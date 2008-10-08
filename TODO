@@ -1,0 +1,28 @@
+1.3
+  features for sysadmins, split by users etc.
+
+1.2
+  split rendering engine from data-gatherer and allow data to be fed through a pipe thus allowing different data sources to be profiled.
+  show preview icons next to the labels
+  last access time colour scheme
+  History actions need to have menu pulldown just like konqi
+  show statusbar signal to say that diretories weren't scanned due to lack of permissions (allow user to enter root password, for this scan only or to keep and then scan only bits that were missed)
+  determine if canvas is too square and shrink map accordingly
+
+1.1
+  If scanning a partition show free space
+  if the view is square shrink the map slightly as a slightly rectangular view is preferable
+  use kdirwatcher, then move rescan to scan menu, rename force rescan
+  clicking center goes up directory
+  refactor disklister.cpp
+  implement vectors instead of double-linked lists for file data
+  Trace inodes in binarytree to avoid recursive hardlinks and counting same directory tree twice
+  admin mode
+  fix that Part settings file is not same as app settings file
+  support other mouse actions for central circle (ie middle click, right click)
+  write caches for all scans, so if crash or something that root scan that took 20 mins is not lost
+
+MAYBE
+  flicking mouse wheel shows different information in tooltip, and there's an off setting, show temp status message to reflect info box
+  ideally, eventually show which labels are children of which by grouping them with a coloured square or something
+  create html summary files (pics and text)

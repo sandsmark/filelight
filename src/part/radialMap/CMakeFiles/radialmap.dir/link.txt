@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../../../lib/libradialmap.a  CMakeFiles/radialmap.dir/radialmap_automoc.o CMakeFiles/radialmap.dir/widget.o CMakeFiles/radialmap.dir/builder.o CMakeFiles/radialmap.dir/map.o CMakeFiles/radialmap.dir/widgetEvents.o CMakeFiles/radialmap.dir/labels.o CMakeFiles/radialmap.dir/segmentTip.o
+/usr/bin/ranlib ../../../lib/libradialmap.a
