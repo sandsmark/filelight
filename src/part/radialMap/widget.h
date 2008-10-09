@@ -5,20 +5,27 @@
 #define WIDGET_H
 
 #include <kurl.h>
-#include <qtimer.h>
+#include <QTimer>
+#include <QPixmap>
+//Added by qt3to4:
+#include <QResizeEvent>
+#include <QDragEnterEvent>
+#include <QDropEvent>
+#include <QMouseEvent>
+#include <QPaintEvent>
 #include "segmentTip.h"
 
 template <class T> class Chain;
 class Directory;
 class File;
 namespace KIO { class Job; }
-class KURL;
+class KUrl;
 
 namespace RadialMap
 {
     class Segment;
 
-    class Map : public KPixmap
+    class Map : public QPixmap
     {
     public:
         Map();
@@ -59,7 +66,7 @@ namespace RadialMap
         ~Widget() { delete m_tip; }
 
         QString path() const;
-        KURL url( File const * const = 0 ) const;
+        KUrl url( File const * const = 0 ) const;
 
         bool isValid() const { return m_tree != 0; }
 
@@ -79,11 +86,11 @@ namespace RadialMap
         void createFromCache( const Directory* );
 
     signals:
-        void activated( const KURL& );
-        void invalidated( const KURL& );
+        void activated( const KUrl& );
+        void invalidated( const KUrl& );
         void created( const Directory* );
         void mouseHover( const QString& );
-        void giveMeTreeFor( const KURL& );
+        void giveMeTreeFor( const KUrl& );
 
     protected:
         virtual void paintEvent( QPaintEvent* );

@@ -1,11 +1,12 @@
 //Author:    Max Howell <max.howell@methylblue.com>, (C) 2003-4
 //Copyright: See COPYING file that comes with this distribution
 
-#include <debug.h>
 #include "fileTree.h"
 #include <qapplication.h>
 #include <qtimer.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
+//Added by qt3to4:
+#include <QCustomEvent>
 #include "remoteLister.h"
 #include "scan.h"
 
@@ -18,10 +19,10 @@ namespace Filelight
 
    struct Store {
 
-      typedef QValueList<Store*> List;
+      typedef Q3ValueList<Store*> List;
 
       /// location of the directory
-      const KURL url;
+      const KUrl url;
       /// the directory on which we are operating
       Directory *directory;
       /// so we can reference the parent store
@@ -31,7 +32,7 @@ namespace Filelight
 
       Store()
          : directory( 0 ), parent( 0 ) {}
-      Store( const KURL &u, const QString &name, Store *s )
+      Store( const KUrl &u, const QString &name, Store *s )
          : url( u ), directory( new Directory( name.local8Bit() + '/' ) ), parent( s ) {}
 
 
@@ -40,7 +41,7 @@ namespace Filelight
       {
          /// returns the next store available for scanning
 
-         debug() << "propagate: " << url << endl;
+         kDebug() << "propagate: " << url << endl;
 
          if( parent ) {
             parent->directory->append( directory );
@@ -61,7 +62,7 @@ namespace Filelight
    };
 
 
-   RemoteLister::RemoteLister( const KURL &url, QWidget *parent )
+   RemoteLister::RemoteLister( const KUrl &url, QWidget *parent )
       : KDirLister( true /*don't fetch mimetypes*/ )
       , m_root( new Store( url, url.url(), 0 ) )
       , m_store( m_root )
@@ -92,7 +93,7 @@ namespace Filelight
    void
    RemoteLister::completed()
    {
-      debug() << "completed: " << url().prettyURL() << endl;
+      kDebug() << "completed: " << url().prettyUrl() << endl;
 
       //as usual KDE documentation didn't suggest I needed to do this at all
       //I had to figure it out myself
@@ -103,7 +104,7 @@ namespace Filelight
    void
    RemoteLister::canceled()
    {
-      debug() << "canceled: " << url().prettyURL() << endl;
+      kDebug() << "canceled: " << url().prettyUrl() << endl;
 
       QTimer::singleShot( 0, this, SLOT(_completed()) );
    }
@@ -133,7 +134,7 @@ namespace Filelight
       if( !m_store->stores.isEmpty() )
       {
          Store::List::Iterator first = m_store->stores.begin();
-         const KURL url( (*first)->url );
+         const KUrl url( (*first)->url );
          Store *currentStore = m_store;
 
          //we should operate with this store next time this function is called
@@ -143,12 +144,12 @@ namespace Filelight
          currentStore->stores.remove( first );
 
          //this returns _immediately_
-         debug() << "scanning: " << url << endl;
+         kDebug() << "scanning: " << url << endl;
          openURL( url );
       }
       else {
 
-         debug() << "I think we're done\n";
+         kDebug() << "I think we're done\n";
 
          Q_ASSERT( m_root == m_store );
 

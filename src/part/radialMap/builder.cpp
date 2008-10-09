@@ -2,8 +2,8 @@
 //Copyright: See COPYING file that comes with this distribution
 
 #include "builder.h"
-#include "Config.h"
-#include "fileTree.h"
+#include "../Config.h"
+#include "../fileTree.h"
 #include <kglobal.h> //locale object
 #include <klocale.h>
 #include "widget.h"
@@ -130,9 +130,9 @@ RadialMap::Builder::build( const Directory* const dir, const unsigned int depth,
       //append a segment for unrepresented space - a "fake" segment
 
       // I dunno how to i18n this
-      const QString s = i18n( "There can't ever be only 1 file", "%1 files, each about %2" )
-         .arg( hiddenFileCount )
-         .arg( File::humanReadableSize( hiddenSize/hiddenFileCount ) );
+      const QString s = i18np( "There can't ever be only 1 file", "%1 files, each about %2", 
+		      hiddenFileCount, 
+		      File::humanReadableSize( hiddenSize/hiddenFileCount ) );
 
       (m_signature + depth)->append( new Segment( new File( s.local8Bit(), hiddenSize ), a_start, a_end - a_start, true ) );
    }

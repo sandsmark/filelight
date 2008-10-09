@@ -3,17 +3,18 @@
 
 #include <kcursor.h>         //make()
 #include <kglobalsettings.h> //kdeColours
-#include <kimageeffect.h>    //desaturate()
+#include <qimageblitz/qimageblitz.h>    //desaturate()
 #include <qapplication.h>    //make()
 #include <qimage.h>          //make() & paint()
 #include <qfont.h>           //ctor
 #include <qfontmetrics.h>    //ctor
 #include <qpainter.h>
+//Added by qt3to4:
+#include <Q3PointArray>
 
 #include "builder.h"
-#include "Config.h"
-#include "debug.h"
-#include "fileTree.h"
+#include "../Config.h"
+#include "../fileTree.h"
 #define SINCOS_H_IMPLEMENTATION (1)
 #include "sincos.h"
 #include "widget.h"
@@ -41,8 +42,6 @@ RadialMap::Map::~Map()
 void
 RadialMap::Map::invalidate( const bool desaturateTheImage )
 {
-   DEBUG_ANNOUNCE
-
    delete [] m_signature;
    m_signature = 0;
 
@@ -50,8 +49,8 @@ RadialMap::Map::invalidate( const bool desaturateTheImage )
    {
       QImage img = this->convertToImage();
 
-      KImageEffect::desaturate( img, 0.7 );
-      KImageEffect::toGray( img, true );
+      Blitz::desaturate( img, 0.7 );
+      Blitz::grayscale( img, true );
 
       this->convertFromImage( img );
    }
@@ -62,14 +61,12 @@ RadialMap::Map::invalidate( const bool desaturateTheImage )
 void
 RadialMap::Map::make( const Directory *tree, bool refresh )
 {
-   DEBUG_ANNOUNCE
-
    //**** determineText seems pointless optimisation
    //   but is it good to keep the text consistent?
    //   even if it makes it a lie?
 
    //slow operation so set the wait cursor
-   QApplication::setOverrideCursor( KCursor::waitCursor() );
+   QApplication::setOverrideCursor( Qt::WaitCursor );
 
    {
       //build a signature of visible components
@@ -100,8 +97,6 @@ RadialMap::Map::make( const Directory *tree, bool refresh )
 void
 RadialMap::Map::setRingBreadth()
 {
-   DEBUG_ANNOUNCE
-
    //FIXME called too many times on creation
 
    m_ringBreadth = (height() - MAP_2MARGIN) / (2 * m_visibleDepth + 4);
@@ -116,8 +111,6 @@ RadialMap::Map::setRingBreadth()
 bool
 RadialMap::Map::resize( const QRect &rect )
 {
-   DEBUG_ANNOUNCE
-
    //there's a MAP_2MARGIN border
 
    #define mw width()
@@ -144,10 +137,10 @@ RadialMap::Map::resize( const QRect &rect )
 
       //resize the pixmap
       size += MAP_2MARGIN;
-      KPixmap::resize( size, size );
+      QPixmap::resize( size, size );
 
       // for summary widget this is a good optimisation as it happens
-      if (KPixmap::isNull())
+      if (QPixmap::isNull())
           return false;
 
       if( m_signature != 0 )
@@ -171,8 +164,6 @@ RadialMap::Map::resize( const QRect &rect )
 void
 RadialMap::Map::colorise()
 {
-   DEBUG_ANNOUNCE
-
    QColor cp, cb;
    double darkness = 1;
    double contrast = (double)Config::contrast / (double)100;
@@ -286,7 +277,7 @@ RadialMap::Map::aaPaint()
 {
    //paint() is called during continuous processes
    //aaPaint() is not and is slower so set overidecursor (make sets it too)
-   QApplication::setOverrideCursor( KCursor::waitCursor() );
+   QApplication::setOverrideCursor( Qt::WaitCursor );
    paint( Config::antiAliasFactor );
    QApplication::restoreOverrideCursor();
 }
@@ -294,8 +285,6 @@ RadialMap::Map::aaPaint()
 void
 RadialMap::Map::paint( unsigned int scaleFactor )
 {
-   DEBUG_ANNOUNCE
-
    if (scaleFactor == 0) //just in case
       scaleFactor = 1;
 
@@ -316,7 +305,7 @@ RadialMap::Map::paint( unsigned int scaleFactor )
       rect.setCoords( x1, y1, x2, y2 );
 
       step *= scaleFactor;
-      KPixmap::resize( this->size() * (int)scaleFactor );
+      QPixmap::resize( this->size() * (int)scaleFactor );
    }
    else if( m_ringBreadth != MAX_RING_BREADTH && m_ringBreadth != MIN_RING_BREADTH ) {
       excess = rect.width() % m_ringBreadth;
@@ -326,7 +315,7 @@ RadialMap::Map::paint( unsigned int scaleFactor )
    //**** best option you can think of is to make the circles slightly less perfect,
    //  ** i.e. slightly eliptic when resizing inbetween
 
-   if (KPixmap::isNull())
+   if (QPixmap::isNull())
       return;
 
    paint.begin( this );
@@ -349,7 +338,7 @@ RadialMap::Map::paint( unsigned int scaleFactor )
          if( (*it)->hasHiddenChildren() )
          {
             //draw arrow head to indicate undisplayed files/directories
-            QPointArray pts( 3 );
+            Q3PointArray pts( 3 );
             QPoint pos, cpos = rect.center();
             int a[3] = { (*it)->start(), (*it)->length(), 0 };
 

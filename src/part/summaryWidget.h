@@ -16,7 +16,7 @@ public:
     ~SummaryWidget();
 
 signals:
-    void activated( const KURL& );
+    void activated( const KUrl& );
 
 private:
     void createDiskMaps();

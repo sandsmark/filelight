@@ -39,7 +39,7 @@ Filelight::Config::read()
     antiAliasFactor    = config.readNumEntry( "antiAliasFactor", 2 );
     minFontPitch       = config.readNumEntry( "minFontPitch", QFont().pointSize() - 3);
     scheme = (MapScheme) config.readNumEntry( "scheme", 0 );
-    skipList           = config.readPathListEntry( "skipList" );
+    skipList           = config.readPathEntry( "skipList", QStringList() );
 
     defaultRingDepth   = 4;
 }

@@ -39,7 +39,7 @@ int main( int argc, char *argv[] )
 
     KApplication app;
 
-    if (!app.isRestored()) {
+    if (!app.isSessionRestored()) {
         MainWindow *mw = new MainWindow();
         app.setMainWidget( mw );
 

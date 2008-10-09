@@ -2,7 +2,6 @@
 //Copyright: See COPYING file that comes with this distribution
 
 #include "Config.h"
-#include "debug.h"
 #include "define.h"
 #include "fileTree.h"
 #include "part.h"
@@ -19,10 +18,13 @@
 //#include <konq_operations.h>
 #include <kparts/genericfactory.h>
 #include <kstatusbar.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 #include <qfile.h>        //encodeName()
 #include <qtimer.h>       //postInit() hack
-#include <qvbox.h>
+#include <q3vbox.h>
+//Added by qt3to4:
+#include <Q3CString>
+#include <QPixmap>
 #include <unistd.h>       //access()
 
 
@@ -51,23 +53,23 @@ Part::Part( QWidget *parentWidget, const char *widgetName, QObject *parent, cons
     Config::read();
 
     setInstance( Factory::instance() );
-    setWidget( new QVBox( parentWidget, widgetName ) );
+    setWidget( new Q3VBox( parentWidget, widgetName ) );
     setXMLFile( "filelight_partui.rc" );
 
     m_map = new RadialMap::Widget( widget() );
     m_map->hide();
 
-    KStdAction::zoomIn( m_map, SLOT(zoomIn()), actionCollection() );
-    KStdAction::zoomOut( m_map, SLOT(zoomOut()), actionCollection() );
-    KStdAction::preferences( this, SLOT(configFilelight()), actionCollection(), "configure_filelight" )->setText( i18n( "Configure Filelight..." ) );
+    KStandardAction::zoomIn( m_map, SLOT(zoomIn()), actionCollection() );
+    KStandardAction::zoomOut( m_map, SLOT(zoomOut()), actionCollection() );
+    KStandardAction::preferences( this, SLOT(configFilelight()), actionCollection(), "configure_filelight" )->setText( i18n( "Configure Filelight..." ) );
 
     connect( m_map, SIGNAL(created( const Directory* )), SIGNAL(completed()) );
     connect( m_map, SIGNAL(created( const Directory* )), SLOT(mapChanged( const Directory* )) );
-    connect( m_map, SIGNAL(activated( const KURL& )), SLOT(updateURL( const KURL& )) );
+    connect( m_map, SIGNAL(activated( const KUrl& )), SLOT(updateURL( const KUrl& )) );
 
     // TODO make better system
-    connect( m_map, SIGNAL(giveMeTreeFor( const KURL& )), SLOT(updateURL( const KURL& )) );
-    connect( m_map, SIGNAL(giveMeTreeFor( const KURL& )), SLOT(openURL( const KURL& )) );
+    connect( m_map, SIGNAL(giveMeTreeFor( const KUrl& )), SLOT(updateURL( const KUrl& )) );
+    connect( m_map, SIGNAL(giveMeTreeFor( const KUrl& )), SLOT(openURL( const KUrl& )) );
 
     connect( m_manager, SIGNAL(completed( Directory* )), SLOT(scanCompleted( Directory* )) );
     connect( m_manager, SIGNAL(aboutToEmptyCache()), m_map, SLOT(invalidate()) );
@@ -81,7 +83,7 @@ Part::postInit()
    if( m_url.isEmpty() ) //if url is not empty openURL() has been called immediately after ctor, which happens
    {
       QWidget *summary = new SummaryWidget( widget(), "summaryWidget" );
-      connect( summary, SIGNAL(activated( const KURL& )), SLOT(openURL( const KURL& )) );
+      connect( summary, SIGNAL(activated( const KUrl& )), SLOT(openURL( const KUrl& )) );
       summary->show();
 
       //FIXME KXMLGUI is b0rked, it should allow us to set this
@@ -91,22 +93,22 @@ Part::postInit()
 }
 
 bool
-Part::openURL( const KURL &u )
+Part::openURL( const KUrl &u )
 {
    //we don't want to be using the summary screen anymore
    delete widget()->child( "summaryWidget" );
    m_map->show();
 
    //TODO everyone hates dialogs, instead render the text in big fonts on the Map
-   //TODO should have an empty KURL until scan is confirmed successful
+   //TODO should have an empty KUrl until scan is confirmed successful
    //TODO probably should set caption to QString::null while map is unusable
 
    #define KMSG( s ) KMessageBox::information( widget(), s )
 
-   KURL url = u;
+   KUrl url = u;
    url.cleanPath( true );
    const QString path = url.path( 1 );
-   const QCString path8bit = QFile::encodeName( path );
+   const Q3CString path8bit = QFile::encodeName( path );
    const bool isLocal = url.protocol() == "file";
 
    if( url.isEmpty() )
@@ -146,17 +148,17 @@ Part::closeURL()
    if( m_manager->abort() )
       statusBar()->message( i18n( "Aborting Scan..." ) );
 
-   m_url = KURL();
+   m_url = KUrl();
 
    return true;
 }
 
 void
-Part::updateURL( const KURL &u )
+Part::updateURL( const KUrl &u )
 {
    //the map has changed internally, update the interface to reflect this
    emit m_ext->openURLNotify(); //must be done first
-   emit m_ext->setLocationBarURL( u.prettyURL() );
+   emit m_ext->setLocationBarURL( u.prettyUrl() );
 
    //do this last, or it breaks Konqi location bar
    m_url = u;
@@ -180,7 +182,7 @@ Part::createAboutData()
 }
 
 bool
-Part::start( const KURL &url )
+Part::start( const KUrl &url )
 {
    if( !m_started ) {
       m_statusbar->addStatusBarItem( new ProgressBox( statusBar(), this ), 0, true );
@@ -192,7 +194,7 @@ Part::start( const KURL &url )
    if( m_manager->start( url ) ) {
       m_url = url;
 
-      const QString s = i18n( "Scanning: %1" ).arg( prettyURL() );
+      const QString s = i18n( "Scanning: %1" ).arg( prettyUrl() );
       stateChanged( "scan_started" );
       emit started( 0 ); //as a Part, we have to do this
       emit setWindowCaption( s );
@@ -226,13 +228,13 @@ Part::scanCompleted( Directory *tree )
    }
    else {
       stateChanged( "scan_failed" );
-      emit canceled( i18n( "Scan failed: %1" ).arg( prettyURL() ) );
+      emit canceled( i18n( "Scan failed: %1" ).arg( prettyUrl() ) );
       emit setWindowCaption( QString::null );
 
       statusBar()->clear();
 //      QTimer::singleShot( 2000, statusBar(), SLOT(clear()) );
 
-      m_url = KURL();
+      m_url = KUrl();
    }
 }
 
@@ -241,7 +243,7 @@ Part::mapChanged( const Directory *tree )
 {
    //IMPORTANT -> m_url has already been set
 
-   emit setWindowCaption( prettyURL() );
+   emit setWindowCaption( prettyUrl() );
 
    ProgressBox *progress = static_cast<ProgressBox *>(statusBar()->child( "ProgressBox" ));
 

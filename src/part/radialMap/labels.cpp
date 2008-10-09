@@ -5,7 +5,9 @@
 #include <qfont.h>
 #include <qfontmetrics.h>
 #include <qpainter.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
+//Added by qt3to4:
+#include <Q3PtrCollection>
 
 #include "Config.h"
 #include "fileTree.h"
@@ -33,10 +35,10 @@ namespace RadialMap
       QString qs;
    };
 
-   class LabelList : public QPtrList<Label>
+   class LabelList : public Q3PtrList<Label>
    {
    protected:
-      int compareItems( QPtrCollection::Item item1, QPtrCollection::Item item2 )
+      int compareItems( Q3PtrCollection::Item item1, Q3PtrCollection::Item item2 )
       {
          //you add 1440 to work round the fact that later you want the circle split vertically
          //and as it is you start at 3 o' clock. It's to do with rightPrevY, stops annoying bug
@@ -65,7 +67,7 @@ RadialMap::Widget::paintExplodedLabels( QPainter &paint ) const
    //we are a friend of RadialMap::Map
 
    LabelList list; list.setAutoDelete( true );
-   QPtrListIterator<Label> it( list );
+   Q3PtrListIterator<Label> it( list );
    unsigned int startLevel = 0;
 
 
@@ -122,7 +124,7 @@ RadialMap::Widget::paintExplodedLabels( QPainter &paint ) const
    //   if so, remove the least significant labels
 
    it.toFirst();
-   QPtrListIterator<Label> jt( it );
+   Q3PtrListIterator<Label> jt( it );
    ++jt;
 
    while( jt ) //**** no need to check _it_ as jt will be NULL if _it_ was too

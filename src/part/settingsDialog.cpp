@@ -7,6 +7,9 @@
 #include <qradiobutton.h>
 #include <qslider.h>
 #include <qvbuttongroup.h>
+//Added by qt3to4:
+#include <Q3Frame>
+#include <QCloseEvent>
 
 #include <kdirselectdialog.h>
 #include <kiconloader.h>
@@ -21,7 +24,7 @@
 SettingsDialog::SettingsDialog( QWidget *parent, const char *name )
   : Dialog( parent, name, false ) //3rd param => modal
 {
-    colourSchemeGroup->setFrameShape( QFrame::NoFrame );
+    colourSchemeGroup->setFrameShape( Q3Frame::NoFrame );
 
     colourSchemeGroup->insert( new QRadioButton( i18n("Rainbow"), colourSchemeGroup ), Filelight::Rainbow );
     colourSchemeGroup->insert( new QRadioButton( i18n("KDE Colors"), colourSchemeGroup ), Filelight::KDE );
@@ -128,7 +131,7 @@ void SettingsDialog::toggleDontScanRemovableMedia( bool b )
 
 void SettingsDialog::addDirectory()
 {
-    const KURL url = KDirSelectDialog::selectDirectory( "/", false, this );
+    const KUrl url = KDirSelectDialog::selectDirectory( "/", false, this );
 
     //TODO error handling!
     //TODO wrong protocol handling!

@@ -20,6 +20,12 @@ AUTOMOC4_CONFIG_FILE:FILEPATH=/usr/lib/automoc4/Automoc4Config.cmake
 //Path to a program.
 AUTOMOC4_EXECUTABLE:FILEPATH=/usr/bin/automoc4
 
+//Path to a file.
+BLITZ_INCLUDES:PATH=/usr/include/qimageblitz
+
+//Path to a library.
+BLITZ_LIBRARIES:FILEPATH=/usr/lib/libqimageblitz.so
+
 //Path to a program.
 CMAKE_AR:FILEPATH=/usr/bin/ar
 
@@ -273,6 +279,9 @@ PHONON_INCLUDE_DIR:PATH=/usr/include
 //Path to a library.
 PHONON_LIBRARY:FILEPATH=/usr/lib/libphonon.so
 
+//Path to a program.
+PKGCONFIG_EXECUTABLE:FILEPATH=/usr/bin/pkg-config
+
 //Value Computed by CMake
 Project_BINARY_DIR:STATIC=/home/sandsmark/1.0
 
@@ -288,6 +297,7 @@ QT_DBUSXML2CPP_EXECUTABLE:FILEPATH=/usr/bin/qdbusxml2cpp
 //The location of the Qt docs
 QT_DOC_DIR:PATH=/usr/share/doc/qt
 
+//Missing description
 QT_INCLUDE_DIR:PATH=/usr/include
 
 //Qt library dir
@@ -618,7 +628,7 @@ X11_xf86misc_INCLUDE_PATH:PATH=/usr/include
 X11_xf86vmode_INCLUDE_PATH:PATH=/usr/include
 
 //Dependencies for the target
-filelight_LIB_DEPENDS:STATIC=general;/usr/lib/libQtCore.so;general;-lpthread;general;/usr/lib/libQtNetwork.so;general;/usr/lib/libQtDBus.so;general;/usr/lib/libQtXml.so;general;/usr/lib/libz.so;general;/lib/libbz2.so;general;resolv;general;/usr/lib/libkdecore.so;general;radialmap;general;kparts;general;kdeui;
+filelight_LIB_DEPENDS:STATIC=general;/usr/lib/libQtCore.so;general;-lpthread;general;/usr/lib/libQtNetwork.so;general;/usr/lib/libQtDBus.so;general;/usr/lib/libQtXml.so;general;/usr/lib/libz.so;general;/lib/libbz2.so;general;resolv;general;/usr/lib/libkdecore.so;general;radialmap;general;/usr/lib/libQtCore.so;general;-lpthread;general;kdecore;general;kdeui;general;kio;general;/usr/lib/libkparts.so;general;/usr/lib/libQtSvg.so;general;/usr/lib/libQtCore.so;general;-lpthread;general;kdecore;general;/usr/lib/libSM.so;general;/usr/lib/libICE.so;general;/usr/lib/libX11.so;general;/usr/lib/libXext.so;general;/usr/lib/libXft.so;general;/usr/lib/libXau.so;general;/usr/lib/libXdmcp.so;general;/usr/lib/libXpm.so;general;/usr/lib/libQtGui.so;general;/usr/lib/libQtXml.so;general;/usr/lib/libXtst.so;general;/usr/lib/libXcursor.so;general;/usr/lib/libXfixes.so;general;/usr/lib/libXrender.so;general;/usr/lib/libkdeui.so;
 
 //Dependencies for target
 radialmap_LIB_DEPENDS:STATIC=
@@ -628,6 +638,10 @@ radialmap_LIB_DEPENDS:STATIC=
 # INTERNAL cache entries
 ########################
 
+//Advanced flag for variable: BLITZ_INCLUDES
+BLITZ_INCLUDES-ADVANCED:INTERNAL=1
+//Advanced flag for variable: BLITZ_LIBRARIES
+BLITZ_LIBRARIES-ADVANCED:INTERNAL=1
 //Advanced flag for variable: CMAKE_AR
 CMAKE_AR-ADVANCED:INTERNAL=1
 //Advanced flag for variable: CMAKE_BUILD_TOOL
@@ -771,6 +785,8 @@ PERL_EXECUTABLE-ADVANCED:INTERNAL=1
 PHONON_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //Advanced flag for variable: PHONON_LIBRARY
 PHONON_LIBRARY-ADVANCED:INTERNAL=1
+//Advanced flag for variable: PKGCONFIG_EXECUTABLE
+PKGCONFIG_EXECUTABLE-ADVANCED:INTERNAL=1
 QT_BINARY_DIR:INTERNAL=/usr/bin
 //Advanced flag for variable: QT_DBUSCPP2XML_EXECUTABLE
 QT_DBUSCPP2XML_EXECUTABLE-ADVANCED:INTERNAL=1

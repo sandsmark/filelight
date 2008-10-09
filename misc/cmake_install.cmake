@@ -33,11 +33,11 @@ IF(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 ENDIF(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 
 IF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" MATCHES "^(Unspecified)$")
-  FILE(INSTALL DESTINATION "/share/services" TYPE FILE FILES "/home/sandsmark/1.0/misc/filelight_part.desktop")
+  FILE(INSTALL DESTINATION "/usr/local/share/kde4/services" TYPE FILE FILES "/home/sandsmark/1.0/misc/filelight_part.desktop")
 ENDIF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" MATCHES "^(Unspecified)$")
 
 IF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" MATCHES "^(Unspecified)$")
-  FILE(INSTALL DESTINATION "/share/applications/kde" TYPE FILE FILES "/home/sandsmark/1.0/misc/filelight.desktop")
+  FILE(INSTALL DESTINATION "/usr/local/share/applications/kde4/kde" TYPE FILE FILES "/home/sandsmark/1.0/misc/filelight.desktop")
 ENDIF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" MATCHES "^(Unspecified)$")
 
 IF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" MATCHES "^(Unspecified)$")
@@ -45,7 +45,7 @@ IF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" MATCHES "^(Unspec
 ENDIF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" MATCHES "^(Unspecified)$")
 
 IF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" MATCHES "^(Unspecified)$")
-  FILE(INSTALL DESTINATION "/share/apps/filelight" TYPE FILE FILES
+  FILE(INSTALL DESTINATION "/usr/local/share/apps/filelight" TYPE FILE FILES
     "/home/sandsmark/1.0/misc/filelight_partui.rc"
     "/home/sandsmark/1.0/misc/filelightui.rc"
     )

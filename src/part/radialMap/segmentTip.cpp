@@ -9,9 +9,11 @@
 #include <kglobal.h>
 #include <kglobalsettings.h>
 #include <klocale.h>
-#include <kpixmapeffect.h>
+
 #include <qpainter.h>
 #include <qtooltip.h>        //for its palette
+//Added by qt3to4:
+#include <QEvent>
 
 
 
@@ -34,7 +36,7 @@ bool isBackingStoreActive()
 
 
 SegmentTip::SegmentTip( uint h )
-        : QWidget( 0, 0, WNoAutoErase | WStyle_Customize | WStyle_NoBorder | WStyle_Tool | WStyle_StaysOnTop | WX11BypassWM )
+        : QWidget( 0, 0, Qt::WNoAutoErase | Qt::WStyle_Customize | Qt::WStyle_NoBorder | Qt::WStyle_Tool | Qt::WStyle_StaysOnTop | Qt::WX11BypassWM )
         , m_cursorHeight( -h )
         , m_backing_store( isBackingStoreActive() )
 {
@@ -92,7 +94,7 @@ SegmentTip::moveTo( QPoint p, const QWidget &canvas, bool placeAbove )
         m_pixmap = KPixmapEffect::fade( m_pixmap, 0.6, c );
 
     paint.begin( &m_pixmap );
-    paint.drawText( rect(), AlignCenter, m_text );
+    paint.drawText( rect(), Qt::AlignCenter, m_text );
     paint.end();
 
     p += screen.topLeft(); //for Xinerama users

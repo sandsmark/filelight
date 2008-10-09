@@ -6,6 +6,8 @@
 
 #include <kurl.h>
 #include <qobject.h>
+//Added by qt3to4:
+#include <QCustomEvent>
 
 class QThread;
 class Directory;
@@ -24,7 +26,7 @@ namespace Filelight
       ScanManager( QObject *parent );
       virtual ~ScanManager();
 
-      bool start( const KURL& );
+      bool start( const KUrl& );
       bool running() const;
 
       static uint files() { return s_files; }
@@ -41,7 +43,7 @@ namespace Filelight
       static bool s_abort;
       static uint s_files;
 
-      KURL m_url;
+      KUrl m_url;
       QThread *m_thread;
       Chain<Directory> *m_cache;
 

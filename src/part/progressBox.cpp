@@ -8,6 +8,8 @@
 
 #include "scan.h"
 #include "progressBox.h"
+//Added by qt3to4:
+#include <QLabel>
 
 
 ProgressBox::ProgressBox( QWidget *parent, QObject *part )

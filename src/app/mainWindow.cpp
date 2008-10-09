@@ -6,7 +6,7 @@
 #include "historyAction.h"
 
 #include <cstdlib>            //std::exit()
-#include <kaccel.h>           //KStdAccel namespace
+#include <kaccel.h>           //KStandardShortcut namespace
 #include <kaction.h>
 #include <kapplication.h>     //setupActions()
 #include <kcombobox.h>        //locationbar
@@ -22,9 +22,11 @@
 #include <ktoolbar.h>
 #include <kurl.h>
 #include <kurlcompletion.h>   //locationbar
-#include <qobjectlist.h>
-#include <qpopupmenu.h>
+#include <qobject.h>
+#include <q3popupmenu.h>
 #include <qtooltip.h>
+#include <kglobal.h>
+#include <KShortcutsDialog>
 
 
 
@@ -67,7 +69,7 @@ MainWindow::MainWindow()
 
     KConfig* const config = KGlobal::config();
     config->setGroup( "general" );
-    m_combo->setHistoryItems( config->readPathListEntry( "comboHistory" ) );
+    m_combo->setHistoryItems( config->readPathEntry( "comboHistory", QStringList() ) );
     applyMainWindowSettings( config, "window" );
 }
 
@@ -76,26 +78,26 @@ MainWindow::setupActions() //singleton function
 {
     KActionCollection *const ac = actionCollection();
 
-    m_combo = new KHistoryCombo( this, "history_combo" );
-    m_combo->setCompletionObject( new KURLCompletion( KURLCompletion::DirCompletion ) );
+    m_combo = new KHistoryComboBox( this, "history_combo" );
+    m_combo->setCompletionObject( new KUrlCompletion( KUrlCompletion::DirCompletion ) );
     m_combo->setAutoDeleteCompletionObject( true );
     m_combo->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
     m_combo->setDuplicatesEnabled( false );
 
-    KStdAction::open( this, SLOT(slotScanDirectory()), ac, "scan_directory" );
-    KStdAction::quit( this, SLOT(close()), ac );
-    KStdAction::up( this, SLOT(slotUp()), ac );
-    KStdAction::configureToolbars(this, SLOT(configToolbars()), ac);
-    KStdAction::keyBindings(this, SLOT(configKeys()), ac);
+    KStandardAction::open( this, SLOT(slotScanDirectory()), ac, "scan_directory" );
+    KStandardAction::quit( this, SLOT(close()), ac );
+    KStandardAction::up( this, SLOT(slotUp()), ac );
+    KStandardAction::configureToolbars(this, SLOT(configToolbars()), ac);
+    KStandardAction::keyBindings(this, SLOT(configKeys()), ac);
 
     new KAction( i18n( "Scan &Home Directory" ), "folder_home", CTRL+Key_Home, this, SLOT(slotScanHomeDirectory()), ac, "scan_home" );
     new KAction( i18n( "Scan &Root Directory" ), "folder_red", 0, this, SLOT(slotScanRootDirectory()), ac, "scan_root" );
-    new KAction( i18n( "Rescan" ), "reload", KStdAccel::reload(), m_part, SLOT(rescan()), ac, "scan_rescan" );
+    new KAction( i18n( "Rescan" ), "reload", KStandardShortcut::reload(), m_part, SLOT(rescan()), ac, "scan_rescan" );
     new KAction( i18n( "Stop" ), "stop", Qt::Key_Escape, this, SLOT(slotAbortScan()), ac, "scan_stop" );
     new KAction( i18n( "Clear Location Bar" ), KApplication::reverseLayout() ? "clear_left" : "locationbar_erase", 0, m_combo, SLOT(clearEdit()), ac, "clear_location" );
     new KAction( i18n( "Go" ), "key_enter", 0, m_combo, SIGNAL(returnPressed()), ac, "go" );
 
-    KWidgetAction *combo = new KWidgetAction( m_combo, i18n( "Location Bar" ), 0, 0, 0, ac, "location_bar" );
+    K3WidgetAction *combo = new K3WidgetAction( m_combo, i18n( "Location Bar" ), 0, 0, 0, ac, "location_bar" );
     m_recentScans = new KRecentFilesAction( i18n( "&Recent Scans" ), 0, ac, "scan_recent", 8 );
     m_histories = new HistoryCollection( ac, this, "history_collection" );
 
@@ -103,9 +105,9 @@ MainWindow::setupActions() //singleton function
     m_recentScans->loadEntries( KGlobal::config() );
     combo->setAutoSized( true ); //FIXME what does this do?
 
-    connect( m_recentScans, SIGNAL(urlSelected( const KURL& )), SLOT(slotScanUrl( const KURL& )) );
+    connect( m_recentScans, SIGNAL(urlSelected( const KUrl& )), SLOT(slotScanUrl( const KUrl& )) );
     connect( m_combo, SIGNAL(returnPressed()), SLOT(slotComboScan()) );
-    connect( m_histories, SIGNAL(activated( const KURL& )), SLOT(slotScanUrl( const KURL& )) );
+    connect( m_histories, SIGNAL(activated( const KUrl& )), SLOT(slotScanUrl( const KUrl& )) );
 }
 
 bool
@@ -128,20 +130,20 @@ MainWindow::queryExit()
 inline void
 MainWindow::configToolbars() //slot
 {
-    KEditToolbar dialog( factory(), this );
+    KEditToolBar dialog( factory(), this );
     dialog.showButtonApply( false );
 
     if( dialog.exec() )
     {
         createGUI( m_part );
-        applyMainWindowSettings( kapp->config(), "window" );
+        applyMainWindowSettings( KGlobal::config(), "window" );
     }
 }
 
 inline void
 MainWindow::configKeys() //slot
 {
-    KKeyDialog::configure( actionCollection(), this );
+    KShortcutsDialog::configure( actionCollection(), this );
 }
 
 inline void
@@ -152,7 +154,7 @@ MainWindow::slotScanDirectory()
 
 inline void MainWindow::slotScanHomeDirectory() { slotScanPath( getenv( "HOME" ) ); }
 inline void MainWindow::slotScanRootDirectory() { slotScanPath( "/" ); }
-inline void MainWindow::slotUp()                { slotScanUrl( m_part->url().upURL() ); }
+inline void MainWindow::slotUp()                { slotScanUrl( m_part->url().upUrl() ); }
 
 inline void
 MainWindow::slotComboScan()
@@ -165,13 +167,13 @@ MainWindow::slotComboScan()
 inline bool
 MainWindow::slotScanPath( const QString &path )
 {
-   return slotScanUrl( KURL::fromPathOrURL( path ) );
+   return slotScanUrl( KUrl::fromPathOrUrl( path ) );
 }
 
 bool
-MainWindow::slotScanUrl( const KURL &url )
+MainWindow::slotScanUrl( const KUrl &url )
 {
-   const KURL oldUrl = m_part->url();
+   const KUrl oldUrl = m_part->url();
    const bool b = m_part->openURL( url );
 
    if (b) {
@@ -206,20 +208,20 @@ void
 MainWindow::scanCompleted()
 {
     KAction *goUp  = action( "go_up" );
-    const KURL url = m_part->url();
+    const KUrl url = m_part->url();
 
     stateChanged( "scan_complete" );
 
-    m_combo->lineEdit()->setText( m_part->prettyURL() );
+    m_combo->lineEdit()->setText( m_part->prettyUrl() );
 
     if ( url.path( 1 ) == "/") {
         goUp->setEnabled( false );
         setActionMenuTextOnly( goUp, QString() );
     }
     else
-        setActionMenuTextOnly( goUp, url.upURL().path( 1 ) );
+        setActionMenuTextOnly( goUp, url.upUrl().path( 1 ) );
 
-    m_recentScans->addURL( url ); //FIXME doesn't set the tick
+    m_recentScans->addUrl( url ); //FIXME doesn't set the tick
 }
 
 inline void
@@ -267,7 +269,7 @@ void setActionMenuTextOnly( KAction *a, QString const &suffix )
         int const id = a->itemId( i );
 
         if (w->inherits( "QPopupMenu" ))
-            static_cast<QPopupMenu*>(w)->changeItem( id, menu_text );
+            static_cast<Q3PopupMenu*>(w)->changeItem( id, menu_text );
 
         else if (w->inherits( "KToolBar" )) {
             QWidget *button = static_cast<KToolBar*>(w)->getWidget( id );

@@ -9,6 +9,7 @@
 #include <qstringlist.h>
 
 class KConfig;
+class KActionCollection;
 
 
 /// defined in mainWindow.cpp
@@ -48,11 +49,11 @@ public:
     void restore( KConfig *config );
 
 public slots:
-    void push( const KURL& );
+    void push( const KUrl& );
     void stop() { m_receiver = 0; }
 
 signals:
-    void activated( const KURL& );
+    void activated( const KUrl& );
 
 private slots:
     void pop();

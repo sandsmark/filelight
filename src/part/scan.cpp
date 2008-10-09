@@ -1,11 +1,12 @@
 //Author:    Max Howell <max.howell@methylblue.com>, (C) 2003-4
 //Copyright: See COPYING file that comes with this distribution
 
-#include "debug.h"
 #include "fileTree.h"
 #include <kcursor.h>
 #include "localLister.h"
 #include <qapplication.h>
+//Added by qt3to4:
+#include <QCustomEvent>
 #include "remoteLister.h"
 #include "scan.h"
 
@@ -26,7 +27,7 @@ namespace Filelight
    ScanManager::~ScanManager()
    {
       if( m_thread ) {
-         debug() << "Attempting to abort scan operation...\n";
+         kDebug() << "Attempting to abort scan operation..." << endl;
          s_abort = true;
          m_thread->wait();
       }
@@ -44,15 +45,15 @@ namespace Filelight
    }
 
    bool
-   ScanManager::start( const KURL &url )
+   ScanManager::start( const KUrl &url )
    {
       //url is guarenteed clean and safe
 
-      debug() << "Scan requested for: " << url.prettyURL() << endl;
+      kDebug() << "Scan requested for: " << url.prettyUrl() << endl;
 
       if( running() ) {
          //shouldn't happen, but lets prevent mega-disasters just in case eh?
-         kdWarning() << "Attempted to run 2 scans concurrently!\n";
+         kWarning() << "Attempted to run 2 scans concurrently!\n";
          //TODO give user an error
          return false;
       }
@@ -82,7 +83,7 @@ namespace Filelight
             {
                //find a pointer to the requested branch
 
-               debug() << "Cache-(a)hit: " << cachePath << endl;
+               kDebug() << "Cache-(a)hit: " << cachePath << endl;
 
                QStringList split = QStringList::split( '/', path.mid( cachePath.length() ) );
                Directory *d = *it;
@@ -110,7 +111,7 @@ namespace Filelight
                   delete trees;
 
                   //we found a completed tree, thus no need to scan
-                  debug() << "Found cache-handle, generating map..\n";
+                  kDebug() << "Found cache-handle, generating map.." << endl;
 
                   //1001 indicates that this should not be cached
                   QCustomEvent *e = new QCustomEvent( 1001 );
@@ -129,20 +130,20 @@ namespace Filelight
             }
             else if( cachePath.startsWith( path ) ) //then part of the requested tree is already scanned
             {
-               debug() << "Cache-(b)hit: " << cachePath << endl;
+               kDebug() << "Cache-(b)hit: " << cachePath << endl;
                it.transferTo( *trees );
             }
          }
 
          m_url.setPath( path ); //FIXME stop switching between paths and KURLs all the time
-         QApplication::setOverrideCursor( KCursor::workingCursor() );
+         QApplication::setOverrideCursor( Qt::BusyCursor );
          //starts listing by itself
          m_thread = new Filelight::LocalLister( path, trees, this );
          return true;
       }
 
       m_url = url;
-      QApplication::setOverrideCursor( KCursor::workingCursor() );
+      QApplication::setOverrideCursor( Qt::BusyCursor );
       //will start listing straight away
       QObject *o = new Filelight::RemoteLister( url, (QWidget*)parent() );
       insertChild( o );

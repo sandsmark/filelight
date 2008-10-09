@@ -2,7 +2,6 @@
 //Copyright: See COPYING file that comes with this distribution
 
 #include "Config.h"
-#include "debug.h"
 #include <dirent.h>
 #include "fileTree.h"
 #include <fstab.h>
@@ -12,6 +11,9 @@
 #endif
 #include <qapplication.h> //postEvent()
 #include <qfile.h>
+//Added by qt3to4:
+#include <QCustomEvent>
+#include <Q3CString>
 #include "scan.h"
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -47,7 +49,7 @@ namespace Filelight
    LocalLister::run()
    {
       //recursively scan the requested path
-      const QCString path = QFile::encodeName( m_path );
+      const Q3CString path = QFile::encodeName( m_path );
       Directory *tree = scan( path, path );
 
       //delete the list of trees useful for this scan,
@@ -56,7 +58,7 @@ namespace Filelight
 
       if( ScanManager::s_abort ) //scan was cancelled
       {
-         debug() << "Scan succesfully aborted\n";
+         kDebug() << "Scan succesfully aborted" << endl;
          delete tree;
          tree = 0;
       }
@@ -127,7 +129,7 @@ namespace Filelight
 
    #include <errno.h>
    static void
-   outputError( QCString path )
+   outputError( Q3CString path )
    {
       ///show error message that stat or opendir may give
 
@@ -160,7 +162,7 @@ namespace Filelight
    }
 
    Directory*
-   LocalLister::scan( const QCString &path, const QCString &dirname )
+   LocalLister::scan( const Q3CString &path, const Q3CString &dirname )
    {
       Directory *cwd = new Directory( dirname );
       DIR       *dir = opendir( path );
@@ -180,7 +182,7 @@ namespace Filelight
          if( qstrcmp( ent->d_name, "." ) == 0 || qstrcmp( ent->d_name, ".." ) == 0 )
             continue;
 
-         QCString new_path = path; new_path += ent->d_name;
+         Q3CString new_path = path; new_path += ent->d_name;
 
          //get file information
          if( lstat( new_path, &statbuf ) == -1 ) {
@@ -204,7 +206,7 @@ namespace Filelight
          else if( S_ISDIR( statbuf.st_mode ) )  //directory
          {
             Directory *d = 0;
-            QCString new_dirname = ent->d_name;
+            Q3CString new_dirname = ent->d_name;
             new_dirname += '/';
             new_path    += '/';
 
@@ -214,7 +216,7 @@ namespace Filelight
             {
                if( new_path == (*it)->name8Bit() )
                {
-                  debug() << "Tree pre-completed: " << (*it)->name() << "\n";
+                  kDebug() << "Tree pre-completed: " << (*it)->name() << endl;
                   d = it.remove();
                   ScanManager::s_files += d->children();
                   //**** ideally don't have this redundant extra somehow
@@ -288,7 +290,7 @@ namespace Filelight
          else
             s_localMounts.append( str ); //**** NO! can't be sure won't have trailing slash, need to do a check first dummy!!
 
-         kdDebug() << "FSTAB: " << FS_TYPE << "\n";
+         kDebug() << "FSTAB: " << FS_TYPE << "\n";
       }
 
       endfsent();  /* close fstab.. */
@@ -321,7 +323,7 @@ namespace Filelight
          else if( b = !s_localMounts.contains( str ) )
             s_localMounts.append( str ); //**** NO! can't be sure won't have trailing slash, need to do a check first dummy!!
 
-         if( b ) kdDebug() << "MTAB: " << FS_TYPE << "\n";
+         if( b ) kDebug() << "MTAB: " << FS_TYPE << "\n";
       }
 
       endmntent( fp ); /* close mtab.. */

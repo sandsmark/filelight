@@ -4,7 +4,7 @@
 #ifndef FILETREE_H
 #define FILETREE_H
 
-#include <qcstring.h> //qstrdup
+#include <q3cstring.h> //qstrdup
 #include <qfile.h>    //decodeName()
 #include <stdlib.h>
 

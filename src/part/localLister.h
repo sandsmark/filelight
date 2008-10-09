@@ -5,6 +5,8 @@
 #define LOCALLISTER_H
 
 #include <qthread.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 class Directory;
 template<class T> class Chain;
@@ -25,7 +27,7 @@ namespace Filelight
 
    private:
       virtual void run();
-      Directory *scan( const QCString&, const QCString& );
+      Directory *scan( const Q3CString&, const Q3CString& );
 
    private:
       static QStringList s_localMounts, s_remoteMounts; //TODO namespace

@@ -3,14 +3,17 @@
 
 #include "historyAction.h"
 
-#include <kaccel.h>
-#include <kconfig.h>
-#include <klocale.h>
+#include <KAction>
+#include <KConfig>
+#include <KLocale>
+#include <KActionCollection>
+#include <KStandardShortcut>
+#include <KConfigGroup>
 
 
 inline
 HistoryAction::HistoryAction( const QString &text, const char *icon, const KShortcut &cut, KActionCollection *ac, const char *name )
-        : KAction( text, icon, cut, 0, 0, ac, name )
+        : KAction( text, ac )
         , m_text( text )
 {
     // ui files make this false, but we can't rely on UI file as it isn't compiled in :(
@@ -42,8 +45,8 @@ HistoryAction::pop()
 
 HistoryCollection::HistoryCollection( KActionCollection *ac, QObject *parent, const char *name )
         : QObject( parent, name )
-        , m_b( new HistoryAction( i18n( "Back" ), "back", KStdAccel::back(), ac, "go_back" ) )
-        , m_f( new HistoryAction( i18n( "Forward" ), "forward",  KStdAccel::forward(), ac, "go_forward" ) )
+        , m_b( new HistoryAction( i18n( "Back" ), "back", KStandardShortcut::back(), ac, "go_back" ) )
+        , m_f( new HistoryAction( i18n( "Forward" ), "forward",  KStandardShortcut::forward(), ac, "go_forward" ) )
         , m_receiver( 0 )
 {
     connect( m_b, SIGNAL(activated()), SLOT(pop()) );
@@ -51,7 +54,7 @@ HistoryCollection::HistoryCollection( KActionCollection *ac, QObject *parent, co
 }
 
 void
-HistoryCollection::push( const KURL &url ) //slot
+HistoryCollection::push( const KUrl &url ) //slot
 {
     if( !url.isEmpty() )
     {
@@ -61,7 +64,7 @@ HistoryCollection::push( const KURL &url ) //slot
             m_receiver = m_b;
         }
 
-        m_receiver->push( url.path( 1 ) );
+        m_receiver->push( url.path( KUrl::AddTrailingSlash ) );
     }
     m_receiver = 0;
 }
@@ -69,7 +72,7 @@ HistoryCollection::push( const KURL &url ) //slot
 void
 HistoryCollection::pop() //slot
 {
-    KURL url;
+    KUrl url;
     const QString path = ((HistoryAction*)sender())->pop(); //FIXME here we remove the constness
     url.setPath( path );
 
@@ -81,15 +84,15 @@ HistoryCollection::pop() //slot
 void
 HistoryCollection::save( KConfig *config )
 {
-    config->writePathEntry( "backHistory", m_b->m_list );
-    config->writePathEntry( "forwardHistory", m_f->m_list );
+    config->group(QString()).writePathEntry( "backHistory", m_b->m_list );
+    config->group(QString()).writePathEntry( "forwardHistory", m_f->m_list );
 }
 
 void
 HistoryCollection::restore( KConfig *config )
 {
-    m_b->m_list = config->readPathListEntry( "backHistory" );
-    m_f->m_list = config->readPathListEntry( "forwardHistory" );
+    m_b->m_list = config->group(QString()).readPathEntry( "backHistory", QStringList() );
+    m_f->m_list = config->group(QString()).readPathEntry( "forwardHistory", QStringList() );
     //TODO texts are not updated - no matter
 }
 

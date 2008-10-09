@@ -2,7 +2,6 @@
 //Copyright: See COPYING file that comes with this distribution
 
 #include "Config.h"
-#include "debug.h"
 #include "fileTree.h"
 #include <kcursor.h>
 #include <kiconeffect.h> //MyRadialMap::mousePressEvent()
@@ -10,8 +9,14 @@
 #include <klocale.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qtextstream.h>
-#include <qvbox.h>
+#include <q3textstream.h>
+#include <q3vbox.h>
+//Added by qt3to4:
+#include <Q3CString>
+#include <Q3GridLayout>
+#include <Q3ValueList>
+#include <QMouseEvent>
+#include <QTextOStream>
 #include "radialMap/radialMap.h"
 #include "radialMap/widget.h"
 #include "summaryWidget.h"
@@ -36,7 +41,7 @@ struct Disk
 };
 
 
-struct DiskList : QValueList<Disk>
+struct DiskList : Q3ValueList<Disk>
 {
    DiskList();
 };
@@ -79,10 +84,10 @@ public:
 SummaryWidget::SummaryWidget( QWidget *parent, const char *name )
         : QWidget( parent, name )
 {
-    qApp->setOverrideCursor( KCursor::waitCursor() );
+    qApp->setOverrideCursor( Qt::WaitCursor );
 
     setPaletteBackgroundColor( Qt::white );
-    (new QGridLayout( this, 1, 2 ))->setAutoAdd( true );
+    (new Q3GridLayout( this, 1, 2 ))->setAutoAdd( true );
 
     createDiskMaps();
 
@@ -99,8 +104,8 @@ SummaryWidget::createDiskMaps()
 {
     DiskList disks;
 
-    const QCString free = i18n( "Free" ).local8Bit();
-    const QCString used = i18n( "Used" ).local8Bit();
+    const Q3CString free = i18n( "Free" ).local8Bit();
+    const Q3CString used = i18n( "Used" ).local8Bit();
 
     KIconLoader loader;
 
@@ -114,11 +119,11 @@ SummaryWidget::createDiskMaps()
         if (disk.free == 0 && disk.used == 0)
             continue;
 
-        QWidget *box = new QVBox( this );
+        QWidget *box = new Q3VBox( this );
         RadialMap::Widget *map = new MyRadialMap( box );
 
         QString text; QTextOStream( &text )
-            << "<img src='" << loader.iconPath( disk.icon, KIcon::Toolbar ) << "'>"
+            << "<img src='" << loader.iconPath( disk.icon, KIconLoader::Toolbar ) << "'>"
             << " &nbsp;" << disk.mount << " "
             << "<i>(" << disk.device << ")</i>";
 
@@ -134,7 +139,7 @@ SummaryWidget::createDiskMaps()
 
         map->create( tree ); //must be done when visible
 
-        connect( map, SIGNAL(activated( const KURL& )), SIGNAL(activated( const KURL& )) );
+        connect( map, SIGNAL(activated( const KUrl& )), SIGNAL(activated( const KUrl& )) );
     }
 }
 
@@ -163,7 +168,7 @@ DiskList::DiskList()
     pclose( df );
 
     QString output = QString::fromLocal8Bit( buffer );
-    QTextStream t( &output, IO_ReadOnly );
+    Q3TextStream t( &output, QIODevice::ReadOnly );
     QString const BLANK( QChar(' ') );
 
     while (!t.atEnd()) {

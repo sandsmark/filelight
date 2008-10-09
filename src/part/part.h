@@ -36,12 +36,12 @@ namespace Filelight
       virtual bool openFile() { return false; } //pure virtual in base class
       virtual bool closeURL();
 
-      QString prettyURL() const { return m_url.protocol() == "file" ? m_url.path() : m_url.prettyURL(); }
+      QString prettyUrl() const { return m_url.protocol() == "file" ? m_url.path() : m_url.prettyUrl(); }
 
       static KAboutData *createAboutData();
 
    public slots:
-      virtual bool openURL( const KURL& );
+      virtual bool openURL( const KUrl& );
       void configFilelight();
       void rescan();
 
@@ -61,10 +61,10 @@ namespace Filelight
       bool m_started;
 
    private:
-      bool start( const KURL& );
+      bool start( const KUrl& );
 
    private slots:
-      void updateURL( const KURL & );
+      void updateURL( const KUrl & );
    };
 }
 

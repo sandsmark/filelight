@@ -1,31 +1,31 @@
 //Author:    Max Howell <max.howell@methylblue.com>, (C) 2003-4
 //Copyright: See COPYING file that comes with this distribution
 
-#include <kcursor.h>        //ctor
-#include <klocale.h>
-#include <kurl.h>
-#include <qapplication.h>   //sendEvent
-#include <qbitmap.h>        //ctor - finding cursor size
-#include <qcursor.h>        //slotPostMouseEvent()
-#include <qtimer.h>         //member
+#include <KCursor>        //ctor
+#include <KLocale>
+#include <KUrl>
+#include <QApplication>   //sendEvent
+#include <QBitmap>        //ctor - finding cursor size
+#include <QCursor>        //slotPostMouseEvent()
+#include <QTimer>         //member
+#include <QWidget>
 
-#include "Config.h"
-#include "debug.h"
-#include "fileTree.h"
+#include "../Config.h"
+#include "../fileTree.h"
 #include "radialMap.h" //constants
 #include "widget.h"
 
 
 
-RadialMap::Widget::Widget( QWidget *parent, const char *name )
-   : QWidget( parent, name, Qt::WNoAutoErase )
+RadialMap::Widget::Widget( QWidget *parent, const char *name ) //TODO: remove name
+   : QWidget( parent, Qt::WNoAutoErase )
    , m_tree( 0 )
    , m_focus( 0 )
    , m_rootSegment( 0 ) //TODO we don't delete it, *shrug*
 {
    setAcceptDrops( true );
    setBackgroundColor( Qt::white );
-   const QBitmap *cursor = KCursor::handCursor().bitmap();
+   const QBitmap *cursor = QCursor(Qt::PointingHandCursor).bitmap();
    m_tip = new SegmentTip(cursor ? cursor->height() : 16);
 
    connect( this, SIGNAL(created( const Directory* )), SLOT(sendFakeMouseEvent()) );
@@ -39,10 +39,10 @@ RadialMap::Widget::path() const
    return m_tree->fullPath();
 }
 
-KURL
+KUrl
 RadialMap::Widget::url( File const * const file ) const
 {
-   return KURL::fromPathOrURL( file ? file->fullPath() : m_tree->fullPath() );
+   return KUrl::fromPathOrUrl( file ? file->fullPath() : m_tree->fullPath() );
 }
 
 void

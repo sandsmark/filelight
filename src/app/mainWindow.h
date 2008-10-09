@@ -21,7 +21,7 @@
 #include <kparts/mainwindow.h>
 
 class KSqueezedTextLabel;
-class KHistoryCombo;
+class KHistoryComboBox;
 class KAction;
 class KRecentFilesAction;
 
@@ -40,7 +40,7 @@ class MainWindow : public KParts::MainWindow
   public:
     MainWindow();
 
-    void scan( const KURL &u ) { slotScanUrl( u ); }
+    void scan( const KUrl &u ) { slotScanUrl( u ); }
 
   private slots:
     void slotUp();
@@ -48,7 +48,7 @@ class MainWindow : public KParts::MainWindow
     void slotScanDirectory();
     void slotScanHomeDirectory();
     void slotScanRootDirectory();
-    bool slotScanUrl( const KURL& );
+    bool slotScanUrl( const KUrl& );
     bool slotScanPath( const QString& );
     void slotAbortScan();
 
@@ -70,7 +70,7 @@ class MainWindow : public KParts::MainWindow
     Filelight::Part *m_part;
 
     KSqueezedTextLabel *m_status[2];
-    KHistoryCombo      *m_combo;
+    KHistoryComboBox      *m_combo;
     HistoryCollection  *m_histories;
     KRecentFilesAction *m_recentScans;
 
