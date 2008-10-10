@@ -168,26 +168,26 @@ RadialMap::Widget::mousePressEvent( QMouseEvent *e )
          popup.addTitle( m_focus->file()->fullPath( m_tree ) );
 
          if (isDir) {
-            popup.addAction( SmallIconSet( "konqueror" ), i18n( "Open &Konqueror Here" ), Konqueror, 0, 0 );
+            popup.insertItem( SmallIconSet( "konqueror" ), i18n( "Open &Konqueror Here" ), Konqueror);
 
             if( url.protocol() == "file" )
-               popup.addAction( SmallIconSet( "konsole" ), i18n( "Open &Konsole Here" ), Konsole );
+               popup.insertItem( SmallIconSet( "konsole" ), i18n( "Open &Konsole Here" ), Konsole );
 
             if (m_focus->file() != m_tree) {
-               popup.addSeparator();
-               popup.addAction( SmallIconSet( "viewmag" ), i18n( "&Center Map Here" ), Center );
+               popup.insertSeparator();
+               popup.insertItem( SmallIconSet( "viewmag" ), i18n( "&Center Map Here" ), Center );
             }
          }
          else
             popup.insertItem( SmallIconSet( "fileopen" ), i18n( "&Open" ), Open );
 
-         popup.addSeparator();
-         popup.addAction( SmallIconSet( "editcopy" ), i18n( "&Copy to clipboard" ), Copy );
+         popup.insertSeparator();
+         popup.insertItem( SmallIconSet( "editcopy" ), i18n( "&Copy to clipboard" ), Copy );
 
-         popup.addSeparator();
-         popup.addAction( SmallIconSet( "editdelete" ), i18n( "&Delete" ), Delete );
+         popup.insertSeparator();
+         popup.insertItem( SmallIconSet( "editdelete" ), i18n( "&Delete" ), Delete );
 
-         switch (popup.exec( e->globalPos(), 1 )) {
+         switch (popup.popup( e->globalPos(), 1 )) {
             case Konqueror:
                 //KRun::runCommand will show an error message if there was trouble
                 KRun::runCommand( QString( "kfmclient openURL \"%1\"" ).arg( url.url() ) );
@@ -264,8 +264,6 @@ RadialMap::Widget::deleteJobFinished( KIO::Job *job )
 void
 RadialMap::Widget::dropEvent( QDropEvent *e )
 {
-    DEBUG_ANNOUNCE
-
     KUrl::List urls;
     if (K3URLDrag::decode( e, urls ) && urls.count())
         emit giveMeTreeFor( urls.first() );
@@ -274,6 +272,6 @@ RadialMap::Widget::dropEvent( QDropEvent *e )
 void
 RadialMap::Widget::dragEnterEvent( QDragEnterEvent *e )
 {
-    KURL::List uriList = KUrl::List::fromMimeData(e->mimeData() );
+    KUrl::List uriList = KUrl::List::fromMimeData(e->mimeData() );
     e->accept( !uriList.isEmpty() );
 }
