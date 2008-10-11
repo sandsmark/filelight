@@ -4,14 +4,14 @@
 #ifndef DEFINE_H
 #define DEFINE_H
 
-#include "config.h"
+#include "part/Config.h"
 
 #undef VERSION
 #undef PACKAGE
 #undef PRETTYNAME
 
 #define APP_NAME "filelight"
-#define APP_VERSION "1.0"
+#define APP_VERSION "1.9"
 #define APP_PRETTYNAME "Filelight"
 
 #endif

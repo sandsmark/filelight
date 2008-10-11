@@ -36,7 +36,7 @@ namespace Filelight
       virtual bool openFile() { return false; } //pure virtual in base class
       virtual bool closeURL();
 
-      QString prettyUrl() const { return m_url.protocol() == "file" ? m_url.path() : m_url.prettyUrl(); }
+      QString prettyUrl() const { return url().protocol() == "file" ? url().path() : url().prettyUrl(); }
 
       static KAboutData *createAboutData();
 
