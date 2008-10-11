@@ -10,8 +10,8 @@
 #include <QTimer>         //member
 #include <QWidget>
 
-#include "../Config.h"
-#include "../fileTree.h"
+#include "part/Config.h"
+#include "part/fileTree.h"
 #include "radialMap.h" //constants
 #include "widget.h"
 

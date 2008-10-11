@@ -1,7 +1,7 @@
 //Author:    Max Howell <max.howell@methylblue.com>, (C) 2003-4
 //Copyright: See COPYING file that comes with this distribution
 
-#include "../fileTree.h"
+#include "part/fileTree.h"
 #include "radialMap.h"   //class Segment
 #include "widget.h"
 
@@ -10,6 +10,8 @@
 #include <kiconeffect.h> //::mousePressEvent()
 #include <kiconloader.h> //::mousePressEvent()
 #include <kio/job.h>     //::mousePressEvent()
+#include <kio/deletejob.h>
+#include <kio/jobuidelegate.h>
 #include <klocale.h>
 #include <kmessagebox.h> //::mousePressEvent()
 #include <kmenu.h>  //::mousePressEvent()
@@ -155,12 +157,18 @@ RadialMap::Widget::mousePressEvent( QMouseEvent *e )
    //m_tip is hidden already by event filter
    //m_focus is set correctly (I've been strict, I assure you it is correct!)
 
-   enum { Konqueror, Konsole, Center, Open, Copy, Delete };
-
    if (m_focus && !m_focus->isFake())
    {
       const KUrl url   = Widget::url( m_focus->file() );
       const bool isDir = m_focus->file()->isDirectory();
+
+      // Actions in the right click menu
+      QAction* openKonqueror;
+      QAction* openKonsole;
+      QAction* centerMap;
+      QAction* openFile;
+      QAction* copyClipboard;
+      QAction* deleteItem;
 
       if( e->button() == Qt::RightButton )
       {
@@ -168,46 +176,40 @@ RadialMap::Widget::mousePressEvent( QMouseEvent *e )
          popup.addTitle( m_focus->file()->fullPath( m_tree ) );
 
          if (isDir) {
-            popup.insertItem( SmallIconSet( "konqueror" ), i18n( "Open &Konqueror Here" ), Konqueror);
+            openKonqueror = popup.addAction( SmallIconSet( "konqueror" ), i18n( "Open &Konqueror Here" ));
 
             if( url.protocol() == "file" )
-               popup.insertItem( SmallIconSet( "konsole" ), i18n( "Open &Konsole Here" ), Konsole );
+               openKonsole = popup.addAction( SmallIconSet( "konsole" ), i18n( "Open &Konsole Here" ));
 
             if (m_focus->file() != m_tree) {
-               popup.insertSeparator();
-               popup.insertItem( SmallIconSet( "viewmag" ), i18n( "&Center Map Here" ), Center );
+               popup.addSeparator();
+               centerMap = popup.addAction( SmallIconSet( "viewmag" ), i18n( "&Center Map Here" ));
             }
          }
          else
-            popup.insertItem( SmallIconSet( "fileopen" ), i18n( "&Open" ), Open );
+            openFile = popup.addAction( SmallIconSet( "fileopen" ), i18n( "&Open" ));
 
-         popup.insertSeparator();
-         popup.insertItem( SmallIconSet( "editcopy" ), i18n( "&Copy to clipboard" ), Copy );
+         popup.addSeparator();
+         copyClipboard = popup.addAction( SmallIconSet( "editcopy" ), i18n( "&Copy to clipboard" ));
 
-         popup.insertSeparator();
-         popup.insertItem( SmallIconSet( "editdelete" ), i18n( "&Delete" ), Delete );
+         popup.addSeparator();
+         deleteItem = popup.addAction( SmallIconSet( "editdelete" ), i18n( "&Delete" ));
 
-         switch (popup.popup( e->globalPos(), 1 )) {
-            case Konqueror:
-                //KRun::runCommand will show an error message if there was trouble
-                KRun::runCommand( QString( "kfmclient openURL \"%1\"" ).arg( url.url() ) );
-                break;
+	 QAction* clicked = popup.exec(e->globalPos(), 0);
 
-            case Konsole:
-                // --workdir only works for local file paths
-                KRun::runCommand( QString( "konsole --workdir \"%1\"" ).arg( url.path() ) );
-                break;
-
-            case Center:
-            case Open:
-                goto section_two;
-
-            case Copy:
-                QApplication::clipboard()->setData( new K3URLDrag( KUrl::List( url ) ) );
-                break;
-
-            case Delete:
-            {
+	 if (openKonqueror && clicked == openKonqueror) {
+                KRun::runCommand( QString( "kfmclient openURL \"%1\"" ).arg( url.url() ), this );
+	 } else if (openKonsole && clicked == openKonsole) {
+		 KRun::runCommand( QString( "konsole --workdir \"%1\"" ).arg( url.path() ), this );
+	 } else if (centerMap && clicked == centerMap) {
+		 goto section_two;
+	 } else if (openFile && clicked == openFile) {
+		 goto section_two;
+	 } else if (clicked == copyClipboard) {
+		 QMimeData* mimedata = new QMimeData();
+		 url.populateMimeData(mimedata);
+		 QApplication::clipboard()->setMimeData( mimedata , QClipboard::Clipboard );
+	 } else if (clicked == deleteItem) {
                 const KUrl url = Widget::url( m_focus->file() );
                 const QString message = m_focus->file()->isDirectory()
                         ? i18n( "<qt>The directory at <i>'%1'</i> will be <b>recursively</b> and <b>permanently</b> deleted." )
@@ -218,14 +220,12 @@ RadialMap::Widget::mousePressEvent( QMouseEvent *e )
 
                 if (userIntention == KMessageBox::Continue) {
                     KIO::Job *job = KIO::del( url );
-                    job->setWindow( this );
+                    job->ui()->setWindow( this );
                     connect( job, SIGNAL(result( KIO::Job* )), SLOT(deleteJobFinished( KIO::Job* )) );
                     QApplication::setOverrideCursor( Qt::BusyCursor );
                 }
-            }
-
-            default:
-                //ensure m_focus is set for new mouse position
+	 } else {
+		//ensure m_focus is set for new mouse position
                 sendFakeMouseEvent();
          }
       }
@@ -237,11 +237,11 @@ RadialMap::Widget::mousePressEvent( QMouseEvent *e )
          m_tip->hide(); // user expects this
 
          if (!isDir || e->button() == Qt::MidButton) {
-            KIconEffect::visualActivate( this, rect );
+            // KIconEffect::visualActivate( this, rect ); // TODO: recreate this
             new KRun( url, this, true ); //FIXME see above
          }
          else if (m_focus->file() != m_tree) { // is left click
-            KIconEffect::visualActivate( this, rect );
+            // KIconEffect::visualActivate( this, rect ); // TODO: recreate this
             emit activated( url ); //activate first, this will cause UI to prepare itself
             createFromCache( (Directory *)m_focus->file() );
          }
@@ -264,9 +264,9 @@ RadialMap::Widget::deleteJobFinished( KIO::Job *job )
 void
 RadialMap::Widget::dropEvent( QDropEvent *e )
 {
-    KUrl::List urls;
-    if (K3URLDrag::decode( e, urls ) && urls.count())
-        emit giveMeTreeFor( urls.first() );
+    KUrl::List uriList = KUrl::List::fromMimeData(e->mimeData());
+    if (!uriList.isEmpty())
+        emit giveMeTreeFor( uriList.first() );
 }
 
 void

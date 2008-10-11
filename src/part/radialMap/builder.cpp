@@ -2,8 +2,8 @@
 //Copyright: See COPYING file that comes with this distribution
 
 #include "builder.h"
-#include "../Config.h"
-#include "../fileTree.h"
+#include "part/Config.h"
+#include "part/fileTree.h"
 #include <kglobal.h> //locale object
 #include <klocale.h>
 #include "widget.h"

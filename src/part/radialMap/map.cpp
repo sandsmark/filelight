@@ -13,8 +13,8 @@
 #include <Q3PointArray>
 
 #include "builder.h"
-#include "../Config.h"
-#include "../fileTree.h"
+#include "part/Config.h"
+#include "part/fileTree.h"
 #define SINCOS_H_IMPLEMENTATION (1)
 #include "sincos.h"
 #include "widget.h"

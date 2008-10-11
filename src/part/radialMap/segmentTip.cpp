@@ -1,7 +1,7 @@
 //Author:    Max Howell <max.howell@methylblue.com>, (C) 2003-4
 //Copyright: See COPYING file that comes with this distribution
 
-#include "fileTree.h"
+#include "part/fileTree.h"
 #include "segmentTip.h"
 
 #include <cstdlib>
@@ -10,7 +10,8 @@
 #include <kglobalsettings.h>
 #include <klocale.h>
 
-#include <qpainter.h>
+#include <qimageblitz/qimageblitz.h>
+#include <QPainter>
 #include <qtooltip.h>        //for its palette
 //Added by qt3to4:
 #include <QEvent>
@@ -78,7 +79,7 @@ SegmentTip::moveTo( QPoint p, const QWidget &canvas, bool placeAbove )
     const QRect intersection( alphaMaskRect.intersect( canvas.rect() ) );
 
     m_pixmap.resize( size() ); //move to updateTip once you are sure it can never be null
-    bitBlt( &m_pixmap, offset, &canvas, intersection, Qt::CopyROP );
+    bitBlt( &m_pixmap, offset, &canvas, intersection, QPainter::CompositionMode_SourceOver );
 
     QColor const c = QToolTip::palette().color( QPalette::Active, QColorGroup::Background );
     if (!m_backing_store)
@@ -90,8 +91,8 @@ SegmentTip::moveTo( QPoint p, const QWidget &canvas, bool placeAbove )
     paint.drawRect( rect() );
     paint.end();
 
-    if (m_backing_store)
-        m_pixmap = KPixmapEffect::fade( m_pixmap, 0.6, c );
+    /* if (m_backing_store)
+        m_pixmap = QPixmap::fromImage(Blitz::fade( m_pixmap.toImage() , 0.6f, c )); */ // TODO: reimplement this
 
     paint.begin( &m_pixmap );
     paint.drawText( rect(), Qt::AlignCenter, m_text );
