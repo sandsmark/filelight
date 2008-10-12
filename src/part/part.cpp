@@ -11,11 +11,14 @@
 #include "settingsDialog.h"
 #include "summaryWidget.h"
 
+#include "ui_dialog.h"
+
 #include <kaboutdata.h>   //::createAboutData()
 #include <kaction.h>
 #include <klocale.h>
 #include <kmessagebox.h>  //::start()
 //#include <konq_operations.h>
+#include <kactioncollection.h>
 #include <kparts/genericfactory.h>
 #include <kstatusbar.h>
 #include <kstandardaction.h>
@@ -36,23 +39,21 @@ K_EXPORT_COMPONENT_FACTORY( libfilelight, Filelight::Factory )
 
 
 BrowserExtension::BrowserExtension( Part *parent, const char *name )
-  : KParts::BrowserExtension( parent, name )
+  : KParts::BrowserExtension( parent )
 {}
 
 
 Part::Part( QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name, const QStringList& )
-        : ReadOnlyPart( parent, name )
+        : ReadOnlyPart( parent )
         , m_ext( new BrowserExtension( this ) )
         , m_statusbar( new StatusBarExtension( this ) )
         , m_map( 0 )
         , m_manager( new ScanManager( this ) )
         , m_started( false )
 {
-    QPixmap::setDefaultOptimization( QPixmap::BestOptim );
-
     Config::read();
 
-    setInstance( Factory::instance() );
+//    setInstance( Factory::instance() );
     setWidget( new Q3VBox( parentWidget, widgetName ) );
     setXMLFile( "filelight_partui.rc" );
 
@@ -61,7 +62,7 @@ Part::Part( QWidget *parentWidget, const char *widgetName, QObject *parent, cons
 
     KStandardAction::zoomIn( m_map, SLOT(zoomIn()), actionCollection() );
     KStandardAction::zoomOut( m_map, SLOT(zoomOut()), actionCollection() );
-    KStandardAction::preferences( this, SLOT(configFilelight()), actionCollection(), "configure_filelight" )->setText( i18n( "Configure Filelight..." ) );
+    KStandardAction::preferences( this, SLOT(configFilelight()), actionCollection() )->setText( i18n( "Configure Filelight..." ) );
 
     connect( m_map, SIGNAL(created( const Directory* )), SIGNAL(completed()) );
     connect( m_map, SIGNAL(created( const Directory* )), SLOT(mapChanged( const Directory* )) );
@@ -80,7 +81,7 @@ Part::Part( QWidget *parentWidget, const char *widgetName, QObject *parent, cons
 void
 Part::postInit()
 {
-   if( m_url.isEmpty() ) //if url is not empty openURL() has been called immediately after ctor, which happens
+   if( url().isEmpty() ) //if url is not empty openURL() has been called immediately after ctor, which happens
    {
       QWidget *summary = new SummaryWidget( widget(), "summaryWidget" );
       connect( summary, SIGNAL(activated( const KUrl& )), SLOT(openURL( const KUrl& )) );
@@ -105,17 +106,17 @@ Part::openURL( const KUrl &u )
 
    #define KMSG( s ) KMessageBox::information( widget(), s )
 
-   KUrl url = u;
-   url.cleanPath( true );
-   const QString path = url.path( 1 );
+   KUrl m_url = u;
+   m_url.cleanPath( KUrl::SimplifyDirSeparators );
+   const QString path = m_url.path( KUrl::RemoveTrailingSlash );
    const Q3CString path8bit = QFile::encodeName( path );
-   const bool isLocal = url.protocol() == "file";
+   const bool isLocal = m_url.protocol() == "file";
 
-   if( url.isEmpty() )
+   if( m_url.isEmpty() )
    {
       //do nothing, chances are the user accidently pressed ENTER
    }
-   else if( !url.isValid() )
+   else if( !m_url.isValid() )
    {
       KMSG( i18n( "The entered URL cannot be parsed; it is invalid." ) );
    }
@@ -133,10 +134,10 @@ Part::openURL( const KUrl &u )
    }
    else
    {
-      if( url == m_url )
+      if( m_url == url() )
          m_manager->emptyCache(); //same as rescan()
 
-      return start( url );
+      return start( m_url );
    }
 
    return false;
@@ -148,7 +149,7 @@ Part::closeURL()
    if( m_manager->abort() )
       statusBar()->message( i18n( "Aborting Scan..." ) );
 
-   m_url = KUrl();
+   setUrl(KUrl());
 
    return true;
 }
@@ -157,11 +158,11 @@ void
 Part::updateURL( const KUrl &u )
 {
    //the map has changed internally, update the interface to reflect this
-   emit m_ext->openURLNotify(); //must be done first
-   emit m_ext->setLocationBarURL( u.prettyUrl() );
+   emit m_ext->openUrlNotify(); //must be done first
+   emit m_ext->setLocationBarUrl( u.prettyUrl() );
 
    //do this last, or it breaks Konqi location bar
-   m_url = u;
+   setUrl(u);
 }
 
 void
@@ -178,11 +179,20 @@ Part::configFilelight()
 KAboutData*
 Part::createAboutData()
 {
-    return new KAboutData( APP_NAME, I18N_NOOP( APP_PRETTYNAME ), APP_VERSION );
+    return new KAboutData( APP_NAME, 
+		    "", 
+		    ki18n( APP_PRETTYNAME ), 
+		    APP_VERSION, 
+		    ki18n("Easy identification of file usage"), 
+		    KAboutData::License_GPL,
+		    ki18n("(c) 2008 Martin T. Sandsmark\n(c) 2002-2004 Max Howell"), 
+		    ki18n(""),
+		    "http://iskrembilen.com/",
+		    "sandsmark@iskrembilen.com");
 }
 
 bool
-Part::start( const KUrl &url )
+Part::start( const KUrl &m_url )
 {
    if( !m_started ) {
       m_statusbar->addStatusBarItem( new ProgressBox( statusBar(), this ), 0, true );
@@ -191,8 +201,8 @@ Part::start( const KUrl &url )
       m_started = true;
    }
 
-   if( m_manager->start( url ) ) {
-      m_url = url;
+   if( m_manager->start( m_url ) ) {
+      setUrl(m_url);
 
       const QString s = i18n( "Scanning: %1" ).arg( prettyUrl() );
       stateChanged( "scan_started" );
@@ -212,7 +222,7 @@ Part::rescan()
 {
    //FIXME we have to empty the cache because otherwise rescan picks up the old tree..
    m_manager->emptyCache(); //causes canvas to invalidate
-   start( m_url );
+   start( url() );
 }
 
 void
@@ -234,14 +244,14 @@ Part::scanCompleted( Directory *tree )
       statusBar()->clear();
 //      QTimer::singleShot( 2000, statusBar(), SLOT(clear()) );
 
-      m_url = KUrl();
+      setUrl(KUrl());
    }
 }
 
 void
 Part::mapChanged( const Directory *tree )
 {
-   //IMPORTANT -> m_url has already been set
+   //IMPORTANT -> url has already been set
 
    emit setWindowCaption( prettyUrl() );
 

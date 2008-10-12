@@ -25,7 +25,6 @@ namespace Filelight
       BrowserExtension( Part*, const char * = 0 );
    };
 
-
    class Part : public KParts::ReadOnlyPart
    {
       Q_OBJECT
