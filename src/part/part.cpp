@@ -43,7 +43,7 @@ BrowserExtension::BrowserExtension( Part *parent, const char *name )
 {}
 
 
-Part::Part( QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name, const QStringList& )
+Part::Part( QWidget *parentWidget, QObject *parent, const QStringList& )
         : ReadOnlyPart( parent )
         , m_ext( new BrowserExtension( this ) )
         , m_statusbar( new StatusBarExtension( this ) )
@@ -54,7 +54,7 @@ Part::Part( QWidget *parentWidget, const char *widgetName, QObject *parent, cons
     Config::read();
 
 //    setInstance( Factory::instance() );
-    setWidget( new Q3VBox( parentWidget, widgetName ) );
+    setWidget( new Q3VBox( parentWidget ) );
     setXMLFile( "filelight_partui.rc" );
 
     m_map = new RadialMap::Widget( widget() );

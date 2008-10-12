@@ -1,7 +1,8 @@
 
 #include "Config.h"
-#include <kconfig.h>
-#include <kglobal.h>
+#include <KConfig>
+#include <KConfigGroup>
+#include <KGlobal>
 
 
 bool Config::scanAcrossMounts;
@@ -16,30 +17,21 @@ uint Config::defaultRingDepth;
 Filelight::MapScheme Config::scheme;
 QStringList Config::skipList;
 
-
-inline KConfig&
-Filelight::Config::kconfig()
-{
-    KConfig *config = KGlobal::config();
-    config->setGroup( "filelight_part" );
-    return *config;
-}
-
 void
 Filelight::Config::read()
 {
-    const KConfig &config = kconfig();
+    const KConfigGroup config = KGlobal::config()->group("filelight_part");
 
-    scanAcrossMounts   = config.readBoolEntry( "scanAcrossMounts", false );
-    scanRemoteMounts   = config.readBoolEntry( "scanRemoteMounts", false );
-    scanRemovableMedia = config.readBoolEntry( "scanRemovableMedia", false );
-    varyLabelFontSizes = config.readBoolEntry( "varyLabelFontSizes", true );
-    showSmallFiles     = config.readBoolEntry( "showSmallFiles", false );
-    contrast           = config.readNumEntry( "contrast", 75 );
-    antiAliasFactor    = config.readNumEntry( "antiAliasFactor", 2 );
-    minFontPitch       = config.readNumEntry( "minFontPitch", QFont().pointSize() - 3);
-    scheme = (MapScheme) config.readNumEntry( "scheme", 0 );
-    skipList           = config.readPathEntry( "skipList", QStringList() );
+    scanAcrossMounts   = config.readEntry( "scanAcrossMounts", false );
+    scanRemoteMounts   = config.readEntry( "scanRemoteMounts", false );
+    scanRemovableMedia = config.readEntry( "scanRemovableMedia", false );
+    varyLabelFontSizes = config.readEntry( "varyLabelFontSizes", true );
+    showSmallFiles     = config.readEntry( "showSmallFiles", false );
+    contrast           = config.readEntry( "contrast", 75 );
+    antiAliasFactor    = config.readEntry( "antiAliasFactor", 2 );
+    minFontPitch       = config.readEntry( "minFontPitch", QFont().pointSize() - 3);
+    scheme = (MapScheme) config.readEntry( "scheme", 0 );
+    skipList           = config.readEntry( "skipList", QStringList() );
 
     defaultRingDepth   = 4;
 }
@@ -47,7 +39,7 @@ Filelight::Config::read()
 void
 Filelight::Config::write()
 {
-    KConfig &config = kconfig();
+    KConfigGroup config = KGlobal::config()->group("filelight_part");
 
     config.writeEntry( "scanAcrossMounts", scanAcrossMounts );
     config.writeEntry( "scanRemoteMounts", scanRemoteMounts );
