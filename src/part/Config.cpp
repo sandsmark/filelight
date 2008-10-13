@@ -49,6 +49,6 @@ Filelight::Config::write()
     config.writeEntry( "contrast", contrast );
     config.writeEntry( "antiAliasFactor", antiAliasFactor );
     config.writeEntry( "minFontPitch", minFontPitch );
-    config.writeEntry( "scheme", scheme );
+    config.writeEntry( "scheme", (int)scheme );
     config.writePathEntry( "skipList", skipList );
 }
