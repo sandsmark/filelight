@@ -61,7 +61,7 @@ ProgressBox::halt()
 void
 ProgressBox::setText( int files )
 {
-   QLabel::setText( i18np("%n File", "%n Files", files) );
+   QLabel::setText( i18n("%n File", "%n Files", files) );
 }
 
 #include "progressBox.moc"

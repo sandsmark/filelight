@@ -22,15 +22,16 @@ namespace Filelight
    class BrowserExtension : public KParts::BrowserExtension
    {
    public:
-      BrowserExtension( Part*, const char * = 0 );
+      BrowserExtension( Part* );
    };
+
 
    class Part : public KParts::ReadOnlyPart
    {
       Q_OBJECT
 
    public:
-      Part( QWidget *, QObject *, const QStringList& );
+      Part( QWidget *, const char *, QObject *, const char *, const QStringList& );
 
       virtual bool openFile() { return false; } //pure virtual in base class
       virtual bool closeURL();

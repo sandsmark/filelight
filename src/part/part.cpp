@@ -11,14 +11,12 @@
 #include "settingsDialog.h"
 #include "summaryWidget.h"
 
-#include "ui_dialog.h"
-
 #include <kaboutdata.h>   //::createAboutData()
 #include <kaction.h>
 #include <klocale.h>
 #include <kmessagebox.h>  //::start()
+#include <KActionCollection>
 //#include <konq_operations.h>
-#include <kactioncollection.h>
 #include <kparts/genericfactory.h>
 #include <kstatusbar.h>
 #include <kstandardaction.h>
@@ -38,12 +36,12 @@ typedef KParts::GenericFactory<Filelight::Part> Factory;
 K_EXPORT_COMPONENT_FACTORY( libfilelight, Filelight::Factory )
 
 
-BrowserExtension::BrowserExtension( Part *parent, const char *name )
+BrowserExtension::BrowserExtension( Part *parent )
   : KParts::BrowserExtension( parent )
 {}
 
 
-Part::Part( QWidget *parentWidget, QObject *parent, const QStringList& )
+Part::Part( QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name, const QStringList& )
         : ReadOnlyPart( parent )
         , m_ext( new BrowserExtension( this ) )
         , m_statusbar( new StatusBarExtension( this ) )
@@ -53,8 +51,8 @@ Part::Part( QWidget *parentWidget, QObject *parent, const QStringList& )
 {
     Config::read();
 
-//    setInstance( Factory::instance() );
-    setWidget( new Q3VBox( parentWidget ) );
+//     setInstance( Factory::instance() );
+    setWidget( new Q3VBox( parentWidget, widgetName ) );
     setXMLFile( "filelight_partui.rc" );
 
     m_map = new RadialMap::Widget( widget() );
@@ -106,17 +104,17 @@ Part::openURL( const KUrl &u )
 
    #define KMSG( s ) KMessageBox::information( widget(), s )
 
-   KUrl m_url = u;
-   m_url.cleanPath( KUrl::SimplifyDirSeparators );
-   const QString path = m_url.path( KUrl::RemoveTrailingSlash );
+   KUrl url = u;
+   url.cleanPath( KUrl::SimplifyDirSeparators );
+   const QString path = url.path( KUrl::RemoveTrailingSlash );
    const Q3CString path8bit = QFile::encodeName( path );
-   const bool isLocal = m_url.protocol() == "file";
+   const bool isLocal = url.protocol() == "file";
 
-   if( m_url.isEmpty() )
+   if( url.isEmpty() )
    {
       //do nothing, chances are the user accidently pressed ENTER
    }
-   else if( !m_url.isValid() )
+   else if( !url.isValid() )
    {
       KMSG( i18n( "The entered URL cannot be parsed; it is invalid." ) );
    }
@@ -134,10 +132,10 @@ Part::openURL( const KUrl &u )
    }
    else
    {
-      if( m_url == url() )
+      if( url == url() )
          m_manager->emptyCache(); //same as rescan()
 
-      return start( m_url );
+      return start( url );
    }
 
    return false;
@@ -149,7 +147,7 @@ Part::closeURL()
    if( m_manager->abort() )
       statusBar()->message( i18n( "Aborting Scan..." ) );
 
-   setUrl(KUrl());
+   m_url = KUrl();
 
    return true;
 }
@@ -158,11 +156,11 @@ void
 Part::updateURL( const KUrl &u )
 {
    //the map has changed internally, update the interface to reflect this
-   emit m_ext->openUrlNotify(); //must be done first
-   emit m_ext->setLocationBarUrl( u.prettyUrl() );
+   emit m_ext->openURLNotify(); //must be done first
+   emit m_ext->setLocationBarURL( u.prettyUrl() );
 
    //do this last, or it breaks Konqi location bar
-   setUrl(u);
+   m_url = u;
 }
 
 void
@@ -179,20 +177,11 @@ Part::configFilelight()
 KAboutData*
 Part::createAboutData()
 {
-    return new KAboutData( APP_NAME, 
-		    "", 
-		    ki18n( APP_PRETTYNAME ), 
-		    APP_VERSION, 
-		    ki18n("Easy identification of file usage"), 
-		    KAboutData::License_GPL,
-		    ki18n("(c) 2008 Martin T. Sandsmark\n(c) 2002-2004 Max Howell"), 
-		    ki18n(""),
-		    "http://iskrembilen.com/",
-		    "sandsmark@iskrembilen.com");
+    return new KAboutData( APP_NAME, I18N_NOOP( APP_PRETTYNAME ), APP_VERSION );
 }
 
 bool
-Part::start( const KUrl &m_url )
+Part::start( const KUrl &url )
 {
    if( !m_started ) {
       m_statusbar->addStatusBarItem( new ProgressBox( statusBar(), this ), 0, true );
@@ -201,8 +190,8 @@ Part::start( const KUrl &m_url )
       m_started = true;
    }
 
-   if( m_manager->start( m_url ) ) {
-      setUrl(m_url);
+   if( m_manager->start( url ) ) {
+      m_url = url;
 
       const QString s = i18n( "Scanning: %1" ).arg( prettyUrl() );
       stateChanged( "scan_started" );
@@ -222,7 +211,7 @@ Part::rescan()
 {
    //FIXME we have to empty the cache because otherwise rescan picks up the old tree..
    m_manager->emptyCache(); //causes canvas to invalidate
-   start( url() );
+   start( m_url );
 }
 
 void
@@ -244,14 +233,14 @@ Part::scanCompleted( Directory *tree )
       statusBar()->clear();
 //      QTimer::singleShot( 2000, statusBar(), SLOT(clear()) );
 
-      setUrl(KUrl());
+      m_url = KUrl();
    }
 }
 
 void
 Part::mapChanged( const Directory *tree )
 {
-   //IMPORTANT -> url has already been set
+   //IMPORTANT -> m_url has already been set
 
    emit setWindowCaption( prettyUrl() );
 
