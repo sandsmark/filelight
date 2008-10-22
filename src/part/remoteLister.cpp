@@ -3,7 +3,9 @@
 
 #include "fileTree.h"
 #include <qapplication.h>
+#include <KDebug>
 #include <qtimer.h>
+#include <KDirLister>
 #include <q3valuelist.h>
 //Added by qt3to4:
 #include <QCustomEvent>
@@ -63,7 +65,7 @@ namespace Filelight
 
 
    RemoteLister::RemoteLister( const KUrl &url, QWidget *parent )
-      : KDirLister( true /*don't fetch mimetypes*/ )
+      : KDirLister( parent )
       , m_root( new Store( url, url.url(), 0 ) )
       , m_store( m_root )
    {
@@ -76,7 +78,7 @@ namespace Filelight
       connect( this, SIGNAL(canceled()), SLOT(canceled()) );
 
       //we do this non-recursively - it is the only way!
-      openURL( url );
+      openUrl( url );
    }
 
    RemoteLister::~RemoteLister()
@@ -117,10 +119,10 @@ namespace Filelight
       KFileItemList items = KDirLister::items();
       for( KFileItemList::ConstIterator it = items.begin(), end = items.end(); it != end; ++it )
       {
-         if( (*it)->isDir() )
-            m_store->stores += new Store( (*it)->url(), (*it)->name(), m_store );
+         if( it->isDir() )
+            m_store->stores += new Store( it->url(), it->name(), m_store );
          else
-            m_store->directory->append( (*it)->name().local8Bit(), (*it)->size() / 1024 );
+            m_store->directory->append( it->name().local8Bit(), it->size() / 1024 );
 
          ScanManager::s_files++;
       }
@@ -145,7 +147,7 @@ namespace Filelight
 
          //this returns _immediately_
          kDebug() << "scanning: " << url << endl;
-         openURL( url );
+         openUrl( url );
       }
       else {
 

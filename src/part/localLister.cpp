@@ -9,6 +9,7 @@
 #ifdef HAVE_MNTENT_H
 #include <mntent.h>
 #endif
+#include <KDebug>
 #include <qapplication.h> //postEvent()
 #include <qfile.h>
 //Added by qt3to4:
@@ -133,7 +134,7 @@ namespace Filelight
    {
       ///show error message that stat or opendir may give
 
-      #define out( s ) error() << s ": " << path << endl; break
+      #define out( s ) kError() << s ": " << path << endl; break
 
       switch( errno ) {
       case EACCES:

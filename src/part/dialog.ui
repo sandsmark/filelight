@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>438</width>
-    <height>514</height>
+    <width>556</width>
+    <height>405</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -229,11 +229,7 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout" >
           <item>
-           <layout class="QVBoxLayout" name="colourSchemeGroup" >
-            <property name="sizeConstraint" >
-             <enum>QLayout::SetMaximumSize</enum>
-            </property>
-           </layout>
+           <widget class="KButtonGroup" native="1" name="colourSchemeGroup" />
           </item>
           <item>
            <layout class="QHBoxLayout" >
@@ -378,7 +374,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="spinBox" >
+          <widget class="QSpinBox" name="minFontPitch" >
            <property name="maximum" >
             <number>20</number>
            </property>
@@ -457,6 +453,11 @@
    <class>Q3ListBox</class>
    <extends>Q3Frame</extends>
    <header>q3listbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QButtonGroup</class>
+   <extends>QWidget</extends>
+   <header>qbuttongroup.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

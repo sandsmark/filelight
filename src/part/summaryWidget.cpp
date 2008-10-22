@@ -11,6 +11,7 @@
 #include <qlayout.h>
 #include <q3textstream.h>
 #include <q3vbox.h>
+#include <QApplication>
 //Added by qt3to4:
 #include <Q3CString>
 #include <Q3GridLayout>
@@ -73,7 +74,7 @@ public:
         //and clicks to the used segment
         else if( segment && segment->file()->name() == "Used" ) {
             const QRect rect( e->x() - 20, e->y() - 20, 40, 40 );
-            KIconEffect::visualActivate( this, rect );
+//            KIconEffect::visualActivate( this, rect ); TODO: Re-enable
             emit activated( url() );
         }
     }

@@ -10,12 +10,12 @@
 #include <QCloseEvent>
 
 
-class SettingsDialog : public Ui_Dialog
+class SettingsDialog : public QDialog, public Ui::Dialog
 {
 Q_OBJECT
 
 public:
-  SettingsDialog( QWidget* =0, const char* =0 );
+	SettingsDialog( QWidget* = 0, const char* = 0 );
 
 protected:
   virtual void closeEvent( QCloseEvent * );

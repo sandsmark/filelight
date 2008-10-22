@@ -13,6 +13,7 @@
 
 #include <kaboutdata.h>   //::createAboutData()
 #include <kaction.h>
+#include <kparts/browserextension.h>
 #include <klocale.h>
 #include <kmessagebox.h>  //::start()
 #include <KActionCollection>
@@ -41,7 +42,7 @@ BrowserExtension::BrowserExtension( Part *parent )
 {}
 
 
-Part::Part( QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name, const QStringList& )
+Part::Part( QWidget *parentWidget, QObject *parent, const QStringList& )
         : ReadOnlyPart( parent )
         , m_ext( new BrowserExtension( this ) )
         , m_statusbar( new StatusBarExtension( this ) )
@@ -52,7 +53,7 @@ Part::Part( QWidget *parentWidget, const char *widgetName, QObject *parent, cons
     Config::read();
 
 //     setInstance( Factory::instance() );
-    setWidget( new Q3VBox( parentWidget, widgetName ) );
+    setWidget( new QWidget( parentWidget ) );
     setXMLFile( "filelight_partui.rc" );
 
     m_map = new RadialMap::Widget( widget() );
@@ -104,17 +105,17 @@ Part::openURL( const KUrl &u )
 
    #define KMSG( s ) KMessageBox::information( widget(), s )
 
-   KUrl url = u;
-   url.cleanPath( KUrl::SimplifyDirSeparators );
-   const QString path = url.path( KUrl::RemoveTrailingSlash );
+   KUrl uri = u;
+   uri.cleanPath( KUrl::SimplifyDirSeparators );
+   const QString path = uri.path( KUrl::RemoveTrailingSlash );
    const Q3CString path8bit = QFile::encodeName( path );
-   const bool isLocal = url.protocol() == "file";
+   const bool isLocal = uri.protocol() == "file";
 
-   if( url.isEmpty() )
+   if( uri.isEmpty() )
    {
       //do nothing, chances are the user accidently pressed ENTER
    }
-   else if( !url.isValid() )
+   else if( !uri.isValid() )
    {
       KMSG( i18n( "The entered URL cannot be parsed; it is invalid." ) );
    }
@@ -132,10 +133,10 @@ Part::openURL( const KUrl &u )
    }
    else
    {
-      if( url == url() )
+      if( uri == url() )
          m_manager->emptyCache(); //same as rescan()
 
-      return start( url );
+      return start( uri );
    }
 
    return false;
@@ -147,7 +148,7 @@ Part::closeURL()
    if( m_manager->abort() )
       statusBar()->message( i18n( "Aborting Scan..." ) );
 
-   m_url = KUrl();
+   setUrl(KUrl());
 
    return true;
 }
@@ -156,11 +157,11 @@ void
 Part::updateURL( const KUrl &u )
 {
    //the map has changed internally, update the interface to reflect this
-   emit m_ext->openURLNotify(); //must be done first
-   emit m_ext->setLocationBarURL( u.prettyUrl() );
+   emit m_ext->openUrlNotify(); //must be done first
+   emit m_ext->setLocationBarUrl( u.prettyUrl() );
 
    //do this last, or it breaks Konqi location bar
-   m_url = u;
+   setUrl(u);
 }
 
 void
@@ -177,7 +178,18 @@ Part::configFilelight()
 KAboutData*
 Part::createAboutData()
 {
-    return new KAboutData( APP_NAME, I18N_NOOP( APP_PRETTYNAME ), APP_VERSION );
+    return new KAboutData(
+		    "filelight",
+		    0, 
+		    ki18n("Filelight"),
+		    APP_VERSION,
+		    ki18n( "Displays file usage in an easy to understand way." ),
+		    KAboutData::License_GPL,
+		    ki18n( "(c) 2002-2004 Max Howell\n\
+			    (c) 2008 Martin T. Sandsmark"), 
+		    ki18n("Please report bugs."), 
+		    "http://iskrembilen.com/", 
+		    "sandsmark@iskrembilen.com" );
 }
 
 bool
@@ -191,7 +203,7 @@ Part::start( const KUrl &url )
    }
 
    if( m_manager->start( url ) ) {
-      m_url = url;
+      setUrl(url);
 
       const QString s = i18n( "Scanning: %1" ).arg( prettyUrl() );
       stateChanged( "scan_started" );
@@ -211,7 +223,7 @@ Part::rescan()
 {
    //FIXME we have to empty the cache because otherwise rescan picks up the old tree..
    m_manager->emptyCache(); //causes canvas to invalidate
-   start( m_url );
+   start( url() );
 }
 
 void
@@ -233,14 +245,14 @@ Part::scanCompleted( Directory *tree )
       statusBar()->clear();
 //      QTimer::singleShot( 2000, statusBar(), SLOT(clear()) );
 
-      m_url = KUrl();
+      setUrl(KUrl());
    }
 }
 
 void
 Part::mapChanged( const Directory *tree )
 {
-   //IMPORTANT -> m_url has already been set
+   //IMPORTANT -> url() has already been set
 
    emit setWindowCaption( prettyUrl() );
 

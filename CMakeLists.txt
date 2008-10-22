@@ -1,7 +1,7 @@
 
-find_package(KDE4 REQUIRED)
+find_package(KDE4 REQUIRED Qt3Support)
 
-add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS -w)
+add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS -w -fPIC)
 
 include(KDE4Defaults)
 

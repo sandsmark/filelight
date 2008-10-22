@@ -31,7 +31,7 @@ namespace Filelight
       Q_OBJECT
 
    public:
-      Part( QWidget *, const char *, QObject *, const char *, const QStringList& );
+      Part( QWidget *, QObject *, const QStringList& );
 
       virtual bool openFile() { return false; } //pure virtual in base class
       virtual bool closeURL();

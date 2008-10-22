@@ -6,9 +6,8 @@
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qslider.h>
-#include <qvbuttongroup.h>
+#include <QVBoxLayout>
 //Added by qt3to4:
-#include <Q3Frame>
 #include <QCloseEvent>
 
 #include <kdirselectdialog.h>
@@ -21,14 +20,17 @@
 #include "Config.h"
 
 
-SettingsDialog::SettingsDialog( QWidget *parent, const char *name )
-  : Dialog( parent, name, false ) //3rd param => modal
+SettingsDialog::SettingsDialog( QWidget *parent, const char *name ) : QDialog( parent )
 {
-    colourSchemeGroup->setFrameShape( Q3Frame::NoFrame );
+    setupUi(this);
+    QVBoxLayout *vbox = new QVBoxLayout;
+    //colourSchemeGroup->setFrameShape( QFrame::NoFrame );
 
-    colourSchemeGroup->insert( new QRadioButton( i18n("Rainbow"), colourSchemeGroup ), Filelight::Rainbow );
-    colourSchemeGroup->insert( new QRadioButton( i18n("KDE Colors"), colourSchemeGroup ), Filelight::KDE );
-    colourSchemeGroup->insert( new QRadioButton( i18n("High Contrast"), colourSchemeGroup ), Filelight::HighContrast );
+    vbox->addWidget( new QRadioButton( i18n("Rainbow"), this ), Filelight::Rainbow );
+    vbox->addWidget( new QRadioButton( i18n("KDE Colors"), this ), Filelight::KDE );
+    vbox->addWidget( new QRadioButton( i18n("High Contrast"), this ), Filelight::HighContrast );
+
+    colourSchemeGroup->setLayout(vbox);
 
     //read in settings before you make all those nasty connections!
     reset(); //makes dialog reflect global settings
@@ -90,9 +92,9 @@ void SettingsDialog::reset()
     m_removeButton->setEnabled( m_listBox->count() == 0 );
 
     //tab 2
-    if( colourSchemeGroup->id( colourSchemeGroup->selected() ) != Config::scheme )
+    if( colourSchemeGroup->selected() != Config::scheme ) //TODO: This is probably wrong
     {
-        colourSchemeGroup->setButton( Config::scheme );
+        colourSchemeGroup->setSelected( Config::scheme );
         //setButton doesn't call a single QButtonGroup signal!
         //so we need to call this ourselves (and hence the detection above)
         changeScheme( Config::scheme );
@@ -131,14 +133,14 @@ void SettingsDialog::toggleDontScanRemovableMedia( bool b )
 
 void SettingsDialog::addDirectory()
 {
-    const KUrl url = KDirSelectDialog::selectDirectory( "/", false, this );
+    const KUrl url = KDirSelectDialog::selectDirectory( KUrl("/"), false, this );
 
     //TODO error handling!
     //TODO wrong protocol handling!
 
     if( !url.isEmpty() )
     {
-        const QString path = url.path( 1 );
+        const QString path = url.path( KUrl::RemoveTrailingSlash );
 
         if( !Config::skipList.contains( path ) )
         {

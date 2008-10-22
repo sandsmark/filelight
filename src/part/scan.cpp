@@ -5,6 +5,7 @@
 #include <kcursor.h>
 #include "localLister.h"
 #include <qapplication.h>
+#include <KDebug>
 //Added by qt3to4:
 #include <QCustomEvent>
 #include "remoteLister.h"
@@ -63,7 +64,7 @@ namespace Filelight
 
       if( url.protocol() == "file" )
       {
-         const QString path = url.path( 1 );
+         const QString path = url.path( KUrl::RemoveTrailingSlash );
 
          Chain<Directory> *trees = new Chain<Directory>;
 
@@ -123,7 +124,7 @@ namespace Filelight
                else
                {
                   //something went wrong, we couldn't find the directory we were expecting
-                  error() << "Didn't find " << path << " in the cache!\n";
+                  kError() << "Didn't find " << path << " in the cache!\n";
                   delete it.remove(); //safest to get rid of it
                   break; //do a full scan
                }
