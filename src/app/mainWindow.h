@@ -40,7 +40,7 @@ class MainWindow : public KParts::MainWindow
   public:
     MainWindow();
 
-    void scan( const KUrl &u ) { slotScanUrl( u ); }
+    void scan(const KUrl &u) { slotScanUrl(u); }
 
   private slots:
     void slotUp();
@@ -62,15 +62,15 @@ class MainWindow : public KParts::MainWindow
     void urlAboutToChange();
 
   protected:
-    virtual void saveProperties( KConfig * );
-    virtual void readProperties( KConfig * );
+    virtual void saveProperties(KConfig *);
+    virtual void readProperties(KConfig *);
     virtual bool queryExit();
 
   private:
     Filelight::Part *m_part;
 
     KSqueezedTextLabel *m_status[2];
-    KHistoryComboBox      *m_combo;
+    KHistoryComboBox   *m_combo;
     HistoryCollection  *m_histories;
     KRecentFilesAction *m_recentScans;
 

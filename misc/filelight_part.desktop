@@ -26,5 +26,6 @@ Name[xx]=xxRadialMap Viewxx
 MimeType=inode/directory
 ServiceTypes=KParts/ReadOnlyPart
 X-KDE-Library=libfilelight
+X-KDE-PluginKeyword=filelightpart
 Type=Service
 Icon=view_filelight

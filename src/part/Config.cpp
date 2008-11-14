@@ -3,6 +3,7 @@
 #include <kconfig.h>
 #include <KConfigGroup>
 #include <KSharedConfig>
+#include <KSharedPtr>
 #include <kglobal.h>
 
 
