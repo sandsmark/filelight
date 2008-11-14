@@ -51,7 +51,8 @@ MainWindow::MainWindow()
 
     if (!factory) {
        KMessageBox::error(this, i18n("Unable to load the Filelight Part.\nPlease make sure Filelight was correctly installed."));
-       std::exit(1); //don't use QApplication::exit() - it causes a crash
+       QApplication::exit();
+//       std::exit(1); //don't use QApplication::exit() - it causes a crash
     }
 
 //    m_part = static_cast<KParts::ReadWritePart *>(factory->create(this, "FilelightPart"));
@@ -83,6 +84,7 @@ MainWindow::MainWindow()
         applyMainWindowSettings(config, "window");
     } else {
 	    KMessageBox::error(this, i18n("Unable to create part widget."));
+       	    QApplication::exit();
     }
 }
 

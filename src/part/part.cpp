@@ -33,8 +33,10 @@
 namespace Filelight {
 
 
-typedef KParts::GenericFactory<Filelight::Part> Factory;
-K_EXPORT_COMPONENT_FACTORY( libfilelight, Filelight::Factory )
+//typedef KParts::GenericFactory<Filelight::Part> Factory;
+//K_EXPORT_COMPONENT_FACTORY( libfilelight, Filelight::Factory )
+K_PLUGIN_FACTORY(filelightFactory, registerPlugin<Part>();)
+K_EXPORT_PLUGIN(filelightFactory("Part"))
 
 
 BrowserExtension::BrowserExtension( Part *parent )
@@ -42,7 +44,7 @@ BrowserExtension::BrowserExtension( Part *parent )
 {}
 
 
-Part::Part(QWidget *parentWidget, QObject *parent, const QStringList&)
+Part::Part(QWidget *parentWidget, QObject *parent, const QList<QVariant>&)
         : ReadOnlyPart(parent)
         , m_ext(new BrowserExtension(this))
         , m_statusbar(new StatusBarExtension(this))
@@ -52,7 +54,7 @@ Part::Part(QWidget *parentWidget, QObject *parent, const QStringList&)
 {
     Config::read();
 
-    setInstance(mainComponent());
+//    setInstance(mainComponent());
     setWidget( new QWidget( parentWidget ) );
     setXMLFile( "filelight_partui.rc" );
 
