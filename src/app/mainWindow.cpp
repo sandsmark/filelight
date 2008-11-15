@@ -46,12 +46,13 @@ MainWindow::MainWindow()
         , m_part( 0 )
 {
 //    KLibFactory *factory = KLibLoader::self()->factory( "libfilelight" );
-    KPluginFactory *factory = KPluginLoader("libfilelight").factory();
+    KPluginFactory *factory = KPluginLoader("filelight").factory();
     
 
     if (!factory) {
        KMessageBox::error(this, i18n("Unable to load the Filelight Part.\nPlease make sure Filelight was correctly installed."));
        QApplication::exit();
+       return;
 //       std::exit(1); //don't use QApplication::exit() - it causes a crash
     }
 

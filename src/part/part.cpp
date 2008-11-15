@@ -30,13 +30,14 @@
 #include <unistd.h>       //access()
 
 
+K_PLUGIN_FACTORY(filelightPartFactory, registerPlugin<Filelight::Part>();)  // produce a factory
+K_EXPORT_PLUGIN(filelightPartFactory("filelight", "filelight") )
+
 namespace Filelight {
 
 
 //typedef KParts::GenericFactory<Filelight::Part> Factory;
 //K_EXPORT_COMPONENT_FACTORY( libfilelight, Filelight::Factory )
-K_PLUGIN_FACTORY(filelightFactory, registerPlugin<Part>();)
-K_EXPORT_PLUGIN(filelightFactory("Part"))
 
 
 BrowserExtension::BrowserExtension( Part *parent )
@@ -53,6 +54,10 @@ Part::Part(QWidget *parentWidget, QObject *parent, const QList<QVariant>&)
         , m_started(false)
 {
     Config::read();
+    KGlobal::locale()->insertCatalog("filelight");
+    // we need an instance
+    setComponentData( filelightPartFactory::componentData() );
+
 
 //    setInstance(mainComponent());
     setWidget( new QWidget( parentWidget ) );
