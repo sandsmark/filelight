@@ -1,13 +1,15 @@
-//Author:    Max Howell <max.howell@methylblue.com>, (C) 2003-4
-//Copyright: See COPYING file that comes with this distribution
+// Maintainer:         Martin Sandsmark <sandsmark@samfundet.no> (C) 2008
+// Original author:    Max Howell <max.howell@methylblue.com>, (C) 2003-4
+// Copyright:          See COPYING file that comes with this distribution
 
 #include "define.h"
+#include "mainWindow.h"
+
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kcmdlineargs.h>
 #include <klocale.h>
 #include <kurl.h>
-#include "mainWindow.h"
 
 static KAboutData about(
         APP_NAME,

@@ -1,8 +1,11 @@
+// Maintainer:         Martin Sandsmark <sandsmark@samfundet.no> (C) 2008
+// Original author:    Max Howell <max.howell@methylblue.com>, (C) 2003-4
+// Copyright:          See COPYING file that comes with this distribution
 
 #ifndef Config_H
 #define Config_H
 
-#include <qstringlist.h>
+#include <QStringList>
 
 class KConfig;
 

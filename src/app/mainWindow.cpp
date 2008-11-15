@@ -1,35 +1,32 @@
-//Author:    Max Howell <max.howell@methylblue.com>, (C) 2003-4
-//Copyright: See COPYING file that comes with this distribution
+// Maintainer:         Martin Sandsmark <sandsmark@samfundet.no> (C) 2008
+// Original author:    Max Howell <max.howell@methylblue.com>, (C) 2003-4
+// Copyright:          See COPYING file that comes with this distribution
 
 #include "mainWindow.h"
 #include "part/part.h"
 #include "historyAction.h"
 
 #include <cstdlib>            //std::exit()
-// #include <kaccel.h>           //KStandardShortcut namespace
-// #include <kaction.h>
-#include <kapplication.h>     //setupActions()
-#include <kcombobox.h>        //locationbar
+#include <KApplication>     //setupActions()
+#include <KComboBox>        //locationbar
 #include <KHistoryComboBox>
 #include <KRecentFilesAction>
-#include <kconfig.h>
-#include <kdirselectdialog.h> //slotScanDirectory
-#include <kedittoolbar.h>     //for editToolbar dialog
+#include <KConfig>
+#include <KDirSelectDialog> //slotScanDirectory
+#include <KEditToolBar>     //for editToolbar dialog
 #include <QLineEdit>
 #include <KStandardShortcut>
 #include <KFileDialog>
-// #include <kkeydialog.h>
-#include <klibloader.h>
-#include <klocale.h>
-#include <kmessagebox.h>
-#include <kshell.h>
-#include <kstatusbar.h>
-#include <ktoolbar.h>
-#include <kurl.h>
-#include <kurlcompletion.h>   //locationbar
-#include <qobject.h>
-#include <q3popupmenu.h>
-#include <qtooltip.h>
+#include <KLibLoader>
+#include <KLocale>
+#include <KMessageBox>
+#include <KShell>
+#include <KStatusBar>
+#include <KToolBar>
+#include <KUrl>
+#include <KUrlCompletion>   //locationbar
+#include <QObject>
+#include <QToolTip>
 #include <KGlobal>
 #include <KConfigGroup>
 #include <KShortcutsDialog>
@@ -37,7 +34,7 @@
 #include <KStandardAction>
 #include <KActionCollection>
 
-
+#include <Q3PopupMenu>
 
 namespace Filelight {
 
@@ -45,18 +42,14 @@ MainWindow::MainWindow()
         : KParts::MainWindow()
         , m_part( 0 )
 {
-//    KLibFactory *factory = KLibLoader::self()->factory( "libfilelight" );
     KPluginFactory *factory = KPluginLoader("filelight").factory();
     
-
     if (!factory) {
        KMessageBox::error(this, i18n("Unable to load the Filelight Part.\nPlease make sure Filelight was correctly installed."));
-       QApplication::exit();
+       std::exit(1);
        return;
-//       std::exit(1); //don't use QApplication::exit() - it causes a crash
     }
 
-//    m_part = static_cast<KParts::ReadWritePart *>(factory->create(this, "FilelightPart"));
     m_part = (Part *)factory->create( this, "filelightpart", QStringList() );
 
     if (m_part) {
@@ -85,7 +78,7 @@ MainWindow::MainWindow()
         applyMainWindowSettings(config, "window");
     } else {
 	    KMessageBox::error(this, i18n("Unable to create part widget."));
-       	    QApplication::exit();
+        std::exit(1);
     }
 }
 
@@ -180,7 +173,7 @@ MainWindow::configToolbars() //slot
 
     if (dialog.exec())
     {
-        createGUI( m_part );
+        createGUI(m_part);
         applyMainWindowSettings(KGlobal::config()->group("window"));
     }
 }
@@ -222,7 +215,7 @@ MainWindow::slotScanUrl(const KUrl &url)
    const bool b = m_part->openURL( url );
 
    if (b) {
-      m_histories->push( oldUrl );
+      m_histories->push(oldUrl);
       action("go_back")->setEnabled( false ); } //FIXME
 
    return b;

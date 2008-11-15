@@ -1,47 +1,50 @@
-//Author:    Max Howell <max.howell@methylblue.com>, (C) 2003-4
-//Copyright: See COPYING file that comes with this distribution
+// Maintainer:         Martin Sandsmark <sandsmark@samfundet.no> (C) 2008
+// Original author:    Max Howell <max.howell@methylblue.com>, (C) 2003-4
+// Copyright:          See COPYING file that comes with this distribution
 
 #include "Config.h"
-#include <dirent.h>
-#include "fileTree.h"
-#include <fstab.h>
 #include "localLister.h"
-#ifdef HAVE_MNTENT_H
-#include <mntent.h>
-#endif
+#include "fileTree.h"
+#include "scan.h"
+
 #include <KDebug>
-#include <qapplication.h> //postEvent()
-#include <qfile.h>
-//Added by qt3to4:
+#include <QApplication> //postEvent()
+#include <QFile>
 #include <QCustomEvent>
 #include <Q3CString>
-#include "scan.h"
+
+#include <dirent.h>
+#include <fstab.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+
+#ifdef HAVE_MNTENT_H
+#include <mntent.h>
+#endif
 
 namespace Filelight
 {
    QStringList LocalLister::s_remoteMounts;
    QStringList LocalLister::s_localMounts;
 
-   LocalLister::LocalLister( const QString &path, Chain<Directory> *cachedTrees, QObject *parent )
+   LocalLister::LocalLister(const QString &path, Chain<Directory> *cachedTrees, QObject *parent)
       : QThread()
-      , m_path( path )
-      , m_trees( cachedTrees )
-      , m_parent( parent )
+      , m_path(path)
+      , m_trees(cachedTrees)
+      , m_parent(parent)
    {
       //add empty directories for any mount points that are in the path
       //TODO empty directories is not ideal as adds to fileCount incorrectly
 
-      QStringList list( Config::skipList );
-      if( !Config::scanAcrossMounts ) list += s_localMounts;
-      if( !Config::scanRemoteMounts ) list += s_remoteMounts;
+      QStringList list(Config::skipList);
+      if (!Config::scanAcrossMounts) list += s_localMounts;
+      if (!Config::scanRemoteMounts) list += s_remoteMounts;
 
-      for( QStringList::ConstIterator it = list.constBegin(); it != list.constEnd(); ++it )
-         if( (*it).startsWith( path ) )
+      for (QStringList::ConstIterator it = list.constBegin(); it != list.constEnd(); ++it)
+         if ((*it).startsWith(path))
             //prevent scanning of these directories
-            m_trees->append( new Directory( (*it).local8Bit() ) );
+            m_trees->append(new Directory((*it).local8Bit()));
 
       start();
    }
@@ -50,14 +53,14 @@ namespace Filelight
    LocalLister::run()
    {
       //recursively scan the requested path
-      const Q3CString path = QFile::encodeName( m_path );
-      Directory *tree = scan( path, path );
+      const Q3CString path = QFile::encodeName(m_path);
+      Directory *tree = scan(path, path);
 
       //delete the list of trees useful for this scan,
       //in a sucessful scan the contents would now be transfered to 'tree'
       delete m_trees;
 
-      if( ScanManager::s_abort ) //scan was cancelled
+      if(ScanManager::s_abort) //scan was cancelled
       {
          kDebug() << "Scan succesfully aborted" << endl;
          delete tree;
@@ -65,8 +68,8 @@ namespace Filelight
       }
 
       QCustomEvent *e = new QCustomEvent( 1000 );
-      e->setData( tree );
-      QApplication::postEvent( m_parent, e );
+      e->setData(tree);
+      QApplication::postEvent(m_parent, e);
    }
 
    // from system.h in GNU coreutils package
@@ -130,81 +133,81 @@ namespace Filelight
 
    #include <errno.h>
    static void
-   outputError( Q3CString path )
+   outputError(Q3CString path)
    {
       ///show error message that stat or opendir may give
 
-      #define out( s ) kError() << s ": " << path << endl; break
+      #define out(s) kError() << s ": " << path << endl; break
 
-      switch( errno ) {
+      switch(errno) {
       case EACCES:
-         out( "Inadequate access permisions" );
+         out("Inadequate access permisions");
       case EMFILE:
-         out( "Too many file descriptors in use by Filelight" );
+         out("Too many file descriptors in use by Filelight");
       case ENFILE:
-         out( "Too many files are currently open in the system" );
+         out("Too many files are currently open in the system");
       case ENOENT:
-         out( "A component of the path does not exist, or the path is an empty string" );
+         out("A component of the path does not exist, or the path is an empty string");
       case ENOMEM:
-         out( "Insufficient memory to complete the operation" );
+         out("Insufficient memory to complete the operation");
       case ENOTDIR:
-         out( "A component of the path is not a directory" );
+         out("A component of the path is not a directory");
       case EBADF:
-         out( "Bad file descriptor" );
+         out("Bad file descriptor");
       case EFAULT:
-         out( "Bad address" );
+         out("Bad address");
       case ELOOP: //NOTE shouldn't ever happen
-         out( "Too many symbolic links encountered while traversing the path" );
+         out("Too many symbolic links encountered while traversing the path");
       case ENAMETOOLONG:
-         out( "File name too long" );
+         out("File name too long");
       }
 
       #undef out
    }
 
    Directory*
-   LocalLister::scan( const Q3CString &path, const Q3CString &dirname )
+   LocalLister::scan(const Q3CString &path, const Q3CString &dirname)
    {
-      Directory *cwd = new Directory( dirname );
-      DIR       *dir = opendir( path );
+      Directory *cwd = new Directory(dirname);
+      DIR *dir = opendir(path);
 
-      if( !dir ) {
-         outputError( path );
+      if (!dir) {
+         outputError(path);
          return cwd;
       }
 
       struct stat statbuf;
       dirent *ent;
-      while ((ent = readdir( dir )))
+      while ((ent = readdir(dir)))
       {
          if( ScanManager::s_abort )
             return cwd;
 
-         if( qstrcmp( ent->d_name, "." ) == 0 || qstrcmp( ent->d_name, ".." ) == 0 )
+         if (qstrcmp(ent->d_name, ".") == 0 || qstrcmp(ent->d_name, "..") == 0)
             continue;
 
          Q3CString new_path = path; new_path += ent->d_name;
 
          //get file information
-         if( lstat( new_path, &statbuf ) == -1 ) {
-            outputError( new_path );
+         if(lstat(new_path, &statbuf) == -1) {
+            outputError(new_path);
             continue;
          }
 
-         if( S_ISLNK( statbuf.st_mode ) ||
-            S_ISCHR(  statbuf.st_mode ) ||
-            S_ISBLK(  statbuf.st_mode ) ||
-            S_ISFIFO( statbuf.st_mode ) ||
-            S_ISSOCK( statbuf.st_mode ) )
+         if(S_ISLNK(statbuf.st_mode) ||
+            S_ISCHR(statbuf.st_mode) ||
+            S_ISBLK(statbuf.st_mode) ||
+            S_ISFIFO(statbuf.st_mode)||
+            S_ISSOCK(statbuf.st_mode))
          {
             continue;
          }
 
-         if( S_ISREG( statbuf.st_mode ) ) //file
+         if(S_ISREG(statbuf.st_mode)) //file
             //using units of KiB as 32bit max is 4GiB and 64bit ints are expensive
-            cwd->append( ent->d_name, (ST_NBLOCKS( statbuf ) * ST_NBLOCKSIZE) / 1024 );
+            cwd->append(ent->d_name, (ST_NBLOCKS(statbuf) * ST_NBLOCKSIZE) / 1024);
 
-         else if( S_ISDIR( statbuf.st_mode ) )  //directory
+         else if(S_ISDIR(statbuf.st_mode))  //directory
          {
             Directory *d = 0;
             Q3CString new_dirname = ent->d_name;
@@ -213,9 +216,9 @@ namespace Filelight
 
             //check to see if we've scanned this section already
 
-            for( Iterator<Directory> it = m_trees->iterator(); it != m_trees->end(); ++it )
+            for(Iterator<Directory> it = m_trees->iterator(); it != m_trees->end(); ++it)
             {
-               if( new_path == (*it)->name8Bit() )
+               if(new_path == (*it)->name8Bit())
                {
                   kDebug() << "Tree pre-completed: " << (*it)->name() << endl;
                   d = it.remove();
@@ -225,15 +228,15 @@ namespace Filelight
                }
             }
 
-            if( !d ) //then scan
-               if ((d = scan( new_path, new_dirname ))) //then scan was successful
-                  cwd->append( d );
+            if(!d) //then scan
+               if ((d = scan(new_path, new_dirname))) //then scan was successful
+                  cwd->append(d);
          }
 
          ++ScanManager::s_files;
       }
 
-      closedir( dir );
+      closedir(dir);
 
       return cwd;
    }
@@ -243,6 +246,10 @@ namespace Filelight
    {
       #define INFO_PARTITIONS "/proc/partitions"
       #define INFO_MOUNTED_PARTITIONS "/etc/mtab" /* on Linux... */
+
+       ////////////
+       //BIG FAT TODO TODO TODO
+       // Use Solid for this
 
       //**** SHAMBLES
       //  ** mtab should have priority as mount points don't have to follow fstab
@@ -259,11 +266,11 @@ namespace Filelight
 
 #ifdef HAVE_MNTENT_H
       FILE *fp;
-      if( setfsent() == 0 || !( fp = setmntent( INFO_MOUNTED_PARTITIONS, "r" ) ) )
+      if(setfsent() == 0 || !(fp = setmntent(INFO_MOUNTED_PARTITIONS, "r")))
 #else
-      if( setfsent() == 0 )
+      if(setfsent() == 0)
 #endif
-         return false;
+      return false;
 
       #define FS_NAME   fstab_ent->fs_spec    // device-name
       #define FS_FILE   fstab_ent->fs_file    // mount-point
@@ -279,17 +286,17 @@ namespace Filelight
 #endif
       // What about afs?
 
-      while( (fstab_ent = getfsent()) != NULL )
+      while((fstab_ent = getfsent()) != NULL)
       {
-         str = QString( FS_FILE );
-         if( str == "/" ) continue;
+         str = QString(FS_FILE);
+         if(str == "/") continue;
          str += '/';
 
-         if( remoteFsTypes.contains( FS_TYPE ) )
-            s_remoteMounts.append( str ); //**** NO! can't be sure won't have trailing slash, need to do a check first dummy!!
+         if(remoteFsTypes.contains(FS_TYPE))
+            s_remoteMounts.append(str); //**** NO! can't be sure won't have trailing slash, need to do a check first dummy!!
 
          else
-            s_localMounts.append( str ); //**** NO! can't be sure won't have trailing slash, need to do a check first dummy!!
+            s_localMounts.append(str); //**** NO! can't be sure won't have trailing slash, need to do a check first dummy!!
 
          kDebug() << "FSTAB: " << FS_TYPE << "\n";
       }
@@ -309,25 +316,25 @@ namespace Filelight
       //scan mtab, **** mtab should take priority, but currently it isn't
 
 #ifdef HAVE_MNTENT_H
-      while( ( mnt_ent = getmntent( fp ) ) != NULL )
+      while ((mnt_ent = getmntent(fp)) != NULL)
       {
          bool b = false;
 
-         str = QString( FS_FILE );
-         if( str == "/" ) continue;
+         str = QString(FS_FILE);
+         if (str == "/") continue;
          str += "/";
 
-         if( remoteFsTypes.contains( FS_TYPE ) )
-            if( b = !s_remoteMounts.contains( str ) )
-            s_remoteMounts.append( str ); //**** NO! can't be sure won't have trailing slash, need to do a check first dummy!!
+         if (remoteFsTypes.contains(FS_TYPE))
+            if (b = !s_remoteMounts.contains(str))
+            s_remoteMounts.append(str); //**** NO! can't be sure won't have trailing slash, need to do a check first dummy!!
 
-         else if( b = !s_localMounts.contains( str ) )
-            s_localMounts.append( str ); //**** NO! can't be sure won't have trailing slash, need to do a check first dummy!!
+         else if (b = !s_localMounts.contains(str))
+            s_localMounts.append(str); //**** NO! can't be sure won't have trailing slash, need to do a check first dummy!!
 
-         if( b ) kDebug() << "MTAB: " << FS_TYPE << "\n";
+         if(b) kDebug() << "MTAB: " << FS_TYPE << "\n";
       }
 
-      endmntent( fp ); /* close mtab.. */
+      endmntent(fp); /* Close mtab. */
 #endif
 
 
