@@ -14,7 +14,6 @@
 #include <QApplication>
 //Added by qt3to4:
 #include <Q3CString>
-#include <Q3GridLayout>
 #include <Q3ValueList>
 #include <QMouseEvent>
 #include <QTextOStream>
@@ -82,13 +81,12 @@ public:
 
 
 
-SummaryWidget::SummaryWidget( QWidget *parent, const char *name )
-        : QWidget( parent, name )
+SummaryWidget::SummaryWidget(QWidget *parent)
+        : QWidget(parent)
 {
-    qApp->setOverrideCursor( Qt::WaitCursor );
+    qApp->setOverrideCursor(Qt::WaitCursor);
 
-    setPaletteBackgroundColor( Qt::white );
-    (new Q3GridLayout( this, 1, 2 ))->setAutoAdd( true );
+    (new QGridLayout(this));
 
     createDiskMaps();
 
@@ -105,8 +103,8 @@ SummaryWidget::createDiskMaps()
 {
     DiskList disks;
 
-    const Q3CString free = i18n( "Free" ).local8Bit();
-    const Q3CString used = i18n( "Used" ).local8Bit();
+    const Q3CString free = i18n( "Free" ).toLocal8Bit();
+    const Q3CString used = i18n( "Used" ).toLocal8Bit();
 
     KIconLoader loader;
 
@@ -134,7 +132,7 @@ SummaryWidget::createDiskMaps()
 
         box->show(); // will show its children too
 
-        Directory *tree = new Directory( disk.mount.local8Bit() );
+        Directory *tree = new Directory( disk.mount.toLocal8Bit() );
         tree->append( free, disk.free );
         tree->append( used, disk.used );
 
@@ -174,40 +172,40 @@ DiskList::DiskList()
 
     while (!t.atEnd()) {
         QString s = t.readLine();
-        s = s.simplifyWhiteSpace();
+        s = s.simplified();
 
         if (s.isEmpty())
             continue;
 
-        if (s.find( BLANK ) < 0) // devicename was too long, rest in next line
+        if (s.indexOf(BLANK) < 0) // devicename was too long, rest in next line
             if (!t.eof()) { // just appends the next line
                 QString v = t.readLine();
-                s = s.append( v.latin1() );
-                s = s.simplifyWhiteSpace();
+                s = s.append(v.toLatin1());
+                s = s.simplified();
             }
 
         Disk disk;
-        disk.device = s.left( s.find( BLANK ) );
-        s = s.remove( 0, s.find( BLANK ) + 1 );
+        disk.device = s.left(s.indexOf(BLANK));
+        s = s.remove(0, s.indexOf(BLANK) + 1);
 
     #ifndef NO_FS_TYPE
-        disk.type = s.left( s.find( BLANK ) );
-        s = s.remove( 0, s.find( BLANK ) + 1 );
+        disk.type = s.left(s.indexOf(BLANK));
+        s = s.remove(0, s.indexOf( BLANK ) + 1);
     #endif
 
-        int n = s.find( BLANK );
-        disk.size = s.left( n ).toInt();
-        s = s.remove( 0, n + 1 );
+        int n = s.indexOf(BLANK);
+        disk.size = s.left(n).toInt();
+        s = s.remove(0, n + 1);
 
-        n = s.find( BLANK );
+        n = s.indexOf(BLANK);
         disk.used = s.left( n ).toInt();
-        s = s.remove( 0, n + 1 );
+        s = s.remove(0, n + 1);
 
-        n = s.find( BLANK );
-        disk.free = s.left( n ).toInt();
-        s = s.remove( 0, n + 1 );
+        n = s.indexOf(BLANK);
+        disk.free = s.left( n).toInt();
+        s = s.remove(0, n + 1);
 
-        s = s.remove( 0, s.find( BLANK ) + 1 );  // delete the capacity 94%
+        s = s.remove(0, s.indexOf(BLANK) + 1);  // delete the capacity 94%
         disk.mount = s;
 
         disk.guessIconName();
@@ -220,21 +218,21 @@ DiskList::DiskList()
 void
 Disk::guessIconName()
 {
-   if( mount.contains( "cdrom", false ) )       icon = "cdrom";
-   else if( device.contains( "cdrom", false ) )  icon = "cdrom";
-   else if( mount.contains( "writer", false ) ) icon = "cdwriter";
-   else if( device.contains( "writer", false ) ) icon = "cdwriter";
-   else if( mount.contains( "mo", false ) )     icon = "mo";
-   else if( device.contains( "mo", false ) )     icon = "mo";
-   else if( device.contains( "fd", false ) ) {
-      if( device.contains( "360", false ) )      icon = "5floppy";
-      if( device.contains( "1200", false ) )     icon = "5floppy";
+   if( mount.contains("cdrom"))        icon = "cdrom";
+   else if( device.contains("cdrom"))  icon = "cdrom";
+   else if( mount.contains("writer"))  icon = "cdwriter";
+   else if( device.contains("writer")) icon = "cdwriter";
+   else if( mount.contains("mo"))      icon = "mo";
+   else if( device.contains("mo"))     icon = "mo";
+   else if( device.contains("fd")) {
+      if( device.contains("360"))      icon = "5floppy";
+      if( device.contains("1200"))     icon = "5floppy";
       else
          icon = "3floppy";
    }
-   else if( mount.contains( "floppy", false ) ) icon = "3floppy";
-   else if( mount.contains( "zip", false ) )    icon = "zip";
-   else if( type.contains( "nfs", false ) )        icon = "nfs";
+   else if(mount.contains( "floppy"))  icon = "3floppy";
+   else if(mount.contains( "zip"))     icon = "zip";
+   else if(type.contains( "nfs"))      icon = "nfs";
    else
       icon = "hdd";
 

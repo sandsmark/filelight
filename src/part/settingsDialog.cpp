@@ -7,10 +7,9 @@
 #include <qradiobutton.h>
 #include <qslider.h>
 #include <QVBoxLayout>
-//Added by qt3to4:
 #include <QCloseEvent>
 
-#include <kdirselectdialog.h>
+#include <KDirSelectDialog>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -62,7 +61,7 @@ SettingsDialog::SettingsDialog( QWidget *parent, const char *name ) : QDialog( p
 }
 
 
-void SettingsDialog::closeEvent( QCloseEvent* )
+void SettingsDialog::closeEvent(QCloseEvent*)
 {
     //if an invalidation is pending, force it now!
     if( m_timer.isActive() ) m_timer.changeInterval( 0 );
@@ -133,16 +132,16 @@ void SettingsDialog::toggleDontScanRemovableMedia( bool b )
 
 void SettingsDialog::addDirectory()
 {
-    const KUrl url = KDirSelectDialog::selectDirectory( KUrl("/"), false, this );
+    const KUrl url = KDirSelectDialog::selectDirectory(KUrl("/"), false, this, "Select directory...");
 
     //TODO error handling!
     //TODO wrong protocol handling!
 
-    if( !url.isEmpty() )
+    if(!url.isEmpty())
     {
-        const QString path = url.path( KUrl::RemoveTrailingSlash );
+        const QString path = url.path(KUrl::RemoveTrailingSlash);
 
-        if( !Config::skipList.contains( path ) )
+        if( !Config::skipList.contains(path))
         {
             Config::skipList.append( path );
             m_listBox->insertItem( path );

@@ -35,7 +35,7 @@ namespace Filelight
       Store()
          : directory( 0 ), parent( 0 ) {}
       Store( const KUrl &u, const QString &name, Store *s )
-         : url( u ), directory( new Directory( name.local8Bit() + '/' ) ), parent( s ) {}
+         : url( u ), directory( new Directory( name.toLocal8Bit() + '/' ) ), parent( s ) {}
 
 
       Store*
@@ -85,9 +85,9 @@ namespace Filelight
    {
       Directory *tree = isFinished() ? m_store->directory : 0;
 
-      QCustomEvent *e = new QCustomEvent( 1000 );
-      e->setData( tree );
-      QApplication::postEvent( parent(), e );
+      QCustomEvent *e = new QCustomEvent(1000);
+      e->setData(tree);
+      QApplication::postEvent(parent(), e);
 
       delete m_root;
    }
@@ -100,7 +100,7 @@ namespace Filelight
       //as usual KDE documentation didn't suggest I needed to do this at all
       //I had to figure it out myself
       // -- avoid crash
-      QTimer::singleShot( 0, this, SLOT(_completed()) );
+      QTimer::singleShot(0, this, SLOT(_completed()));
    }
 
    void
@@ -122,7 +122,7 @@ namespace Filelight
          if( it->isDir() )
             m_store->stores += new Store( it->url(), it->name(), m_store );
          else
-            m_store->directory->append( it->name().local8Bit(), it->size() / 1024 );
+            m_store->directory->append(it->name().toLocal8Bit(), it->size() / 1024);
 
          ScanManager::s_files++;
       }

@@ -12,11 +12,11 @@ class SummaryWidget : public QWidget
     Q_OBJECT
 
 public:
-    SummaryWidget( QWidget *parent, const char *name );
+    SummaryWidget(QWidget *parent);
     ~SummaryWidget();
 
 signals:
-    void activated( const KUrl& );
+    void activated(const KUrl&);
 
 private:
     void createDiskMaps();

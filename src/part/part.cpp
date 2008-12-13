@@ -89,7 +89,7 @@ Part::postInit()
 {
    if( url().isEmpty() ) //if url is not empty openURL() has been called immediately after ctor, which happens
    {
-      QWidget *summary = new SummaryWidget( widget(), "summaryWidget" );
+      QWidget *summary = new SummaryWidget(widget());
       connect( summary, SIGNAL(activated( const KUrl& )), SLOT(openURL( const KUrl& )) );
       summary->show();
 

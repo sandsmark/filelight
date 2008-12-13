@@ -70,7 +70,8 @@ public:
       chain.append( remove() );
    }
 
-   T* const remove() //remove from list, delete Link, data is returned NOT deleted
+   T* remove() //remove from list, delete Link, data is returned NOT deleted
+
    {
       T* const d = link->data;
       Link<T>* const p = link->prev;
@@ -170,7 +171,7 @@ public:
 
    const Directory *parent() const { return m_parent; }
    const char *name8Bit() const { return m_name; }
-   const FileSize size() const { return m_size; }
+   FileSize size() const { return m_size; }
    QString name() const { return QFile::decodeName( m_name ); }
 
    virtual bool isDirectory() const { return false; }

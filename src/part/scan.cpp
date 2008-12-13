@@ -176,25 +176,25 @@ namespace Filelight
    }
 
    void
-   ScanManager::customEvent( QCustomEvent *e )
+   ScanManager::customEvent(QCustomEvent *e)
    {
       Directory *tree = (Directory*)e->data();
 
-      if( m_thread ) {
+      if(m_thread) {
           m_thread->terminate();
           m_thread->wait();
           delete m_thread; //note the lister deletes itself
           m_thread = 0;
       }
 
-      emit completed( tree );
+      emit completed(tree);
 
-      if( tree ) {
+      if(tree) {
          //we don't cache foreign stuff
          //we don't recache stuff (thus only type 1000 events)
-         if( e->type() == 1000 && m_url.protocol() == "file" )
+         if(e->type() == 1000 && m_url.protocol() == "file")
             //TODO sanity check the cache
-            m_cache->append( tree );
+            m_cache->append(tree);
       }
       else //scan failed
          m_cache->empty(); //FIXME this is safe but annoying
