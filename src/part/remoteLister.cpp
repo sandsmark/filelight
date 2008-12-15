@@ -16,10 +16,11 @@
 
 namespace Filelight
 {
+  
+    //TODO: delete all this stuff!
+
    // You need to use a single DirLister.
    // One per directory breaks KIO (seemingly) and also uses un-godly amounts of memory!
-
-   //TODO: delete all this stuff!
 
    struct Store {
 

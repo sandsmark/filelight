@@ -1,6 +1,7 @@
-// Maintainer:         Martin Sandsmark <sandsmark@samfundet.no> (C) 2008
-// Original author:    Max Howell <max.howell@methylblue.com>, (C) 2003-4
-// Copyright:          See COPYING file that comes with this distribution
+/** Maintainer: Martin T. Sandsmark <sandsmark@samfundet.no>, (C) 2008-2009
+*  Original author:  Max Howell <max.howell@methylblue.com>, (C) 2003-2004
+*  Copyright: See COPYING file that comes with this distribution
+*/
 
 #include "Config.h"
 #include "localLister.h"
@@ -10,7 +11,6 @@
 #include <KDebug>
 #include <QApplication> //postEvent()
 #include <QFile>
-#include <QCustomEvent>
 #include <Q3CString>
 
 #include <dirent.h>
@@ -67,9 +67,7 @@ namespace Filelight
          tree = 0;
       }
 
-      QCustomEvent *e = new QCustomEvent( 1000 );
-      e->setData(tree);
-      QApplication::postEvent(m_parent, e);
+      qobject_cast<ScanManager*>(parent())->appendTree(tree);
    }
 
    // from system.h in GNU coreutils package
