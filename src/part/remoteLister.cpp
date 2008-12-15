@@ -1,27 +1,29 @@
-//Author:    Max Howell <max.howell@methylblue.com>, (C) 2003-4
-//Copyright: See COPYING file that comes with this distribution
+/** Maintainer: Martin T. Sandsmark <sandsmark@samfundet.no>, (C) 2008-2009
+ *  Original author:  Max Howell <max.howell@methylblue.com>, (C) 2003-2004
+ *  Copyright: See COPYING file that comes with this distribution
+ */
+
+#include "remoteLister.h"
 
 #include "fileTree.h"
-#include <qapplication.h>
-#include <KDebug>
-#include <qtimer.h>
-#include <KDirLister>
-#include <q3valuelist.h>
-//Added by qt3to4:
-#include <QCustomEvent>
-#include "remoteLister.h"
 #include "scan.h"
+
+#include <QApplication>
+#include <KDebug>
+#include <QTimer>
+#include <KDirLister>
+#include <QLinkedList>
 
 namespace Filelight
 {
-   //you need to use a single DirLister
-   //one per directory breaks KIO (seemingly) and also uses un-godly amounts of memory!
+   // You need to use a single DirLister.
+   // One per directory breaks KIO (seemingly) and also uses un-godly amounts of memory!
 
-   //TODO delete all this stuff!
+   //TODO: delete all this stuff!
 
    struct Store {
 
-      typedef Q3ValueList<Store*> List;
+      typedef QLinkedList<Store*> List;
 
       /// location of the directory
       const KUrl url;
@@ -32,22 +34,20 @@ namespace Filelight
       /// directories in this directory that need to be scanned before we can propagate()
       List stores;
 
-      Store()
-         : directory( 0 ), parent( 0 ) {}
-      Store( const KUrl &u, const QString &name, Store *s )
-         : url( u ), directory( new Directory( name.toLocal8Bit() + '/' ) ), parent( s ) {}
+      Store() : directory(0), parent(0) {}
+      Store(const KUrl &u, const QString &name, Store *s)
+        : url(u), directory(new Directory(name.toLocal8Bit() + '/')), parent(s) {}
 
 
-      Store*
-      propagate()
+      Store* propagate()
       {
          /// returns the next store available for scanning
 
          kDebug() << "propagate: " << url << endl;
 
-         if( parent ) {
-            parent->directory->append( directory );
-            if( parent->stores.isEmpty() ) {
+         if(parent) {
+            parent->directory->append(directory);
+            if(parent->stores.isEmpty()) {
                return parent->propagate();
             }
             else
@@ -59,36 +59,33 @@ namespace Filelight
       }
 
    private:
-      Store( Store& );
-      Store &operator=( const Store& );
+      Store(Store&);
+      Store &operator=(const Store&);
    };
 
 
-   RemoteLister::RemoteLister( const KUrl &url, QWidget *parent )
-      : KDirLister( parent )
-      , m_root( new Store( url, url.url(), 0 ) )
-      , m_store( m_root )
+   RemoteLister::RemoteLister(const KUrl &url, QWidget *parent)
+      : KDirLister(parent)
+      , m_root(new Store(url, url.url(), 0))
+      , m_store(m_root)
    {
-      setAutoUpdate( false ); //don't use KDirWatchers
-      setShowingDotFiles( true ); //stupid KDirLister API function names
-      setMainWindow( parent );
+      setAutoUpdate(false); // Don't use KDirWatchers
+      setShowingDotFiles(true); // Stupid KDirLister API function names
+      setMainWindow(parent);
 
-      //use SIGNAL(result(KIO::Job*)) instead and then use Job::error()
-      connect( this, SIGNAL(completed()), SLOT(completed()) );
-      connect( this, SIGNAL(canceled()), SLOT(canceled()) );
+      // Use SIGNAL(result(KIO::Job*)) instead and then use Job::error()
+      connect(this, SIGNAL(completed()), SLOT(completed()));
+      connect(this, SIGNAL(canceled()), SLOT(canceled()));
 
-      //we do this non-recursively - it is the only way!
-      openUrl( url );
+      // We do this non-recursively - it is the only way!
+      openUrl(url);
    }
 
    RemoteLister::~RemoteLister()
    {
       Directory *tree = isFinished() ? m_store->directory : 0;
 
-      QCustomEvent *e = new QCustomEvent(1000);
-      e->setData(tree);
-      QApplication::postEvent(parent(), e);
-
+      qobject_cast<ScanManager*>(parent())->appendTree(tree);
       delete m_root;
    }
 
@@ -108,7 +105,7 @@ namespace Filelight
    {
       kDebug() << "canceled: " << url().prettyUrl() << endl;
 
-      QTimer::singleShot( 0, this, SLOT(_completed()) );
+      QTimer::singleShot(0, this, SLOT(_completed()));
    }
 
    void
@@ -117,9 +114,9 @@ namespace Filelight
       //m_directory is set to the directory we should operate on
 
       KFileItemList items = KDirLister::items();
-      for( KFileItemList::ConstIterator it = items.begin(), end = items.end(); it != end; ++it )
+      for(KFileItemList::ConstIterator it = items.begin(), end = items.end(); it != end; ++it)
       {
-         if( it->isDir() )
+         if(it->isDir())
             m_store->stores += new Store( it->url(), it->name(), m_store );
          else
             m_store->directory->append(it->name().toLocal8Bit(), it->size() / 1024);
@@ -128,29 +125,28 @@ namespace Filelight
       }
 
 
-      if( m_store->stores.isEmpty() )
+      if(m_store->stores.isEmpty())
          //no directories to scan, so we need to append ourselves to the parent directory
          //propagate() will return the next ancestor that has stores left to be scanned, or root if we are done
          m_store = m_store->propagate();
 
-      if( !m_store->stores.isEmpty() )
+      if(!m_store->stores.isEmpty())
       {
          Store::List::Iterator first = m_store->stores.begin();
-         const KUrl url( (*first)->url );
+         const KUrl url((*first)->url);
          Store *currentStore = m_store;
 
          //we should operate with this store next time this function is called
          m_store = *first;
 
          //we don't want to handle this store again
-         currentStore->stores.remove( first );
+         currentStore->stores.erase(first);
 
          //this returns _immediately_
          kDebug() << "scanning: " << url << endl;
-         openUrl( url );
+         openUrl(url);
       }
       else {
-
          kDebug() << "I think we're done\n";
 
          Q_ASSERT( m_root == m_store );

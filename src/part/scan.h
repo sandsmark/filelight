@@ -47,7 +47,7 @@ namespace Filelight
       QThread *m_thread;
       Chain<Directory> *m_cache;
 
-      virtual void customEvent( QCustomEvent* );
+      virtual void appendTree(Directory*);
    };
 }
 

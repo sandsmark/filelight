@@ -176,9 +176,9 @@ namespace Filelight
    }
 
    void
-   ScanManager::customEvent(QCustomEvent *e)
+   ScanManager::appendTree(Directory *tree)
    {
-      Directory *tree = (Directory*)e->data();
+/*      Directory *tree = (Directory*)e->data(); */
 
       if(m_thread) {
           m_thread->terminate();
@@ -192,7 +192,7 @@ namespace Filelight
       if(tree) {
          //we don't cache foreign stuff
          //we don't recache stuff (thus only type 1000 events)
-         if(e->type() == 1000 && m_url.protocol() == "file")
+         if(m_url.protocol() == "file")
             //TODO sanity check the cache
             m_cache->append(tree);
       }
