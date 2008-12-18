@@ -1,5 +1,7 @@
-//Author:    Max Howell <max.howell@methylblue.com>, (C) 2003-4
-//Copyright: See COPYING file that comes with this distribution
+/** Maintainer: Martin T. Sandsmark <sandsmark@samfundet.no>, (C) 2008-2009
+*  Original author:  Max Howell <max.howell@methylblue.com>, (C) 2003-2004
+*  Copyright: See COPYING file that comes with this distribution
+*/
 
 #ifndef SETTINGSDLG_H
 #define SETTINGSDLG_H
@@ -15,7 +17,7 @@ class SettingsDialog : public QDialog, public Ui::Dialog
 Q_OBJECT
 
 public:
-	SettingsDialog( QWidget* = 0, const char* = 0 );
+	SettingsDialog(QWidget* = 0);
 
 protected:
   virtual void closeEvent( QCloseEvent * );

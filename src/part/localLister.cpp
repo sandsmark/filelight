@@ -44,7 +44,7 @@ namespace Filelight
       for (QStringList::ConstIterator it = list.constBegin(); it != list.constEnd(); ++it)
          if ((*it).startsWith(path))
             //prevent scanning of these directories
-            m_trees->append(new Directory((*it).local8Bit()));
+            m_trees->append(new Directory((*it).toLocal8Bit()));
 
       start();
    }
@@ -67,7 +67,7 @@ namespace Filelight
          tree = 0;
       }
 
-      qobject_cast<ScanManager*>(parent())->appendTree(tree);
+      qobject_cast<ScanManager*>(parent())->appendTree(tree, false);
    }
 
    // from system.h in GNU coreutils package

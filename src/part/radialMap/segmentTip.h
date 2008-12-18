@@ -1,5 +1,7 @@
-// Author: Max Howell <max.howell@methylblue.com>, (C) 2004
-// Copyright: See COPYING file that comes with this distribution
+/** Maintainer: Martin T. Sandsmark <sandsmark@samfundet.no>, (C) 2008-2009
+*  Original author:  Max Howell <max.howell@methylblue.com>, (C) 2003-2004
+*  Copyright: See COPYING file that comes with this distribution
+*/
 
 #ifndef SEGMENTTIP_H
 #define SEGMENTTIP_H
@@ -16,14 +18,14 @@ namespace RadialMap
     class SegmentTip : public QWidget
     {
     public:
-        SegmentTip( uint );
+        SegmentTip(uint);
 
-        void updateTip( const File*, const Directory* );
-        void moveTo( QPoint, const QWidget&, bool );
+        void updateTip(const File*, const Directory*);
+        void moveTo(QPoint, const QWidget&, bool);
 
     private:
-        virtual bool eventFilter( QObject*, QEvent* );
-        virtual bool event( QEvent* );
+        virtual bool eventFilter(QObject*, QEvent*);
+        virtual bool event(QEvent*);
 
         uint    m_cursorHeight;
         QPixmap m_pixmap;

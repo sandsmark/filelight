@@ -1,5 +1,7 @@
-//Author:    Max Howell <max.howell@methylblue.com>, (C) 2003-4
-//Copyright: See COPYING file that comes with this distribution
+/** Maintainer: Martin T. Sandsmark <sandsmark@samfundet.no>, (C) 2008-2009
+*  Original author:  Max Howell <max.howell@methylblue.com>, (C) 2003-2004
+*  Copyright: See COPYING file that comes with this distribution
+*/
 
 #include "part/fileTree.h"
 #include "segmentTip.h"
@@ -36,12 +38,12 @@ bool isBackingStoreActive()
 }
 
 
-SegmentTip::SegmentTip( uint h )
-        : QWidget( 0, 0, Qt::WNoAutoErase | Qt::WStyle_Customize | Qt::WStyle_NoBorder | Qt::WStyle_Tool | Qt::WStyle_StaysOnTop | Qt::WX11BypassWM )
-        , m_cursorHeight( -h )
-        , m_backing_store( isBackingStoreActive() )
+SegmentTip::SegmentTip(uint h)
+        : QWidget(0, Qt::WNoAutoErase | Qt::WStyle_Customize | Qt::WStyle_NoBorder | Qt::WStyle_Tool | Qt::WStyle_StaysOnTop | Qt::WX11BypassWM)
+        , m_cursorHeight(-h)
+        , m_backing_store(isBackingStoreActive())
 {
-    setBackgroundMode( Qt::NoBackground );
+    /* setBackgroundMode(Qt::NoBackground); */
 }
 
 void
@@ -78,8 +80,9 @@ SegmentTip::moveTo( QPoint p, const QWidget &canvas, bool placeAbove )
     const QRect alphaMaskRect( canvas.mapFromGlobal( p ), size() );
     const QRect intersection( alphaMaskRect.intersect( canvas.rect() ) );
 
-    m_pixmap.resize( size() ); //move to updateTip once you are sure it can never be null
-    bitBlt( &m_pixmap, offset, &canvas, intersection, QPainter::CompositionMode_SourceOver );
+    /* m_pixmap.resize(size()); //move to updateTip once you are sure it can never be null */
+    m_pixmap = QPixmap(size());
+    bitBlt(&m_pixmap, offset, &canvas, intersection, QPainter::CompositionMode_SourceOver);
 
     QColor const c = QToolTip::palette().color( QPalette::Active, QColorGroup::Background );
     if (!m_backing_store)

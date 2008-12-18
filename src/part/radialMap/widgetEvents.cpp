@@ -33,8 +33,9 @@
 void
 RadialMap::Widget::resizeEvent( QResizeEvent* )
 {
-    if( m_map.resize( rect() ) )
-       m_timer.start( 500, true ); //will cause signature to rebuild for new size
+    if(m_map.resize(rect()))
+       m_timer.setSingleShot(true);
+       m_timer.start(500); //will cause signature to rebuild for new size
 
     //always do these as they need to be initialised on creation
     m_offset.rx() = (width() - m_map.width()) / 2;
@@ -136,7 +137,7 @@ RadialMap::Widget::mouseMoveEvent( QMouseEvent *e )
          emit mouseHover( m_focus->file()->fullPath() );
 
          //repaint required to update labels now before transparency is generated
-         repaint( false );
+         repaint();
       }
 
       m_tip->moveTo( e->globalPos(), *this, ( p.y() < 0 ) ); //updates tooltip psuedo-tranparent background
@@ -173,34 +174,34 @@ RadialMap::Widget::mousePressEvent( QMouseEvent *e )
       if( e->button() == Qt::RightButton )
       {
          KMenu popup;
-         popup.addTitle( m_focus->file()->fullPath( m_tree ) );
+         popup.addTitle(m_focus->file()->fullPath(m_tree));
 
          if (isDir) {
-            openKonqueror = popup.addAction( SmallIconSet( "konqueror" ), i18n( "Open &Konqueror Here" ));
+            openKonqueror = popup.addAction(KIcon("konqueror"), i18n("Open &Konqueror Here"));
 
-            if( url.protocol() == "file" )
-               openKonsole = popup.addAction( SmallIconSet( "konsole" ), i18n( "Open &Konsole Here" ));
+            if(url.protocol() == "file")
+               openKonsole = popup.addAction(KIcon("konsole"), i18n("Open &Konsole Here"));
 
             if (m_focus->file() != m_tree) {
                popup.addSeparator();
-               centerMap = popup.addAction( SmallIconSet( "viewmag" ), i18n( "&Center Map Here" ));
+               centerMap = popup.addAction(KIcon("viewmag"), i18n("&Center Map Here"));
             }
          }
          else
-            openFile = popup.addAction( SmallIconSet( "fileopen" ), i18n( "&Open" ));
+            openFile = popup.addAction(KIcon("fileopen"), i18n("&Open"));
 
          popup.addSeparator();
-         copyClipboard = popup.addAction( SmallIconSet( "editcopy" ), i18n( "&Copy to clipboard" ));
+         copyClipboard = popup.addAction(KIcon("editcopy"), i18n("&Copy to clipboard"));
 
          popup.addSeparator();
-         deleteItem = popup.addAction( SmallIconSet( "editdelete" ), i18n( "&Delete" ));
+         deleteItem = popup.addAction(KIcon("editdelete"), i18n("&Delete"));
 
 	 QAction* clicked = popup.exec(e->globalPos(), 0);
 
 	 if (openKonqueror && clicked == openKonqueror) {
-                KRun::runCommand( QString( "kfmclient openURL \"%1\"" ).arg( url.url() ), this );
+                KRun::runCommand(QString("kfmclient openURL \"%1\"").arg(url.url() ), this);
 	 } else if (openKonsole && clicked == openKonsole) {
-		 KRun::runCommand( QString( "konsole --workdir \"%1\"" ).arg( url.path() ), this );
+		 KRun::runCommand(QString( "konsole --workdir \"%1\"" ).arg( url.path() ), this);
 	 } else if (centerMap && clicked == centerMap) {
 		 goto section_two;
 	 } else if (openFile && clicked == openFile) {
@@ -252,13 +253,13 @@ RadialMap::Widget::mousePressEvent( QMouseEvent *e )
 }
 
 void
-RadialMap::Widget::deleteJobFinished( KIO::Job *job )
+RadialMap::Widget::deleteJobFinished(KIO::Job *job)
 {
    QApplication::restoreOverrideCursor();
-   if( !job->error() )
+   if(!job->error())
       invalidate();
    else
-      job->showErrorDialog( this );
+      job->ui()->showErrorMessage();
 }
 
 void
@@ -270,8 +271,8 @@ RadialMap::Widget::dropEvent( QDropEvent *e )
 }
 
 void
-RadialMap::Widget::dragEnterEvent( QDragEnterEvent *e )
+RadialMap::Widget::dragEnterEvent(QDragEnterEvent *e)
 {
-    KUrl::List uriList = KUrl::List::fromMimeData(e->mimeData() );
-    e->accept( !uriList.isEmpty() );
+    KUrl::List uriList = KUrl::List::fromMimeData(e->mimeData());
+    e->setAccepted(!uriList.isEmpty());
 }

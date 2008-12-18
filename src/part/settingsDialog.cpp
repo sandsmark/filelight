@@ -1,5 +1,7 @@
-//Author:    Max Howell <max.howell@methylblue.com>, (C) 2003-4
-//Copyright: See COPYING file that comes with this distribution
+/** Maintainer: Martin T. Sandsmark <sandsmark@samfundet.no>, (C) 2008-2009
+*  Original author:  Max Howell <max.howell@methylblue.com>, (C) 2003-2004
+*  Copyright: See COPYING file that comes with this distribution
+*/
 
 #include <qapplication.h> //Getting desktop width
 #include <qcheckbox.h>
@@ -19,52 +21,52 @@
 #include "Config.h"
 
 
-SettingsDialog::SettingsDialog( QWidget *parent, const char *name ) : QDialog( parent )
+SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent)
 {
     setupUi(this);
     QVBoxLayout *vbox = new QVBoxLayout;
-    //colourSchemeGroup->setFrameShape( QFrame::NoFrame );
+    //colourSchemeGroup->setFrameShape(QFrame::NoFrame);
 
-    vbox->addWidget( new QRadioButton( i18n("Rainbow"), this ), Filelight::Rainbow );
-    vbox->addWidget( new QRadioButton( i18n("KDE Colors"), this ), Filelight::KDE );
-    vbox->addWidget( new QRadioButton( i18n("High Contrast"), this ), Filelight::HighContrast );
+    vbox->addWidget(new QRadioButton(i18n("Rainbow"), this), Filelight::Rainbow);
+    vbox->addWidget(new QRadioButton(i18n("KDE Colors"), this), Filelight::KDE);
+    vbox->addWidget(new QRadioButton(i18n("High Contrast"), this), Filelight::HighContrast);
 
     colourSchemeGroup->setLayout(vbox);
 
     //read in settings before you make all those nasty connections!
     reset(); //makes dialog reflect global settings
 
-    connect( &m_timer, SIGNAL(timeout()), SIGNAL(mapIsInvalid()) );
+    connect(&m_timer, SIGNAL(timeout()), SIGNAL(mapIsInvalid()));
 
-    connect( m_addButton,    SIGNAL( clicked() ), SLOT( addDirectory() ) );
-    connect( m_removeButton, SIGNAL( clicked() ), SLOT( removeDirectory() ) );
-    connect( m_resetButton,  SIGNAL( clicked() ), SLOT( reset() ) );
-    connect( m_closeButton,  SIGNAL( clicked() ), SLOT( close() ) );
+    connect(m_addButton,    SIGNAL(clicked()), SLOT(addDirectory()));
+    connect(m_removeButton, SIGNAL(clicked()), SLOT(removeDirectory()));
+    connect(m_resetButton,  SIGNAL(clicked()), SLOT(reset()));
+    connect(m_closeButton,  SIGNAL(clicked()), SLOT(close()));
 
-    connect( colourSchemeGroup, SIGNAL(clicked( int )), SLOT(changeScheme( int )) );
-    connect( contrastSlider, SIGNAL(valueChanged( int )), SLOT(changeContrast( int )) );
-    connect( contrastSlider, SIGNAL(sliderReleased()), SLOT(slotSliderReleased()) );
+    connect(colourSchemeGroup, SIGNAL(clicked(int)), SLOT(changeScheme(int)));
+    connect(contrastSlider, SIGNAL(valueChanged(int)), SLOT(changeContrast(int)));
+    connect(contrastSlider, SIGNAL(sliderReleased()), SLOT(slotSliderReleased()));
 
-    connect( scanAcrossMounts,       SIGNAL( toggled( bool ) ), SLOT( startTimer() ) );
-    connect( dontScanRemoteMounts,   SIGNAL( toggled( bool ) ), SLOT( startTimer() ) );
-    connect( dontScanRemovableMedia, SIGNAL( toggled( bool ) ), SLOT( startTimer() ) );
+    connect(scanAcrossMounts,       SIGNAL(toggled(bool)), SLOT(startTimer()));
+    connect(dontScanRemoteMounts,   SIGNAL(toggled(bool)), SLOT(startTimer()));
+    connect(dontScanRemovableMedia, SIGNAL(toggled(bool)), SLOT(startTimer()));
 
-    connect( useAntialiasing,    SIGNAL( toggled( bool ) ), SLOT( toggleUseAntialiasing( bool ) ) );
-    connect( varyLabelFontSizes, SIGNAL( toggled( bool ) ), SLOT( toggleVaryLabelFontSizes( bool ) ) );
-    connect( showSmallFiles,     SIGNAL( toggled( bool ) ), SLOT( toggleShowSmallFiles( bool ) ) );
+    connect(useAntialiasing,    SIGNAL(toggled(bool)), SLOT(toggleUseAntialiasing(bool)));
+    connect(varyLabelFontSizes, SIGNAL(toggled(bool)), SLOT(toggleVaryLabelFontSizes(bool)));
+    connect(showSmallFiles,     SIGNAL(toggled(bool)), SLOT(toggleShowSmallFiles(bool)));
 
-    connect( minFontPitch, SIGNAL ( valueChanged( int ) ), SLOT( changeMinFontPitch( int ) ) );
+    connect(minFontPitch, SIGNAL (valueChanged(int)), SLOT(changeMinFontPitch(int)));
 
-    m_addButton->setIconSet( SmallIcon( "fileopen" ) );
-    m_resetButton->setIconSet( SmallIcon( "undo" ) );
-    m_closeButton->setIconSet( SmallIcon( "fileclose" ) );
+    m_addButton->setIcon(SmallIcon("fileopen"));
+    m_resetButton->setIcon(SmallIcon("undo"));
+    m_closeButton->setIcon(SmallIcon("fileclose"));
 }
 
 
 void SettingsDialog::closeEvent(QCloseEvent*)
 {
     //if an invalidation is pending, force it now!
-    if( m_timer.isActive() ) m_timer.changeInterval( 0 );
+    if(m_timer.isActive()) m_timer.setInterval(0);
 
     Config::write();
 
@@ -77,53 +79,53 @@ void SettingsDialog::reset()
     Config::read();
 
     //tab 1
-    scanAcrossMounts->setChecked( Config::scanAcrossMounts );
-    dontScanRemoteMounts->setChecked( !Config::scanRemoteMounts );
-    dontScanRemovableMedia->setChecked( !Config::scanRemovableMedia );
+    scanAcrossMounts->setChecked(Config::scanAcrossMounts);
+    dontScanRemoteMounts->setChecked(!Config::scanRemoteMounts);
+    dontScanRemovableMedia->setChecked(!Config::scanRemovableMedia);
 
-    dontScanRemoteMounts->setEnabled( Config::scanAcrossMounts );
-    //  dontScanRemovableMedia.setEnabled( Config::scanAcrossMounts );
+    dontScanRemoteMounts->setEnabled(Config::scanAcrossMounts);
+    //  dontScanRemovableMedia.setEnabled(Config::scanAcrossMounts);
 
     m_listBox->clear();
-    m_listBox->insertStringList( Config::skipList );
-    m_listBox->setSelected( 0, true );
+    m_listBox->insertStringList(Config::skipList);
+    m_listBox->setSelected(0, true);
 
-    m_removeButton->setEnabled( m_listBox->count() == 0 );
+    m_removeButton->setEnabled(m_listBox->count() == 0);
 
     //tab 2
-    if( colourSchemeGroup->selected() != Config::scheme ) //TODO: This is probably wrong
+    if(colourSchemeGroup->selected() != Config::scheme) //TODO: This is probably wrong
     {
-        colourSchemeGroup->setSelected( Config::scheme );
+        colourSchemeGroup->setSelected(Config::scheme);
         //setButton doesn't call a single QButtonGroup signal!
         //so we need to call this ourselves (and hence the detection above)
-        changeScheme( Config::scheme );
+        changeScheme(Config::scheme);
     }
-    contrastSlider->setValue( Config::contrast );
+    contrastSlider->setValue(Config::contrast);
 
-    useAntialiasing->setChecked( (Config::antiAliasFactor > 1) ? true : false );
+    useAntialiasing->setChecked((Config::antiAliasFactor > 1) ? true : false);
 
-    varyLabelFontSizes->setChecked( Config::varyLabelFontSizes );
-    minFontPitch->setEnabled( Config::varyLabelFontSizes );
-    minFontPitch->setValue( Config::minFontPitch );
-    showSmallFiles->setChecked( Config::showSmallFiles );
+    varyLabelFontSizes->setChecked(Config::varyLabelFontSizes);
+    minFontPitch->setEnabled(Config::varyLabelFontSizes);
+    minFontPitch->setValue(Config::minFontPitch);
+    showSmallFiles->setChecked(Config::showSmallFiles);
 }
 
 
 
-void SettingsDialog::toggleScanAcrossMounts( bool b )
+void SettingsDialog::toggleScanAcrossMounts(bool b)
 {
     Config::scanAcrossMounts = b;
 
-    dontScanRemoteMounts->setEnabled( b );
-    //dontScanRemovableMedia.setEnabled( b );
+    dontScanRemoteMounts->setEnabled(b);
+    //dontScanRemovableMedia.setEnabled(b);
 }
 
-void SettingsDialog::toggleDontScanRemoteMounts( bool b )
+void SettingsDialog::toggleDontScanRemoteMounts(bool b)
 {
     Config::scanRemoteMounts = !b;
 }
 
-void SettingsDialog::toggleDontScanRemovableMedia( bool b )
+void SettingsDialog::toggleDontScanRemovableMedia(bool b)
 {
     Config::scanRemovableMedia = !b;
 }
@@ -141,70 +143,71 @@ void SettingsDialog::addDirectory()
     {
         const QString path = url.path(KUrl::RemoveTrailingSlash);
 
-        if( !Config::skipList.contains(path))
+        if(!Config::skipList.contains(path))
         {
-            Config::skipList.append( path );
-            m_listBox->insertItem( path );
-            m_removeButton->setEnabled( true );
+            Config::skipList.append(path);
+            m_listBox->insertItem(path);
+            m_removeButton->setEnabled(true);
         }
-        else KMessageBox::sorry( this, i18n("That directory is already set to be excluded from scans") );
+        else KMessageBox::sorry(this, i18n("That directory is already set to be excluded from scans"));
     }
 }
 
 
 void SettingsDialog::removeDirectory()
 {
-    Config::skipList.remove( m_listBox->currentText() ); //removes all entries that match
+    Config::skipList.removeAll(m_listBox->currentText()); //removes all entries that match
 
     //safest method to ensure consistency
     m_listBox->clear();
-    m_listBox->insertStringList( Config::skipList );
+    m_listBox->insertStringList(Config::skipList);
 
-    m_removeButton->setEnabled( m_listBox->count() == 0 );
+    m_removeButton->setEnabled(m_listBox->count() == 0);
 }
 
 
 void SettingsDialog::startTimer()
 {
-    m_timer.start( TIMEOUT, true );
+    m_timer.setSingleShot(true);
+    m_timer.start(TIMEOUT);
 }
 
-void SettingsDialog::changeScheme( int s )
+void SettingsDialog::changeScheme(int s)
 {
     Config::scheme = (Filelight::MapScheme)s;
-    emit canvasIsDirty( 1 );
+    emit canvasIsDirty(1);
 }
-void SettingsDialog::changeContrast( int c )
+void SettingsDialog::changeContrast(int c)
 {
     Config::contrast = c;
-    emit canvasIsDirty( 3 );
+    emit canvasIsDirty(3);
 }
-void SettingsDialog::toggleUseAntialiasing( bool b )
+void SettingsDialog::toggleUseAntialiasing(bool b)
 {
     Config::antiAliasFactor = b ? 2 : 1;
-    emit canvasIsDirty( 2 );
+    emit canvasIsDirty(2);
 }
-void SettingsDialog::toggleVaryLabelFontSizes( bool b )
+void SettingsDialog::toggleVaryLabelFontSizes(bool b)
 {
     Config::varyLabelFontSizes = b;
-    minFontPitch->setEnabled( b );
-    emit canvasIsDirty( 0 );
+    minFontPitch->setEnabled(b);
+    emit canvasIsDirty(0);
 }
-void SettingsDialog::changeMinFontPitch( int p )
+void SettingsDialog::changeMinFontPitch(int p)
 {
     Config::minFontPitch = p;
-    emit canvasIsDirty( 0 );
+    emit canvasIsDirty(0);
 }
-void SettingsDialog::toggleShowSmallFiles( bool b )
+void SettingsDialog::toggleShowSmallFiles(bool b)
 {
     Config::showSmallFiles = b;
-    emit canvasIsDirty( 1 );
+    emit canvasIsDirty(1);
 }
 
 
 void SettingsDialog::slotSliderReleased()
 {
-    emit canvasIsDirty( 2 );
+    emit canvasIsDirty(2);
 }
 
 

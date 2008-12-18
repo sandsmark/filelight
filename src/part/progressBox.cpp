@@ -12,10 +12,12 @@
 #include <QLabel>
 
 
-ProgressBox::ProgressBox( QWidget *parent, QObject *part )
-   : QLabel( parent, "ProgressBox" )
+ProgressBox::ProgressBox(QWidget *parent, QObject *part)
+   : QLabel(parent)
 {
    hide();
+   
+   setObjectName("ProgressBox");
 
    setAlignment( Qt::AlignCenter );
    setFont( KGlobalSettings::fixedFont() );

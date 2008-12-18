@@ -1,5 +1,7 @@
-//Author:    Max Howell <max.howell@methylblue.com>, (C) 2003-4
-//Copyright: See COPYING file that comes with this distribution
+/**Maintainer: Martin T. Sandsmark <sandsmark@samfundet.no>, (C) 2008-2009
+*  Original author:  Max Howell <max.howell@methylblue.com>, (C) 2003-2004
+*  Copyright: See COPYING file that comes with this distribution
+*/
 
 #include "Config.h"
 #include "define.h"
@@ -90,12 +92,12 @@ Part::postInit()
    if( url().isEmpty() ) //if url is not empty openURL() has been called immediately after ctor, which happens
    {
       QWidget *summary = new SummaryWidget(widget());
-      connect( summary, SIGNAL(activated( const KUrl& )), SLOT(openURL( const KUrl& )) );
+      connect(summary, SIGNAL(activated(const KUrl&)), SLOT(openURL(const KUrl&)));
       summary->show();
 
       //FIXME KXMLGUI is b0rked, it should allow us to set this
       //BEFORE createGUI is called but it doesn't
-      stateChanged( "scan_failed" );
+      stateChanged("scan_failed");
    }
 }
 
@@ -103,7 +105,7 @@ bool
 Part::openURL( const KUrl &u )
 {
    //we don't want to be using the summary screen anymore
-   delete widget()->child( "summaryWidget" );
+   delete widget()->findChild<SummaryWidget *>("summaryWidget");
    m_map->show();
 
    //TODO everyone hates dialogs, instead render the text in big fonts on the Map
@@ -153,7 +155,7 @@ bool
 Part::closeURL()
 {
    if( m_manager->abort() )
-      statusBar()->message( i18n( "Aborting Scan..." ) );
+      statusBar()->showMessage(i18n("Aborting Scan..."));
 
    setUrl(KUrl());
 
@@ -174,7 +176,7 @@ Part::updateURL( const KUrl &u )
 void
 Part::configFilelight()
 {
-    QWidget *dialog = new SettingsDialog( widget(), "settings_dialog" );
+    QWidget *dialog = new SettingsDialog(widget());
 
     connect( dialog, SIGNAL(canvasIsDirty( int )), m_map, SLOT(refresh( int )) );
     connect( dialog, SIGNAL(mapIsInvalid()), m_manager, SLOT(emptyCache()) );
@@ -202,21 +204,21 @@ Part::createAboutData()
 bool
 Part::start( const KUrl &url )
 {
-   if( !m_started ) {
-      m_statusbar->addStatusBarItem( new ProgressBox( statusBar(), this ), 0, true );
-      connect( m_map, SIGNAL(mouseHover( const QString& )), statusBar(), SLOT(message( const QString& )) );
-      connect( m_map, SIGNAL(created( const Directory* )), statusBar(), SLOT(clear()) );
+   if(!m_started) {
+      m_statusbar->addStatusBarItem(new ProgressBox(statusBar(), this), 0, true);
+      connect(m_map, SIGNAL(mouseHover(const QString&)), statusBar(), SLOT(message(const QString&)));
+      connect(m_map, SIGNAL(created(const Directory*)), statusBar(), SLOT(clear()));
       m_started = true;
    }
 
-   if( m_manager->start( url ) ) {
+   if(m_manager->start(url)) {
       setUrl(url);
 
-      const QString s = i18n( "Scanning: %1" ).arg( prettyUrl() );
-      stateChanged( "scan_started" );
-      emit started( 0 ); //as a Part, we have to do this
-      emit setWindowCaption( s );
-      statusBar()->message( s );
+      const QString s = i18n("Scanning: %1").arg( prettyUrl() );
+      stateChanged("scan_started");
+      emit started(0); //as a Part, we have to do this
+      emit setWindowCaption(s);
+      statusBar()->showMessage(s);
       m_map->invalidate(); //to maintain ui consistency
 
       return true;
@@ -237,20 +239,19 @@ void
 Part::scanCompleted( Directory *tree )
 {
    if( tree ) {
-      statusBar()->message( i18n( "Scan completed, generating map..." ) );
+      statusBar()->showMessage(i18n( "Scan completed, generating map..." ));
 
-      m_map->create( tree );
+      m_map->create(tree);
 
       //do after creating map
-      stateChanged( "scan_complete" );
+      stateChanged("scan_complete");
    }
    else {
       stateChanged( "scan_failed" );
       emit canceled( i18n( "Scan failed: %1" ).arg( prettyUrl() ) );
       emit setWindowCaption( QString::null );
 
-      statusBar()->clear();
-//      QTimer::singleShot( 2000, statusBar(), SLOT(clear()) );
+      statusBar()->clearMessage();
 
       setUrl(KUrl());
    }
@@ -263,10 +264,10 @@ Part::mapChanged( const Directory *tree )
 
    emit setWindowCaption( prettyUrl() );
 
-   ProgressBox *progress = static_cast<ProgressBox *>(statusBar()->child( "ProgressBox" ));
+   ProgressBox *progress = static_cast<ProgressBox *>(statusBar()->findChild<ProgressBox *>());
 
-   if( progress )
-      progress->setText( tree->children() );
+   if(progress)
+      progress->setText(tree->children());
 }
 
 } //namespace Filelight
