@@ -31,17 +31,17 @@ namespace RadialMap
         Map();
         ~Map();
 
-        void make( const Directory *, bool = false );
-        bool resize( const QRect& );
+        void make(const Directory *, bool = false);
+        bool resize(const QRect&);
 
-        bool isNull() const { return ( m_signature == 0 ); }
-        void invalidate( const bool );
+        bool isNull() const { return (m_signature == 0); }
+        void invalidate(const bool);
 
         friend class Builder;
         friend class Widget;
 
     private:
-        void paint( uint = 1 );
+        void paint(uint = 1);
         void aaPaint();
         void colorise();
         void setRingBreadth();
@@ -62,11 +62,11 @@ namespace RadialMap
         Q_OBJECT
 
     public:
-        Widget( QWidget* = 0, const char* = 0 );
+        Widget(QWidget* = 0);
         ~Widget() { delete m_tip; }
 
         QString path() const;
-        KUrl url( File const * const = 0 ) const;
+        KUrl url(File const * const = 0) const;
 
         bool isValid() const { return m_tree != 0; }
 
@@ -75,38 +75,38 @@ namespace RadialMap
     public slots:
         void zoomIn();
         void zoomOut();
-        void create( const Directory* );
-        void invalidate( const bool = true );
-        void refresh( int );
+        void create(const Directory*);
+        void invalidate(const bool = true);
+        void refresh(int);
 
     private slots:
         void resizeTimeout();
         void sendFakeMouseEvent();
-        void deleteJobFinished( KIO::Job* );
-        void createFromCache( const Directory* );
+        void deleteJobFinished(KIO::Job*);
+        void createFromCache(const Directory*);
 
     signals:
-        void activated( const KUrl& );
-        void invalidated( const KUrl& );
-        void created( const Directory* );
-        void mouseHover( const QString& );
-        void giveMeTreeFor( const KUrl& );
+        void activated(const KUrl&);
+        void invalidated(const KUrl&);
+        void created(const Directory*);
+        void mouseHover(const QString&);
+        void giveMeTreeFor(const KUrl&);
 
     protected:
-        virtual void paintEvent( QPaintEvent* );
-        virtual void resizeEvent( QResizeEvent* );
-        virtual void mouseMoveEvent( QMouseEvent* );
-        virtual void mousePressEvent( QMouseEvent* );
-        virtual void dragEnterEvent( QDragEnterEvent* );
-        virtual void dropEvent( QDropEvent* );
+        virtual void paintEvent(QPaintEvent*);
+        virtual void resizeEvent(QResizeEvent*);
+        virtual void mouseMoveEvent(QMouseEvent*);
+        virtual void mousePressEvent(QMouseEvent*);
+        virtual void dragEnterEvent(QDragEnterEvent*);
+        virtual void dropEvent(QDropEvent*);
 
     protected:
-        const Segment *segmentAt( QPoint& ) const; //FIXME const reference for a library others can use
+        const Segment *segmentAt(QPoint&) const; //FIXME const reference for a library others can use
         const Segment *rootSegment() const { return m_rootSegment; } ///never == 0
         const Segment *focusSegment() const { return m_focus; } ///0 == nothing in focus
 
     private:
-        void paintExplodedLabels( QPainter& ) const;
+        void paintExplodedLabels(QPainter&) const;
 
         const Directory *m_tree;
         const Segment   *m_focus;

@@ -45,7 +45,6 @@ int main(int argc, char *argv[])
 
     if (!app.isSessionRestored()) {
         MainWindow *mw = new MainWindow();
-        app.setMainWidget(mw);
 
         KCmdLineArgs* const args = KCmdLineArgs::parsedArgs();
         if (args->count() > 0) mw->scan( args->url(0));

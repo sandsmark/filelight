@@ -112,12 +112,12 @@ Part::openURL( const KUrl &u )
    //TODO should have an empty KUrl until scan is confirmed successful
    //TODO probably should set caption to QString::null while map is unusable
 
-   #define KMSG( s ) KMessageBox::information( widget(), s )
+   #define KMSG(s) KMessageBox::information(widget(), s)
 
    KUrl uri = u;
-   uri.cleanPath( KUrl::SimplifyDirSeparators );
-   const QString path = uri.path( KUrl::RemoveTrailingSlash );
-   const Q3CString path8bit = QFile::encodeName( path );
+   uri.cleanPath(KUrl::SimplifyDirSeparators);
+   const QString path = uri.path(KUrl::AddTrailingSlash);
+   const Q3CString path8bit = QFile::encodeName(path);
    const bool isLocal = uri.protocol() == "file";
 
    if( uri.isEmpty() )

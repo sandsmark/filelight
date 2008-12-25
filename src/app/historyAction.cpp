@@ -12,8 +12,7 @@
 #include <KConfigGroup>
 
 
-inline
-HistoryAction::HistoryAction(const QString &text, const char *icon, const KShortcut &cut, KActionCollection *ac, const char *name)
+inline HistoryAction::HistoryAction(const QString &text, KActionCollection *ac)
         : KAction(text, ac)
         , m_text(text)
 {
@@ -21,8 +20,7 @@ HistoryAction::HistoryAction(const QString &text, const char *icon, const KShort
     KAction::setEnabled(false);
 }
 
-void
-HistoryAction::push(const QString &path)
+void HistoryAction::push(const QString &path)
 {
     if(!path.isEmpty() && m_list.last() != path)
     {
@@ -32,8 +30,7 @@ HistoryAction::push(const QString &path)
     }
 }
 
-QString
-HistoryAction::pop()
+QString HistoryAction::pop()
 {
     const QString s = m_list.last();
     m_list.pop_back();
@@ -44,18 +41,17 @@ HistoryAction::pop()
 
 
 
-HistoryCollection::HistoryCollection(KActionCollection *ac, QObject *parent, const char *name)
-        : QObject(parent, name)
-        , m_b( new HistoryAction(i18n("Back"), "back", KStandardShortcut::back(), ac, "go_back"))
-        , m_f( new HistoryAction(i18n("Forward"), "forward",  KStandardShortcut::forward(), ac, "go_forward"))
+HistoryCollection::HistoryCollection(KActionCollection *ac, QObject *parent)
+        : QObject(parent)
+        , m_b(new HistoryAction(i18n("Back"), ac))
+        , m_f(new HistoryAction(i18n("Forward"), ac))
         , m_receiver(0)
 {
     connect(m_b, SIGNAL(activated()), SLOT(pop()));
     connect(m_f, SIGNAL(activated()), SLOT(pop()));
 }
 
-void
-HistoryCollection::push(const KUrl &url) //slot
+void HistoryCollection::push(const KUrl &url) //slot
 {
     if(!url.isEmpty())
     {
@@ -70,8 +66,7 @@ HistoryCollection::push(const KUrl &url) //slot
     m_receiver = 0;
 }
 
-void
-HistoryCollection::pop() //slot
+void HistoryCollection::pop() //slot
 {
     KUrl url;
     const QString path = ((HistoryAction*)sender())->pop(); //FIXME here we remove the constness
@@ -82,18 +77,16 @@ HistoryCollection::pop() //slot
     emit activated(url);
 }
 
-void
-HistoryCollection::save(KConfig *config)
+void HistoryCollection::save(KConfigGroup &configgroup)
 {
-    config->group(QString()).writePathEntry("backHistory", m_b->m_list);
-    config->group(QString()).writePathEntry("forwardHistory", m_f->m_list);
+    configgroup.writePathEntry("backHistory", m_b->m_list);
+    configgroup.writePathEntry("forwardHistory", m_f->m_list);
 }
 
-void
-HistoryCollection::restore(KConfig *config)
+void HistoryCollection::restore(const KConfigGroup &configgroup)
 {
-    m_b->m_list = config->group(QString()).readPathEntry("backHistory", QStringList());
-    m_f->m_list = config->group(QString()).readPathEntry("forwardHistory", QStringList());
+    m_b->m_list = configgroup.readPathEntry("backHistory", QStringList());
+    m_f->m_list = configgroup.readPathEntry("forwardHistory", QStringList());
     //TODO texts are not updated - no matter
 }
 

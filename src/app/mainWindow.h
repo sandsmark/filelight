@@ -49,8 +49,8 @@ class MainWindow : public KParts::MainWindow
     void urlAboutToChange();
 
   protected:
-    virtual void saveProperties(KConfig *);
-    virtual void readProperties(KConfig *);
+    virtual void saveProperties(KConfigGroup&);
+    virtual void readProperties(const KConfigGroup&);
     virtual bool queryExit();
 
   private:

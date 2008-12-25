@@ -66,8 +66,8 @@ namespace Filelight
          delete tree;
          tree = 0;
       }
-
-      qobject_cast<ScanManager*>(parent())->appendTree(tree, false);
+      kDebug() << parent() << endl;
+      qobject_cast<ScanManager *>(parent())->appendTree(tree, false);
    }
 
    // from system.h in GNU coreutils package

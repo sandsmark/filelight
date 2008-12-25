@@ -38,9 +38,7 @@
 
 namespace Filelight {
 
-MainWindow::MainWindow()
-        : KParts::MainWindow()
-        , m_part( 0 )
+MainWindow::MainWindow() : KParts::MainWindow(), m_part(0)
 {
     KPluginFactory *factory = KPluginLoader("filelightpart").factory();
     
@@ -50,7 +48,8 @@ MainWindow::MainWindow()
        return;
     }
 
-    m_part = static_cast<Part *>(factory->create(this));
+    setXMLFile("filelightui.rc");
+    m_part = static_cast<Part *>(factory->create<KParts::ReadOnlyPart>(this));
 
     if (m_part) {
         setCentralWidget(m_part->widget());
@@ -60,10 +59,10 @@ MainWindow::MainWindow()
     
         stateChanged("scan_failed"); //bah! doesn't affect the parts' actions, should I add them to the actionCollection here?
     
-        QObjectList buttons = toolBar()->queryList("KToolBarButton");
+        QList<QObject *> buttons = toolBar()->findChildren<QObject *>("KToolBarButton");
         if (buttons.isEmpty())
             KMessageBox::error(this, i18n("Filelight is not installed properly, consequently its menus and toolbars will appear reduced or even empty"));
-        delete &buttons;
+        //delete &buttons;
     
         connect(m_part, SIGNAL(started(KIO::Job*)), SLOT(scanStarted()));
         connect(m_part, SIGNAL(completed()), SLOT(scanCompleted()));
@@ -82,8 +81,7 @@ MainWindow::MainWindow()
     }
 }
 
-inline void
-MainWindow::setupActions() //singleton function
+inline void MainWindow::setupActions() //singleton function
 {
     KActionCollection *const ac = actionCollection();
 
@@ -98,7 +96,7 @@ MainWindow::setupActions() //singleton function
     KStandardAction::up(this, SLOT(slotUp()), ac);
     KStandardAction::configureToolbars(this, SLOT(configToolbars()), ac);
     KStandardAction::keyBindings(this, SLOT(configKeys()), ac);
-    
+
     KAction* action;
 
     //KAction(KIcon("folder_home"), i18n( "Scan &Home Directory" ), this, SLOT(slotScanHomeDirectory()), ac, "scan_home" )
@@ -138,7 +136,7 @@ MainWindow::setupActions() //singleton function
     m_recentScans = new KRecentFilesAction(i18n("&Recent Scans"), ac);
     m_recentScans->setMaxItems(8);
 
-    m_histories = new HistoryCollection(ac, this, "history_collection");
+    m_histories = new HistoryCollection(ac, this);
 
 //    ac->action("scan_directory")->setText(i18n("&Scan Directory...")); TODO: Uncomment this, and fix.
     m_recentScans->loadEntries(KGlobal::config()->group(""));
@@ -202,48 +200,42 @@ MainWindow::slotComboScan()
       m_combo->addToHistory(path);
 }
 
-inline bool
-MainWindow::slotScanPath(const QString &path)
+inline bool MainWindow::slotScanPath(const QString &path)
 {
-   return slotScanUrl(KUrl::fromPathOrUrl(path));
+   return slotScanUrl(KUrl::KUrl(path));
 }
 
-bool
-MainWindow::slotScanUrl(const KUrl &url)
+bool MainWindow::slotScanUrl(const KUrl &url)
 {
    const KUrl oldUrl = m_part->url();
-   const bool b = m_part->openURL( url );
+   const bool b = m_part->openURL(url);
 
    if (b) {
       m_histories->push(oldUrl);
-      action("go_back")->setEnabled( false ); } //FIXME
-
+      //action("go_back")->setEnabled(false); //FIXME
+   }
    return b;
 }
 
-inline void
-MainWindow::slotAbortScan()
+inline void MainWindow::slotAbortScan()
 {
     if(m_part->closeURL()) action("scan_stop")->setEnabled(false);
 }
 
-inline void
-MainWindow::scanStarted()
+inline void MainWindow::scanStarted()
 {
     stateChanged("scan_started");
     m_combo->clearFocus();
 }
 
-inline void
-MainWindow::scanFailed()
+inline void MainWindow::scanFailed()
 {
     stateChanged("scan_failed");
     setActionMenuTextOnly(qobject_cast<KAction *>(action("go_up")), QString());
     m_combo->lineEdit()->clear();
 }
 
-void
-MainWindow::scanCompleted()
+void MainWindow::scanCompleted()
 {
     KAction *goUp  = qobject_cast<KAction *>(action("go_up"));
     const KUrl url = m_part->url();
@@ -262,8 +254,7 @@ MainWindow::scanCompleted()
     m_recentScans->addUrl(url); //FIXME doesn't set the tick
 }
 
-inline void
-MainWindow::urlAboutToChange()
+inline void MainWindow::urlAboutToChange()
 {
    //called when part's URL is about to change internally
    //the part will then create the Map and emit completed()
@@ -276,18 +267,16 @@ MainWindow::urlAboutToChange()
   SESSION MANAGEMENT
  **********************************************/
 
-void
-MainWindow::saveProperties(KConfig *config) //virtual
+void MainWindow::saveProperties(KConfigGroup &configgroup) //virtual
 {
-   m_histories->save(config);
-   config->group("General").writeEntry("currentMap", m_part->url().path());
+   m_histories->save(configgroup);
+   configgroup.writeEntry("currentMap", m_part->url().path());
 }
 
-void
-MainWindow::readProperties(KConfig *config) //virtual
+void MainWindow::readProperties(const KConfigGroup &configgroup) //virtual
 {
-   m_histories->restore(config);
-   slotScanPath(config->group("General").readEntry("currentMap", QString()));
+   m_histories->restore(configgroup);
+   slotScanPath(configgroup.group("General").readEntry("currentMap", QString()));
 }
 
 } //namespace Filelight
@@ -306,13 +295,13 @@ void setActionMenuTextOnly(KAction *a, QString const &suffix)
         QWidget *w = a->associatedWidgets().value(i);
 //        int const id = a->itemId(i);
 
-        /*if (w->inherits("QPopupMenu"))
+        /*if (w->inherits("QPopupMenu")) //FIXME: This was probably here for a reason!
             static_cast<Q3PopupMenu*>(w)->changeItem(id, menu_text);
 
         else */if (w->inherits("KToolBar")) {
             QWidget *button = static_cast<KToolBar*>(w);
             if (button->inherits("KToolBarButton"))
-                QToolTip::add(button, suffix);
+                button->setToolTip(suffix);
         }
     }
 }

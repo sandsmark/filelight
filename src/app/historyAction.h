@@ -9,7 +9,7 @@
 #include <kurl.h>
 #include <qstringlist.h>
 
-class KConfig;
+class KConfigGroup;
 class KActionCollection;
 
 
@@ -19,7 +19,7 @@ void setActionMenuTextOnly(KAction *a, QString const &suffix);
 
 class HistoryAction : KAction
 {
-    HistoryAction(const QString &text, const char *icon, const KShortcut &cut, KActionCollection *ac, const char *name);
+    HistoryAction(const QString &text, KActionCollection *ac);
 
     friend class HistoryCollection;
 
@@ -44,10 +44,10 @@ class HistoryCollection : public QObject
 Q_OBJECT
 
 public:
-    HistoryCollection(KActionCollection *ac, QObject *parent, const char *name);
+    HistoryCollection(KActionCollection *ac, QObject *parent);
 
-    void save(KConfig *config);
-    void restore(KConfig *config);
+    void save(KConfigGroup &configgroup);
+    void restore(const KConfigGroup &configgroup);
 
 public slots:
     void push(const KUrl&);

@@ -62,7 +62,7 @@ namespace Filelight
 
       if(url.protocol() == "file")
       {
-         const QString path = url.path( KUrl::RemoveTrailingSlash );
+         const QString path = url.path( KUrl::AddTrailingSlash );
 
          Chain<Directory> *trees = new Chain<Directory>;
 

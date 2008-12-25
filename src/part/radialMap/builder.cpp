@@ -134,7 +134,7 @@ RadialMap::Builder::build( const Directory* const dir, const unsigned int depth,
 		      hiddenFileCount, 
 		      File::humanReadableSize( hiddenSize/hiddenFileCount ) );
 
-      (m_signature + depth)->append( new Segment( new File( s.local8Bit(), hiddenSize ), a_start, a_end - a_start, true ) );
+      (m_signature + depth)->append( new Segment( new File( s.toLocal8Bit(), hiddenSize ), a_start, a_end - a_start, true ) );
    }
 
    return false;
