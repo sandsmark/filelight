@@ -25,16 +25,17 @@ namespace RadialMap {
 
 bool isBackingStoreActive()
 {
+    //TODO: THIS IS UGLY!
     // # xdpyinfo | grep backing
     // options:    backing-store YES, save-unders YES
 
     char buffer[4096];
-    FILE *xdpyinfo = popen( "xdpyinfo", "r" );
-    int const N = fread( (void*)buffer, sizeof(char), 4096, xdpyinfo );
-    buffer[ N ] = '\0';
-    pclose( xdpyinfo );
+    FILE *xdpyinfo = popen("xdpyinfo", "r");
+    int const N = fread((void*)buffer, sizeof(char), 4096, xdpyinfo);
+    buffer[N] = '\0';
+    pclose(xdpyinfo);
 
-    return QString::fromLocal8Bit( buffer ).contains( "backing-store YES" );
+    return QString::fromLocal8Bit(buffer).contains( "backing-store YES" );
 }
 
 
@@ -47,7 +48,7 @@ SegmentTip::SegmentTip(uint h)
 }
 
 void
-SegmentTip::moveTo( QPoint p, const QWidget &canvas, bool placeAbove )
+SegmentTip::moveTo( QPoint p, QWidget &canvas, bool placeAbove )
 {
     //**** this function is very slow and seems to be visibly influenced by operations like mapFromGlobal() (who knows why!)
     //  ** so any improvements are much desired
@@ -72,17 +73,20 @@ SegmentTip::moveTo( QPoint p, const QWidget &canvas, bool placeAbove )
 
 
     //I'm using this QPoint to determine where to offset the bitBlt in m_pixmap
-    QPoint offset = canvas.mapToGlobal( QPoint() ) - p;
-    if( offset.x() < 0 ) offset.setX( 0 );
-    if( offset.y() < 0 ) offset.setY( 0 );
+    QPoint offset = canvas.mapToGlobal(QPoint()) - p;
+    if(offset.x() < 0) offset.setX(0);
+    if(offset.y() < 0) offset.setY(0);
 
 
-    const QRect alphaMaskRect( canvas.mapFromGlobal( p ), size() );
-    const QRect intersection( alphaMaskRect.intersect( canvas.rect() ) );
+    const QRect alphaMaskRect(canvas.mapFromGlobal(p), size());
+    const QRect intersection(alphaMaskRect.intersect(canvas.rect()));
 
     /* m_pixmap.resize(size()); //move to updateTip once you are sure it can never be null */
     m_pixmap = QPixmap(size());
     bitBlt(&m_pixmap, offset, &canvas, intersection, QPainter::CompositionMode_SourceOver);
+/*    QPainter* p = new QPainter(&canvas);
+    p->drawPixmap(intersection, m_pixmap);
+    delete p; */
 
     QColor const c = QToolTip::palette().color( QPalette::Active, QColorGroup::Background );
     if (!m_backing_store)

@@ -30,13 +30,12 @@
 #include <Q3CString>
 #include <QPixmap>
 #include <unistd.h>       //access()
-
-
-K_PLUGIN_FACTORY(filelightPartFactory, registerPlugin<Filelight::Part>();)  // produce a factory
-K_EXPORT_PLUGIN(filelightPartFactory("filelight", "filelight") )
+#include <iostream>
 
 namespace Filelight {
 
+K_PLUGIN_FACTORY(filelightPartFactory, registerPlugin<Part>();)  // produce a factory
+K_EXPORT_PLUGIN(filelightPartFactory("filelightpart"))
 
 //typedef KParts::GenericFactory<Filelight::Part> Factory;
 //K_EXPORT_COMPONENT_FACTORY( libfilelight, Filelight::Factory )
@@ -55,6 +54,7 @@ Part::Part(QWidget *parentWidget, QObject *parent, const QList<QVariant>&)
         , m_manager(new ScanManager(this))
         , m_started(false)
 {
+    std::cout << "loading stuff" << std::endl;
     Config::read();
     KGlobal::locale()->insertCatalog("filelight");
     // we need an instance

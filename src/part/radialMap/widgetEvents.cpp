@@ -152,8 +152,7 @@ RadialMap::Widget::mouseMoveEvent( QMouseEvent *e )
    }
 }
 
-void
-RadialMap::Widget::mousePressEvent( QMouseEvent *e )
+void RadialMap::Widget::mousePressEvent( QMouseEvent *e )
 {
    //m_tip is hidden already by event filter
    //m_focus is set correctly (I've been strict, I assure you it is correct!)
@@ -164,12 +163,12 @@ RadialMap::Widget::mousePressEvent( QMouseEvent *e )
       const bool isDir = m_focus->file()->isDirectory();
 
       // Actions in the right click menu
-      QAction* openKonqueror;
-      QAction* openKonsole;
-      QAction* centerMap;
-      QAction* openFile;
-      QAction* copyClipboard;
-      QAction* deleteItem;
+      QAction* openKonqueror = 0;
+      QAction* openKonsole = 0;
+      QAction* centerMap = 0;
+      QAction* openFile = 0;
+      QAction* copyClipboard = 0;
+      QAction* deleteItem = 0;
 
       if( e->button() == Qt::RightButton )
       {
@@ -196,7 +195,7 @@ RadialMap::Widget::mousePressEvent( QMouseEvent *e )
          popup.addSeparator();
          deleteItem = popup.addAction(KIcon("editdelete"), i18n("&Delete"));
 
-	 QAction* clicked = popup.exec(e->globalPos(), 0);
+     QAction* clicked = popup.exec(e->globalPos(), 0);
 
 	 if (openKonqueror && clicked == openKonqueror) {
                 KRun::runCommand(QString("kfmclient openURL \"%1\"").arg(url.url() ), this);

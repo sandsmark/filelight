@@ -42,7 +42,7 @@ MainWindow::MainWindow()
         : KParts::MainWindow()
         , m_part( 0 )
 {
-    KPluginFactory *factory = KPluginLoader("filelight").factory();
+    KPluginFactory *factory = KPluginLoader("filelightpart").factory();
     
     if (!factory) {
        KMessageBox::error(this, i18n("Unable to load the Filelight Part.\nPlease make sure Filelight was correctly installed."));
@@ -50,7 +50,7 @@ MainWindow::MainWindow()
        return;
     }
 
-    m_part = (Part *)factory->create( this, "filelightpart", QStringList() );
+    m_part = static_cast<Part *>(factory->create(this));
 
     if (m_part) {
         setCentralWidget(m_part->widget());
@@ -77,7 +77,7 @@ MainWindow::MainWindow()
         m_combo->setHistoryItems(config.readPathEntry("comboHistory", QStringList()));
         applyMainWindowSettings(config, "window");
     } else {
-	    KMessageBox::error(this, i18n("Unable to create part widget."));
+        KMessageBox::error(this, i18n("Unable to create part widget."));
         std::exit(1);
     }
 }
@@ -113,7 +113,7 @@ MainWindow::setupActions() //singleton function
     action->setIcon(KIcon("folder_red"));
 
     //new KAction( i18n( "Rescan" ), "reload", KStandardShortcut::reload(), m_part, SLOT(rescan()), ac, "scan_rescan" );
-    action = ac->addAction("scan_rescan", this, SLOT(rescan())); 
+    action = ac->addAction("scan_rescan", m_part, SLOT(rescan())); 
     action->setText(i18n("Rescan"));
     action->setIcon(KIcon("reload"));
     action->setShortcut(KStandardShortcut::reload());
@@ -140,7 +140,7 @@ MainWindow::setupActions() //singleton function
 
     m_histories = new HistoryCollection(ac, this, "history_collection");
 
-    ac->action("scan_directory")->setText(i18n("&Scan Directory..."));
+//    ac->action("scan_directory")->setText(i18n("&Scan Directory...")); TODO: Uncomment this, and fix.
     m_recentScans->loadEntries(KGlobal::config()->group(""));
     //combo->setAutoSized( true ); //FIXME what does this do?
 

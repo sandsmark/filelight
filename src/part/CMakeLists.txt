@@ -19,9 +19,9 @@ set(filelight_PART_SRCS
 
 kde4_add_ui_files(filelight_PART_SRCS dialog.ui)
 
-kde4_add_plugin(filelight ${filelight_PART_SRCS})
+kde4_add_plugin(filelightpart ${filelight_PART_SRCS})
 
-target_link_libraries(filelight radialmap
+target_link_libraries(filelightpart radialmap
                                 ${KDE4_KDECORE_LIBS}
                                 ${KDE4_KPARTS_LIBS}
                                 ${KDE4_KDEUI_LIBS}
@@ -30,7 +30,7 @@ target_link_libraries(filelight radialmap
                                 ${KDE4_KFILE_LIBS}
                                 qimageblitz)
 
-install(TARGETS filelight DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS filelightpart DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
