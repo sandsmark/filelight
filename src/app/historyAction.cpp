@@ -61,7 +61,7 @@ void HistoryCollection::push(const KUrl &url) //slot
             m_receiver = m_b;
         }
 
-        m_receiver->push(url.path( KUrl::AddTrailingSlash));
+        m_receiver->push(url.path(KUrl::AddTrailingSlash));
     }
     m_receiver = 0;
 }

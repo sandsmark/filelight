@@ -7,8 +7,10 @@
 #include "localLister.h"
 #include "fileTree.h"
 #include "scan.h"
+#include <iostream>
 
 #include <KDebug>
+#include <KMessageBox>
 #include <QApplication> //postEvent()
 #include <QFile>
 #include <Q3CString>
@@ -66,8 +68,10 @@ namespace Filelight
          delete tree;
          tree = 0;
       }
-      kDebug() << parent() << endl;
-      qobject_cast<ScanManager *>(parent())->appendTree(tree, false);
+      if (parent() != 0) 
+        qobject_cast<ScanManager *>(parent())->appendTree(tree, false);
+      else
+        KMessageBox::error(qobject_cast<QWidget *>(parent()), "FIXME: something wrong happened!");
    }
 
    // from system.h in GNU coreutils package

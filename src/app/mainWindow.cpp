@@ -40,6 +40,7 @@ namespace Filelight {
 
 MainWindow::MainWindow() : KParts::MainWindow(), m_part(0)
 {
+    setXMLFile("filelightui.rc");
     KPluginFactory *factory = KPluginLoader("filelightpart").factory();
     
     if (!factory) {
@@ -48,7 +49,6 @@ MainWindow::MainWindow() : KParts::MainWindow(), m_part(0)
        return;
     }
 
-    setXMLFile("filelightui.rc");
     m_part = static_cast<Part *>(factory->create<KParts::ReadOnlyPart>(this));
 
     if (m_part) {
@@ -130,7 +130,11 @@ inline void MainWindow::setupActions() //singleton function
     action->setText(i18n("Go"));
     action->setIcon(KIcon("key_enter"));
 
-    //K3WidgetAction *combo = new K3WidgetAction( m_combo, i18n( "Location Bar" ), 0, 0, 0, ac, "location_bar" ); //TODO: Wtf was this good for?
+//    K3WidgetAction *combo = new K3WidgetAction( m_combo, i18n( "Location Bar" ), 0, 0, 0, ac, "location_bar" ); //TODO: Wtf was this good for?
+    action = ac->addAction("location_bar", 0, 0);
+    action->setText(i18n("Location Bar"));
+    action->setDefaultWidget(m_combo);
+
 
     //m_recentScans = new KRecentFilesAction( i18n( "&Recent Scans" ), 0, ac, "scan_recent", 8 );
     m_recentScans = new KRecentFilesAction(i18n("&Recent Scans"), ac);
@@ -147,8 +151,7 @@ inline void MainWindow::setupActions() //singleton function
     connect(m_histories, SIGNAL(activated(const KUrl&)), SLOT(slotScanUrl(const KUrl&)));
 }
 
-bool
-MainWindow::queryExit()
+bool MainWindow::queryExit()
 {
     if(!m_part) //apparently std::exit() still calls this function, and abort() causes a crash..
        return true;
@@ -163,8 +166,7 @@ MainWindow::queryExit()
     return true;
 }
 
-inline void
-MainWindow::configToolbars() //slot
+inline void MainWindow::configToolbars() //slot
 {
     KEditToolBar dialog(factory(), this);
     // dialog.showButtonApply( false ); //TODO: Is this still needed?
@@ -176,14 +178,12 @@ MainWindow::configToolbars() //slot
     }
 }
 
-inline void
-MainWindow::configKeys() //slot
+inline void MainWindow::configKeys() //slot
 {
     KShortcutsDialog::configure(actionCollection(), KShortcutsEditor::LetterShortcutsAllowed, this, true);
 }
 
-inline void
-MainWindow::slotScanDirectory()
+inline void MainWindow::slotScanDirectory()
 {
     slotScanUrl(KFileDialog::getExistingDirectoryUrl(m_part->url(), this, QString("Select directory to scan...")));
 }
@@ -192,8 +192,7 @@ inline void MainWindow::slotScanHomeDirectory() { slotScanPath(getenv("HOME")); 
 inline void MainWindow::slotScanRootDirectory() { slotScanPath("/"); }
 inline void MainWindow::slotUp()                { slotScanUrl(m_part->url().upUrl()); }
 
-inline void
-MainWindow::slotComboScan()
+inline void MainWindow::slotComboScan()
 {
    const QString path = KShell::tildeExpand(m_combo->lineEdit()->text());
    if (slotScanPath(path))
