@@ -56,9 +56,9 @@ Part::Part(QWidget *parentWidget, QObject *parent, const QList<QVariant>&)
 {
     Config::read();
     KGlobal::locale()->insertCatalog("filelight");
+    setComponentData(filelightPartFactory::componentData());
     setXMLFile("filelight_partui.rc");
     // we need an instance
-    setComponentData(filelightPartFactory::componentData());
 
 
 //    setInstance(mainComponent());
@@ -213,7 +213,7 @@ Part::start(const KUrl &url)
    if(m_manager->start(url)) {
       setUrl(url);
 
-      const QString s = i18n("Scanning: %1").arg(prettyUrl());
+      const QString s = i18n("Scanning: %1", prettyUrl());
       stateChanged("scan_started");
       emit started(0); //as a Part, we have to do this
       emit setWindowCaption(s);
