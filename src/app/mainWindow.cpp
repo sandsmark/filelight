@@ -102,13 +102,13 @@ inline void MainWindow::setupActions() //singleton function
     //KAction(KIcon("folder_home"), i18n( "Scan &Home Directory" ), this, SLOT(slotScanHomeDirectory()), ac, "scan_home" )
     action = ac->addAction("scan_home", this, SLOT(slotScanHomeDirectory())); 
     action->setText(i18n("Scan &Home Directory"));
-    action->setIcon(KIcon("folder_home"));
+    action->setIcon(KIcon("user-home"));
     action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Home));
 
     //new KAction( i18n( "Scan &Root Directory" ), "folder_red", 0, this, SLOT(slotScanRootDirectory()), ac, "scan_root" );
     action = ac->addAction("scan_root", this, SLOT(slotScanRootDirectory())); 
     action->setText(i18n("Scan &Root Directory"));
-    action->setIcon(KIcon("folder_red"));
+    action->setIcon(KIcon("folder-red"));
 
     //new KAction( i18n( "Rescan" ), "reload", KStandardShortcut::reload(), m_part, SLOT(rescan()), ac, "scan_rescan" );
     action = ac->addAction("scan_rescan", m_part, SLOT(rescan())); 
