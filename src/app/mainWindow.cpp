@@ -52,14 +52,14 @@ MainWindow::MainWindow() : KParts::MainWindow(), m_part(0)
     m_part = static_cast<Part *>(factory->create<KParts::ReadOnlyPart>(this));
 
     if (m_part) {
-        setCentralWidget(m_part->widget());
         setStandardToolBarMenuEnabled(true);
         setupActions();
         createGUI(m_part);
+        setCentralWidget(m_part->widget());
     
         stateChanged("scan_failed"); //bah! doesn't affect the parts' actions, should I add them to the actionCollection here?
     
-        QList<QObject *> buttons = toolBar()->findChildren<QObject *>("KToolBarButton");
+        QList<QObject *> buttons = toolBar()->findChildren<QObject *>("KToolBarButton"); //FIXME
         if (buttons.isEmpty())
             KMessageBox::error(this, i18n("Filelight is not installed properly, consequently its menus and toolbars will appear reduced or even empty"));
         //delete &buttons;
@@ -113,14 +113,14 @@ inline void MainWindow::setupActions() //singleton function
     //new KAction( i18n( "Rescan" ), "reload", KStandardShortcut::reload(), m_part, SLOT(rescan()), ac, "scan_rescan" );
     action = ac->addAction("scan_rescan", m_part, SLOT(rescan())); 
     action->setText(i18n("Rescan"));
-    action->setIcon(KIcon("reload"));
+    action->setIcon(KIcon("view-refresh"));
     action->setShortcut(KStandardShortcut::reload());
 
 
     //new KAction( i18n( "Stop" ), "stop", Qt::Key_Escape, this, SLOT(slotAbortScan()), ac, "scan_stop" );
     action = ac->addAction("scan_stop", this, SLOT(slotAbortScan())); 
     action->setText(i18n("Stop"));
-    action->setIcon(KIcon("stop"));
+    action->setIcon(KIcon("process-stop"));
     action->setShortcut(Qt::Key_Escape);
 
     //new KAction( i18n( "Clear Location Bar" ), KApplication::reverseLayout() ? "clear_left" : "locationbar_erase", 0, m_combo, SLOT(clearEdit()), ac, "clear_location" );
@@ -128,7 +128,7 @@ inline void MainWindow::setupActions() //singleton function
     //new KAction( i18n( "Go" ), "key_enter", 0, m_combo, SIGNAL(returnPressed()), ac, "go" );
     action = ac->addAction("go", m_combo, SIGNAL(returnPressed())); 
     action->setText(i18n("Go"));
-    action->setIcon(KIcon("key_enter"));
+    action->setIcon(KIcon("go-jump-locationbar"));
 
 //    K3WidgetAction *combo = new K3WidgetAction( m_combo, i18n( "Location Bar" ), 0, 0, 0, ac, "location_bar" ); //TODO: Wtf was this good for?
     action = ac->addAction("location_bar", 0, 0);
