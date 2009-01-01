@@ -53,6 +53,7 @@ namespace Filelight
    private:
       KStatusBar *statusBar() { return m_statusbar->statusBar(); }
 
+      QLayout            *m_layout;
       BrowserExtension   *m_ext;
       StatusBarExtension *m_statusbar;
       RadialMap::Widget  *m_map;

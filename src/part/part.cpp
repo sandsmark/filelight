@@ -64,6 +64,9 @@ Part::Part(QWidget *parentWidget, QObject *parent, const QList<QVariant>&)
 //    setInstance(mainComponent());
     setWidget(new QWidget(parentWidget));
 
+    m_layout = new QVBoxLayout(widget());
+    widget()->setLayout(m_layout);
+
     m_map = new RadialMap::Widget(widget());
     m_map->hide();
 
@@ -93,7 +96,8 @@ Part::postInit()
       QWidget *summary = new SummaryWidget(widget());
       connect(summary, SIGNAL(activated(const KUrl&)), SLOT(openURL(const KUrl&)));
       summary->show();
-
+      m_layout->addWidget(summary);
+  
       //FIXME KXMLGUI is b0rked, it should allow us to set this
       //BEFORE createGUI is called but it doesn't
       stateChanged("scan_failed");
