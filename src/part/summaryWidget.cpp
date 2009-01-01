@@ -85,11 +85,8 @@ SummaryWidget::SummaryWidget(QWidget *parent)
         : QWidget(parent)
 {
     qApp->setOverrideCursor(Qt::WaitCursor);
-
-    (new QGridLayout(this));
-
+    setLayout(new QGridLayout(this));
     createDiskMaps();
-
     qApp->restoreOverrideCursor();
 }
 
@@ -98,8 +95,7 @@ SummaryWidget::~SummaryWidget()
     Config::scheme = oldScheme;
 }
 
-void
-SummaryWidget::createDiskMaps()
+void SummaryWidget::createDiskMaps()
 {
     DiskList disks;
 
@@ -118,7 +114,8 @@ SummaryWidget::createDiskMaps()
         if (disk.free == 0 && disk.used == 0)
             continue;
 
-        QWidget *box = new Q3VBox(this);
+        QWidget *box = new QWidget(this);
+	box->setLayout(new QVBoxLayout);
         RadialMap::Widget *map = new MyRadialMap(box);
 
         QString text; QTextOStream(&text)
@@ -215,8 +212,7 @@ DiskList::DiskList()
 }
 
 
-void
-Disk::guessIconName()
+void Disk::guessIconName()
 {
    if(mount.contains("cdrom"))        icon = "cdrom";
    else if(device.contains("cdrom"))  icon = "cdrom";
