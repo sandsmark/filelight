@@ -6,11 +6,11 @@
 #include <kcursor.h>
 #include <kiconeffect.h> //MyRadialMap::mousePressEvent()
 #include <kiconloader.h>
+#include <KIcon>
 #include <klocale.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <q3textstream.h>
-#include <q3vbox.h>
 #include <QApplication>
 //Added by qt3to4:
 #include <Q3CString>
@@ -118,15 +118,20 @@ void SummaryWidget::createDiskMaps()
 	box->setLayout(new QVBoxLayout);
         RadialMap::Widget *map = new MyRadialMap(box);
 
-        QString text; QTextOStream(&text)
-            << "<img src='" << loader.iconPath(disk.icon, KIconLoader::Toolbar) << "'>"
-            << " &nbsp;" << disk.mount << " "
-            << "<i>(" << disk.device << ")</i>";
+//        QString text; QTextOStream(&text)
+//            << "<img src='" << loader.iconPath(disk.icon, KIconLoader::Toolbar) << "'>"
+//            << " &nbsp;" << disk.mount << " "
+//            << "<i>(" << disk.device << ")</i>";
 
-        QLabel *label = new QLabel(text, box);
+        QLabel *label = new QLabel(disk.mount + " (" + disk.device + ")", box);
         label->setAlignment(Qt::AlignCenter);
         label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
 
+	QLabel *icon = new QLabel();
+	icon->setPixmap(KIcon::KIcon(disk.icon).pixmap(32,32));
+	box->layout()->addWidget(icon);
+
+	layout()->addWidget(box);
         box->show(); // will show its children too
 
         Directory *tree = new Directory(disk.mount.toLocal8Bit());
@@ -214,23 +219,23 @@ DiskList::DiskList()
 
 void Disk::guessIconName()
 {
-   if(mount.contains("cdrom"))        icon = "cdrom";
-   else if(device.contains("cdrom"))  icon = "cdrom";
-   else if(mount.contains("writer"))  icon = "cdwriter";
-   else if(device.contains("writer")) icon = "cdwriter";
-   else if(mount.contains("mo"))      icon = "mo";
-   else if(device.contains("mo"))     icon = "mo";
+   if(mount.contains("cdrom"))        icon = "media-optical";
+   else if(device.contains("cdrom"))  icon = "media-optical";
+   else if(mount.contains("writer"))  icon = "media-optical-recordable";
+   else if(device.contains("writer")) icon = "media-optical-recordable";
+//   else if(mount.contains("mo"))      icon = "mo";
+//   else if(device.contains("mo"))     icon = "mo";
    else if(device.contains("fd")) {
-      if(device.contains("360"))      icon = "5floppy";
-      if(device.contains("1200"))     icon = "5floppy";
-      else
-         icon = "3floppy";
+//      if(device.contains("360"))      icon = "media-floppy";
+//      if(device.contains("1200"))     icon = "media-floppy";
+//      else
+         icon = "media-floppy";
    }
-   else if(mount.contains("floppy"))  icon = "3floppy";
-   else if(mount.contains("zip"))     icon = "zip";
-   else if(type.contains("nfs"))      icon = "nfs";
+   else if(mount.contains("floppy"))  icon = "media-floppy";
+   else if(mount.contains("zip"))     icon = "media-floppy";
+   else if(type.contains("nfs"))      icon = "network-server-database";
    else
-      icon = "hdd";
+      icon = "drive-harddisk";
 
-   icon += /*mounted() ? */"_mount"/* : "_unmount"*/;
+//   icon += /*mounted() ? */"_mount"/* : "_unmount"*/;
 }
