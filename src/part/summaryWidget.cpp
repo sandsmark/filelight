@@ -50,31 +50,31 @@ struct DiskList : Q3ValueList<Disk>
 class MyRadialMap : public RadialMap::Widget
 {
 public:
-    MyRadialMap( QWidget *parent )
-            : RadialMap::Widget( parent )
+    MyRadialMap(QWidget *parent)
+            : RadialMap::Widget(parent)
     {}
 
-    virtual void setCursor( const QCursor &c )
+    virtual void setCursor(const QCursor &c)
     {
-        if( focusSegment() && focusSegment()->file()->name() == "Used" )
-            RadialMap::Widget::setCursor( c );
+        if(focusSegment() && focusSegment()->file()->name() == "Used")
+            RadialMap::Widget::setCursor(c);
         else
             unsetCursor();
     }
 
-    virtual void mousePressEvent( QMouseEvent *e )
+    virtual void mousePressEvent(QMouseEvent *e)
     {
         const RadialMap::Segment *segment = focusSegment();
 
         //we will allow right clicks to the center circle
-        if( segment == rootSegment() )
-            RadialMap::Widget::mousePressEvent( e );
+        if(segment == rootSegment())
+            RadialMap::Widget::mousePressEvent(e);
 
         //and clicks to the used segment
-        else if( segment && segment->file()->name() == "Used" ) {
-            const QRect rect( e->x() - 20, e->y() - 20, 40, 40 );
-//            KIconEffect::visualActivate( this, rect ); TODO: Re-enable
-            emit activated( url() );
+        else if(segment && segment->file()->name() == "Used") {
+            const QRect rect(e->x() - 20, e->y() - 20, 40, 40);
+//            KIconEffect::visualActivate(this, rect); TODO: Re-enable
+            emit activated(url());
         }
     }
 };
@@ -103,8 +103,8 @@ SummaryWidget::createDiskMaps()
 {
     DiskList disks;
 
-    const Q3CString free = i18n( "Free" ).toLocal8Bit();
-    const Q3CString used = i18n( "Used" ).toLocal8Bit();
+    const Q3CString free = i18n("Free").toLocal8Bit();
+    const Q3CString used = i18n("Used").toLocal8Bit();
 
     KIconLoader loader;
 
@@ -118,27 +118,27 @@ SummaryWidget::createDiskMaps()
         if (disk.free == 0 && disk.used == 0)
             continue;
 
-        QWidget *box = new Q3VBox( this );
-        RadialMap::Widget *map = new MyRadialMap( box );
+        QWidget *box = new Q3VBox(this);
+        RadialMap::Widget *map = new MyRadialMap(box);
 
-        QString text; QTextOStream( &text )
-            << "<img src='" << loader.iconPath( disk.icon, KIconLoader::Toolbar ) << "'>"
+        QString text; QTextOStream(&text)
+            << "<img src='" << loader.iconPath(disk.icon, KIconLoader::Toolbar) << "'>"
             << " &nbsp;" << disk.mount << " "
             << "<i>(" << disk.device << ")</i>";
 
-        QLabel *label = new QLabel( text, box );
-        label->setAlignment( Qt::AlignCenter );
-        label->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Maximum );
+        QLabel *label = new QLabel(text, box);
+        label->setAlignment(Qt::AlignCenter);
+        label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
 
         box->show(); // will show its children too
 
-        Directory *tree = new Directory( disk.mount.toLocal8Bit() );
-        tree->append( free, disk.free );
-        tree->append( used, disk.used );
+        Directory *tree = new Directory(disk.mount.toLocal8Bit());
+        tree->append(free, disk.free);
+        tree->append(used, disk.used);
 
-        map->create( tree ); //must be done when visible
+        map->create(tree); //must be done when visible
 
-        connect( map, SIGNAL(activated( const KUrl& )), SIGNAL(activated( const KUrl& )) );
+        connect(map, SIGNAL(activated(const KUrl&)), SIGNAL(activated(const KUrl&)));
     }
 }
 
@@ -154,21 +154,21 @@ SummaryWidget::createDiskMaps()
 DiskList::DiskList()
 {
     //FIXME bug prone
-    setenv( "LANG", "en_US", 1 );
-    setenv( "LC_ALL", "en_US", 1 );
-    setenv( "LC_MESSAGES", "en_US", 1 );
-    setenv( "LC_TYPE", "en_US", 1 );
-    setenv( "LANGUAGE", "en_US", 1 );
+    setenv("LANG", "en_US", 1);
+    setenv("LC_ALL", "en_US", 1);
+    setenv("LC_MESSAGES", "en_US", 1);
+    setenv("LC_TYPE", "en_US", 1);
+    setenv("LANGUAGE", "en_US", 1);
 
     char buffer[4096];
-    FILE *df = popen( "env LC_ALL=POSIX df " DF_ARGS, "r" );
-    int const N = fread( (void*)buffer, sizeof(char), 4096, df );
+    FILE *df = popen("env LC_ALL=POSIX df " DF_ARGS, "r");
+    int const N = fread((void*)buffer, sizeof(char), 4096, df);
     buffer[ N ] = '\0';
-    pclose( df );
+    pclose(df);
 
-    QString output = QString::fromLocal8Bit( buffer );
-    Q3TextStream t( &output, QIODevice::ReadOnly );
-    QString const BLANK( QChar(' ') );
+    QString output = QString::fromLocal8Bit(buffer);
+    Q3TextStream t(&output, QIODevice::ReadOnly);
+    QString const BLANK(QChar(' '));
 
     while (!t.atEnd()) {
         QString s = t.readLine();
@@ -190,7 +190,7 @@ DiskList::DiskList()
 
     #ifndef NO_FS_TYPE
         disk.type = s.left(s.indexOf(BLANK));
-        s = s.remove(0, s.indexOf( BLANK ) + 1);
+        s = s.remove(0, s.indexOf(BLANK) + 1);
     #endif
 
         int n = s.indexOf(BLANK);
@@ -198,11 +198,11 @@ DiskList::DiskList()
         s = s.remove(0, n + 1);
 
         n = s.indexOf(BLANK);
-        disk.used = s.left( n ).toInt();
+        disk.used = s.left(n).toInt();
         s = s.remove(0, n + 1);
 
         n = s.indexOf(BLANK);
-        disk.free = s.left( n).toInt();
+        disk.free = s.left(n).toInt();
         s = s.remove(0, n + 1);
 
         s = s.remove(0, s.indexOf(BLANK) + 1);  // delete the capacity 94%
@@ -218,21 +218,21 @@ DiskList::DiskList()
 void
 Disk::guessIconName()
 {
-   if( mount.contains("cdrom"))        icon = "cdrom";
-   else if( device.contains("cdrom"))  icon = "cdrom";
-   else if( mount.contains("writer"))  icon = "cdwriter";
-   else if( device.contains("writer")) icon = "cdwriter";
-   else if( mount.contains("mo"))      icon = "mo";
-   else if( device.contains("mo"))     icon = "mo";
-   else if( device.contains("fd")) {
-      if( device.contains("360"))      icon = "5floppy";
-      if( device.contains("1200"))     icon = "5floppy";
+   if(mount.contains("cdrom"))        icon = "cdrom";
+   else if(device.contains("cdrom"))  icon = "cdrom";
+   else if(mount.contains("writer"))  icon = "cdwriter";
+   else if(device.contains("writer")) icon = "cdwriter";
+   else if(mount.contains("mo"))      icon = "mo";
+   else if(device.contains("mo"))     icon = "mo";
+   else if(device.contains("fd")) {
+      if(device.contains("360"))      icon = "5floppy";
+      if(device.contains("1200"))     icon = "5floppy";
       else
          icon = "3floppy";
    }
-   else if(mount.contains( "floppy"))  icon = "3floppy";
-   else if(mount.contains( "zip"))     icon = "zip";
-   else if(type.contains( "nfs"))      icon = "nfs";
+   else if(mount.contains("floppy"))  icon = "3floppy";
+   else if(mount.contains("zip"))     icon = "zip";
+   else if(type.contains("nfs"))      icon = "nfs";
    else
       icon = "hdd";
 
