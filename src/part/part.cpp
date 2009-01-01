@@ -267,7 +267,7 @@ Part::mapChanged(const Directory *tree)
 
    emit setWindowCaption(prettyUrl());
 
-   ProgressBox *progress = static_cast<ProgressBox *>(statusBar()->findChild<ProgressBox *>());
+   ProgressBox *progress = statusBar()->findChild<ProgressBox *>();
 
    if(progress)
       progress->setText(tree->children());
