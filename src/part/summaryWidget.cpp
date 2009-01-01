@@ -52,7 +52,8 @@ class MyRadialMap : public RadialMap::Widget
 public:
     MyRadialMap(QWidget *parent)
             : RadialMap::Widget(parent)
-    {}
+    {
+    }
 
     virtual void setCursor(const QCursor &c)
     {
@@ -85,7 +86,7 @@ SummaryWidget::SummaryWidget(QWidget *parent)
         : QWidget(parent)
 {
     qApp->setOverrideCursor(Qt::WaitCursor);
-    setLayout(new QGridLayout(this));
+    setLayout(new QHBoxLayout(this));
     createDiskMaps();
     qApp->restoreOverrideCursor();
 }
@@ -116,6 +117,7 @@ void SummaryWidget::createDiskMaps()
 
         QWidget *box = new QWidget(this);
 	box->setLayout(new QVBoxLayout);
+        box->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
         RadialMap::Widget *map = new MyRadialMap(box);
 
 //        QString text; QTextOStream(&text)
