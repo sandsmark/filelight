@@ -115,7 +115,7 @@ void SummaryWidget::createDiskMaps()
             continue;
 
         QWidget *box = new QWidget(this);
-	box->setLayout(new QVBoxLayout);
+	box->setLayout(new QVBoxLayout(box));
         RadialMap::Widget *map = new MyRadialMap(box);
 
 //        QString text; QTextOStream(&text)
@@ -123,16 +123,22 @@ void SummaryWidget::createDiskMaps()
 //            << " &nbsp;" << disk.mount << " "
 //            << "<i>(" << disk.device << ")</i>";
 
+        QHBoxLayout * horizontalLayout = new QHBoxLayout(box);
+
+	QLabel *icon = new QLabel(box);
+	icon->setPixmap(KIcon(disk.icon).pixmap(32,32));
+        horizontalLayout->addWidget(icon);
+
         QLabel *label = new QLabel(disk.mount + " (" + disk.device + ")", box);
         label->setAlignment(Qt::AlignCenter);
-        label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+        //label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+        horizontalLayout->addWidget(label);
 
-	QLabel *icon = new QLabel();
-	icon->setPixmap(KIcon::KIcon(disk.icon).pixmap(32,32));
-	box->layout()->addWidget(icon);
+        box->layout()->addWidget(map);
+        box->layout()->addItem(horizontalLayout);
 
 	layout()->addWidget(box);
-        box->show(); // will show its children too
+        //box->show(); // will show its children too
 
         Directory *tree = new Directory(disk.mount.toLocal8Bit());
         tree->append(free, disk.free);
