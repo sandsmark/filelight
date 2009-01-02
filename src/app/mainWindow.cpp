@@ -59,9 +59,9 @@ MainWindow::MainWindow() : KParts::MainWindow(), m_part(0)
     
         stateChanged("scan_failed"); //bah! doesn't affect the parts' actions, should I add them to the actionCollection here?
     
-        QList<QObject *> buttons = toolBar()->findChildren<QObject *>("KToolBarButton"); //FIXME
-        if (buttons.isEmpty())
-            KMessageBox::error(this, i18n("Filelight is not installed properly, consequently its menus and toolbars will appear reduced or even empty"));
+        //QList<QObject *> buttons = toolBar()->findChildren<QObject *>("KToolBarButton"); //FIXME
+        //if (buttons.isEmpty())
+        //    KMessageBox::error(this, i18n("Filelight is not installed properly, consequently its menus and toolbars will appear reduced or even empty"));
         //delete &buttons;
     
         connect(m_part, SIGNAL(started(KIO::Job*)), SLOT(scanStarted()));
