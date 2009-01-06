@@ -136,7 +136,7 @@ void SummaryWidget::createDiskMaps()
 
         QWidget *box = new QWidget(this);
         box->setLayout(new QVBoxLayout(box));
-        box->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+        //box->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
         RadialMap::Widget *map = new MyRadialMap(box);
 
 //        QString text; QTextOStream(&text)

@@ -41,7 +41,7 @@
 
 
 RadialMap::Map::Map()
-        : QPixmap(QSize(500,500))
+        : QPixmap()
         , m_signature(0)
         , m_ringBreadth(MIN_RING_BREADTH)
         , m_innerRadius(0)
@@ -152,7 +152,8 @@ bool RadialMap::Map::resize(const QRect &rect)
 
       //resize the pixmap
       size += MAP_2MARGIN;
-      //QPixmap::resize(size, size); //FIXME: What were we resizing here?
+      QPixmap::resize(size, size); //FIXME 
+      fill();
 
       // for summary widget this is a good optimisation as it happens
       if (QPixmap::isNull())
@@ -330,8 +331,8 @@ void RadialMap::Map::paint(unsigned int scaleFactor)
    //**** best option you can think of is to make the circles slightly less perfect,
    //  ** i.e. slightly eliptic when resizing inbetween
 
-   if (QPixmap::isNull())
-      kWarning() << "Refusing to draw on null pixmap";
+   if (isNull())
+      kWarning() << "Refusing to draw uninitialized.";
       return;
 
    paint.begin(this);

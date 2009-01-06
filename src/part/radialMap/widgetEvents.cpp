@@ -49,7 +49,7 @@
 
 
 void
-RadialMap::Widget::resizeEvent( QResizeEvent* )
+RadialMap::Widget::resizeEvent(QResizeEvent*)
 {
     if(m_map.resize(rect()))
        m_timer.setSingleShot(true);
@@ -61,71 +61,71 @@ RadialMap::Widget::resizeEvent( QResizeEvent* )
 }
 
 void
-RadialMap::Widget::paintEvent( QPaintEvent* )
+RadialMap::Widget::paintEvent(QPaintEvent*)
 {
     //bltBit for some Qt setups will bitBlt _after_ the labels are painted. Which buggers things up!
     //shame as bitBlt is faster, possibly Qt bug? Should report the bug? - seems to be race condition
-    //bitBlt( this, m_offset, &m_map );
+    //bitBlt(this, m_offset, &m_map);
 
-    QPainter paint( this );
+    QPainter paint(this);
 
-    paint.drawPixmap( m_offset, m_map );
+    paint.drawPixmap(m_offset, m_map);
 
     //vertical strips
-    if( m_map.width() < width() )
+    if(m_map.width() < width())
     {
-        paint.eraseRect( 0, 0, m_offset.x(), height() );
-        paint.eraseRect( m_map.width() + m_offset.x(), 0, m_offset.x() + 1, height() );
+        paint.eraseRect(0, 0, m_offset.x(), height());
+        paint.eraseRect(m_map.width() + m_offset.x(), 0, m_offset.x() + 1, height());
     }
     //horizontal strips
-    if( m_map.height() < height() )
+    if(m_map.height() < height())
     {
-        paint.eraseRect( 0, 0, width(), m_offset.y() );
-        paint.eraseRect( 0, m_map.height() + m_offset.y(), width(), m_offset.y() + 1 );
+        paint.eraseRect(0, 0, width(), m_offset.y());
+        paint.eraseRect(0, m_map.height() + m_offset.y(), width(), m_offset.y() + 1);
     }
 
     //exploded labels
-    if( !m_map.isNull() && !m_timer.isActive() )
-       paintExplodedLabels( paint );
+    if(!m_map.isNull() && !m_timer.isActive())
+       paintExplodedLabels(paint);
 }
 
 const RadialMap::Segment*
-RadialMap::Widget::segmentAt( QPoint &e ) const
+RadialMap::Widget::segmentAt(QPoint &e) const
 {
     //determine which segment QPoint e is above
 
     e -= m_offset;
 
-    if( !m_map.m_signature )
+    if(!m_map.m_signature)
        return 0;
 
-    if( e.x() <= m_map.width() && e.y() <= m_map.height() )
+    if(e.x() <= m_map.width() && e.y() <= m_map.height())
     {
         //transform to cartesian coords
         e.rx() -= m_map.width() / 2; //should be an int
         e.ry()  = m_map.height() / 2 - e.y();
 
-        double length = hypot( e.x(), e.y() );
+        double length = hypot(e.x(), e.y());
 
-        if( length >= m_map.m_innerRadius ) //not hovering over inner circle
+        if(length >= m_map.m_innerRadius) //not hovering over inner circle
         {
             uint depth  = ((int)length - m_map.m_innerRadius) / m_map.m_ringBreadth;
 
-            if( depth <= m_map.m_visibleDepth ) //**** do earlier since you can //** check not outside of range
+            if(depth <= m_map.m_visibleDepth) //**** do earlier since you can //** check not outside of range
             {
                 //vector calculation, reduces to simple trigonometry
                 //cos angle = (aibi + ajbj) / albl
                 //ai = x, bi=1, aj=y, bj=0
                 //cos angle = x / (length)
 
-                uint a  = (uint)(acos( (double)e.x() / length ) * 916.736);  //916.7324722 = #radians in circle * 16
+                uint a  = (uint)(acos((double)e.x() / length) * 916.736);  //916.7324722 = #radians in circle * 16
 
                 //acos only understands 0-180 degrees
-                if( e.y() < 0 ) a = 5760 - a;
+                if(e.y() < 0) a = 5760 - a;
 
                 #define ring (m_map.m_signature + depth)
-                for( ConstIterator<Segment> it = ring->constIterator(); it != ring->end(); ++it )
-                    if( (*it)->intersects( a ) )
+                for(ConstIterator<Segment> it = ring->constIterator(); it != ring->end(); ++it)
+                    if((*it)->intersects(a))
                         return *it;
                 #undef ring
             }
@@ -137,47 +137,47 @@ RadialMap::Widget::segmentAt( QPoint &e ) const
 }
 
 void
-RadialMap::Widget::mouseMoveEvent( QMouseEvent *e )
+RadialMap::Widget::mouseMoveEvent(QMouseEvent *e)
 {
    //set m_focus to what we hover over, update UI if it's a new segment
 
    Segment const * const oldFocus = m_focus;
    QPoint p = e->pos();
 
-   m_focus = segmentAt( p ); //NOTE p is passed by non-const reference
+   m_focus = segmentAt(p); //NOTE p is passed by non-const reference
 
-   if( m_focus && m_focus->file() != m_tree )
+   if(m_focus && m_focus->file() != m_tree)
    {
-      if( m_focus != oldFocus ) //if not same as last time
+      if(m_focus != oldFocus) //if not same as last time
       {
-         setCursor( Qt::PointingHandCursor );
-         m_tip->updateTip( m_focus->file(), m_tree );
-         emit mouseHover( m_focus->file()->fullPath() );
+         setCursor(Qt::PointingHandCursor);
+         m_tip->updateTip(m_focus->file(), m_tree);
+         emit mouseHover(m_focus->file()->fullPath());
 
          //repaint required to update labels now before transparency is generated
          repaint();
       }
 
-      m_tip->moveTo( e->globalPos(), *this, ( p.y() < 0 ) ); //updates tooltip psuedo-tranparent background
+      m_tip->moveTo(e->globalPos(), *this, (p.y() < 0)); //updates tooltip psuedo-tranparent background
    }
-   else if( oldFocus && oldFocus->file() != m_tree )
+   else if(oldFocus && oldFocus->file() != m_tree)
    {
       unsetCursor();
       m_tip->hide();
       update();
 
-      emit mouseHover( QString::null );
+      emit mouseHover(QString::null);
    }
 }
 
-void RadialMap::Widget::mousePressEvent( QMouseEvent *e )
+void RadialMap::Widget::mousePressEvent(QMouseEvent *e)
 {
    //m_tip is hidden already by event filter
    //m_focus is set correctly (I've been strict, I assure you it is correct!)
 
    if (m_focus && !m_focus->isFake())
    {
-      const KUrl url   = Widget::url( m_focus->file() );
+      const KUrl url   = Widget::url(m_focus->file());
       const bool isDir = m_focus->file()->isDirectory();
 
       // Actions in the right click menu
@@ -188,7 +188,7 @@ void RadialMap::Widget::mousePressEvent( QMouseEvent *e )
       QAction* copyClipboard = 0;
       QAction* deleteItem = 0;
 
-      if( e->button() == Qt::RightButton )
+      if(e->button() == Qt::RightButton)
       {
          KMenu popup;
          popup.addTitle(m_focus->file()->fullPath(m_tree));
@@ -216,9 +216,9 @@ void RadialMap::Widget::mousePressEvent( QMouseEvent *e )
      QAction* clicked = popup.exec(e->globalPos(), 0);
 
 	 if (openKonqueror && clicked == openKonqueror) {
-                KRun::runCommand(QString("kfmclient openURL \"%1\"").arg(url.url() ), this);
+                KRun::runCommand(QString("kfmclient openURL \"%1\"").arg(url.url()), this);
 	 } else if (openKonsole && clicked == openKonsole) {
-		 KRun::runCommand(QString( "konsole --workdir \"%1\"" ).arg( url.path() ), this);
+		 KRun::runCommand(QString("konsole --workdir \"%1\"").arg(url.path()), this);
 	 } else if (centerMap && clicked == centerMap) {
 		 goto section_two;
 	 } else if (openFile && clicked == openFile) {
@@ -226,21 +226,21 @@ void RadialMap::Widget::mousePressEvent( QMouseEvent *e )
 	 } else if (clicked == copyClipboard) {
 		 QMimeData* mimedata = new QMimeData();
 		 url.populateMimeData(mimedata);
-		 QApplication::clipboard()->setMimeData( mimedata , QClipboard::Clipboard );
+		 QApplication::clipboard()->setMimeData(mimedata , QClipboard::Clipboard);
 	 } else if (clicked == deleteItem) {
-                const KUrl url = Widget::url( m_focus->file() );
+                const KUrl url = Widget::url(m_focus->file());
                 const QString message = m_focus->file()->isDirectory()
-                        ? i18n( "<qt>The directory at <i>'%1'</i> will be <b>recursively</b> and <b>permanently</b> deleted." )
-                        : i18n( "<qt><i>'%1'</i> will be <b>permanently</b> deleted." );
+                        ? i18n("<qt>The directory at <i>'%1'</i> will be <b>recursively</b> and <b>permanently</b> deleted.")
+                        : i18n("<qt><i>'%1'</i> will be <b>permanently</b> deleted.");
                 const int userIntention = KMessageBox::warningContinueCancel(
-                        this, message.arg( url.prettyUrl() ),
-                        QString::null, KGuiItem( i18n("&Delete"), "editdelete" ) );
+                        this, message.arg(url.prettyUrl()),
+                        QString::null, KGuiItem(i18n("&Delete"), "editdelete"));
 
                 if (userIntention == KMessageBox::Continue) {
-                    KIO::Job *job = KIO::del( url );
-                    job->ui()->setWindow( this );
-                    connect( job, SIGNAL(result( KIO::Job* )), SLOT(deleteJobFinished( KIO::Job* )) );
-                    QApplication::setOverrideCursor( Qt::BusyCursor );
+                    KIO::Job *job = KIO::del(url);
+                    job->ui()->setWindow(this);
+                    connect(job, SIGNAL(result(KIO::Job*)), SLOT(deleteJobFinished(KIO::Job*)));
+                    QApplication::setOverrideCursor(Qt::BusyCursor);
                 }
 	 } else {
 		//ensure m_focus is set for new mouse position
@@ -250,21 +250,21 @@ void RadialMap::Widget::mousePressEvent( QMouseEvent *e )
       else { // not right mouse button
 
       section_two:
-         const QRect rect( e->x() - 20, e->y() - 20, 40, 40 );
+         const QRect rect(e->x() - 20, e->y() - 20, 40, 40);
 
          m_tip->hide(); // user expects this
 
          if (!isDir || e->button() == Qt::MidButton) {
-            // KIconEffect::visualActivate( this, rect ); // TODO: recreate this
-            new KRun( url, this, true ); //FIXME see above
+            // KIconEffect::visualActivate(this, rect); // TODO: recreate this
+            new KRun(url, this, true); //FIXME see above
          }
          else if (m_focus->file() != m_tree) { // is left click
-            // KIconEffect::visualActivate( this, rect ); // TODO: recreate this
-            emit activated( url ); //activate first, this will cause UI to prepare itself
-            createFromCache( (Directory *)m_focus->file() );
+            // KIconEffect::visualActivate(this, rect); // TODO: recreate this
+            emit activated(url); //activate first, this will cause UI to prepare itself
+            createFromCache((Directory *)m_focus->file());
          }
          else
-            emit giveMeTreeFor( url.upUrl() );
+            emit giveMeTreeFor(url.upUrl());
       }
    }
 }
@@ -280,11 +280,11 @@ RadialMap::Widget::deleteJobFinished(KIO::Job *job)
 }
 
 void
-RadialMap::Widget::dropEvent( QDropEvent *e )
+RadialMap::Widget::dropEvent(QDropEvent *e)
 {
     KUrl::List uriList = KUrl::List::fromMimeData(e->mimeData());
     if (!uriList.isEmpty())
-        emit giveMeTreeFor( uriList.first() );
+        emit giveMeTreeFor(uriList.first());
 }
 
 void

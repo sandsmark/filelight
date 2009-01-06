@@ -22,8 +22,7 @@
 #ifndef SEGMENTTIP_H
 #define SEGMENTTIP_H
 
-#include <qwidget.h>
-//Added by qt3to4:
+#include <QWidget>
 #include <QEvent>
 
 class File;
