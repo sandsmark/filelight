@@ -3,14 +3,14 @@
 
 #include "Config.h"
 #include "fileTree.h"
-#include <kcursor.h>
-#include <kiconeffect.h> //MyRadialMap::mousePressEvent()
-#include <kiconloader.h>
+#include <KCursor>
+#include <KIconEffect> //MyRadialMap::mousePressEvent()
+#include <KIconLoader>
 #include <KIcon>
-#include <klocale.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <q3textstream.h>
+#include <KLocale>
+#include <QLabel>
+#include <QLayout>
+#include <Q3TextStream>
 #include <QApplication>
 //Added by qt3to4:
 #include <Q3CString>
@@ -116,7 +116,8 @@ void SummaryWidget::createDiskMaps()
             continue;
 
         QWidget *box = new QWidget(this);
-	box->setLayout(new QVBoxLayout(box));
+        box->setLayout(new QVBoxLayout(box));
+        box->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
         RadialMap::Widget *map = new MyRadialMap(box);
 
 //        QString text; QTextOStream(&text)
@@ -124,15 +125,14 @@ void SummaryWidget::createDiskMaps()
 //            << " &nbsp;" << disk.mount << " "
 //            << "<i>(" << disk.device << ")</i>";
 
-        QHBoxLayout * horizontalLayout = new QHBoxLayout(box);
+        QGridLayout* horizontalLayout = new QGridLayout(box);
 
-	QLabel *icon = new QLabel(box);
-	icon->setPixmap(KIcon(disk.icon).pixmap(32,32));
+        QLabel *icon = new QLabel(box);
+        icon->setPixmap(KIcon(disk.icon).pixmap(32,32));
         horizontalLayout->addWidget(icon);
 
         QLabel *label = new QLabel(disk.mount + " (" + disk.device + ")", box);
         label->setAlignment(Qt::AlignCenter);
-        //label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
         horizontalLayout->addWidget(label);
 
         box->layout()->addWidget(map);
