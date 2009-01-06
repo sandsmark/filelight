@@ -1,10 +1,10 @@
-//Author:    Max Howell <max.howell@methylblue.com>, (C) 2004
+//original author:    Max Howell <max.howell@methylblue.com>, (C) 2004
 //Copyright: See COPYING file that comes with this distribution
 
 #ifndef WIDGET_H
 #define WIDGET_H
 
-#include <kurl.h>
+#include <KUrl>
 #include <QTimer>
 #include <QPixmap>
 //Added by qt3to4:
@@ -13,7 +13,9 @@
 #include <QDropEvent>
 #include <QMouseEvent>
 #include <QPaintEvent>
+
 #include "segmentTip.h"
+#include "map.h"
 
 template <class T> class Chain;
 class Directory;
@@ -24,38 +26,6 @@ class KUrl;
 namespace RadialMap
 {
     class Segment;
-
-    class Map : public QPixmap
-    {
-    public:
-        Map();
-        ~Map();
-
-        void make(const Directory *, bool = false);
-        bool resize(const QRect&);
-
-        bool isNull() const { return (m_signature == 0); }
-        void invalidate(const bool);
-
-        friend class Builder;
-        friend class Widget;
-
-    private:
-        void paint(uint = 1);
-        void aaPaint();
-        void colorise();
-        void setRingBreadth();
-
-        Chain<Segment> *m_signature;
-
-        QRect   m_rect;
-        uint    m_ringBreadth;  ///ring breadth
-        uint    m_innerRadius;  ///radius of inner circle
-        uint    m_visibleDepth; ///visible level depth of system
-        QString m_centerText;
-
-        uint MAP_2MARGIN;
-    };
 
     class Widget : public QWidget
     {
