@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
         MainWindow *mw = new MainWindow();
 
         KCmdLineArgs* const args = KCmdLineArgs::parsedArgs();
-        if (args->count() > 0) mw->scan( args->url(0));
+        if (args->count() > 0) mw->scan(args->url(0));
         args->clear();
 
         mw->show();

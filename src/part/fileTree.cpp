@@ -65,9 +65,9 @@ File::humanReadableSize(uint size, UnitPrefix key /*= mega*/) //static
    if (prettySize >= 0.01)
    {
       //use three significant figures
-      if (prettySize < 1)        s = locale.formatNumber( prettySize, 2 );
-      else if (prettySize < 100) s = locale.formatNumber( prettySize, 1 );
-      else                       s = locale.formatNumber( prettySize, 0 );
+      if (prettySize < 1)        s = locale.formatNumber(prettySize, 2);
+      else if (prettySize < 100) s = locale.formatNumber(prettySize, 1);
+      else                       s = locale.formatNumber(prettySize, 0);
 
       s += ' ';
       s += PREFIX[key];

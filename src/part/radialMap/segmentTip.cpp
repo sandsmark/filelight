@@ -51,7 +51,7 @@ bool isBackingStoreActive()
     buffer[N] = '\0';
     pclose(xdpyinfo);
 
-    return QString::fromLocal8Bit(buffer).contains("backing-store YES" );
+    return QString::fromLocal8Bit(buffer).contains("backing-store YES");
 }
 
 
@@ -64,7 +64,7 @@ SegmentTip::SegmentTip(uint h)
 }
 
 void
-SegmentTip::moveTo(QPoint p, QWidget &canvas, bool placeAbove )
+SegmentTip::moveTo(QPoint p, QWidget &canvas, bool placeAbove)
 {
     //**** this function is very slow and seems to be visibly influenced by operations like mapFromGlobal() (who knows why!)
     //  ** so any improvements are much desired
@@ -73,7 +73,7 @@ SegmentTip::moveTo(QPoint p, QWidget &canvas, bool placeAbove )
     p.rx() -= rect().center().x();
     p.ry() -= (placeAbove ? 8 + height() : m_cursorHeight - 8);
 
-    const QRect screen = KGlobalSettings::desktopGeometry(parentWidget() );
+    const QRect screen = KGlobalSettings::desktopGeometry(parentWidget());
 
     const int x  = p.x();
     const int y  = p.y();
@@ -82,10 +82,10 @@ SegmentTip::moveTo(QPoint p, QWidget &canvas, bool placeAbove )
     const int sw = screen.width();
     const int sh = screen.height();
 
-    if(x  < 0  ) p.setX(0 );
-    if(y  < 0  ) p.setY(0 );
-    if(x2 > sw ) p.rx() -= x2 - sw;
-    if(y2 > sh ) p.ry() -= y2 - sh;
+    if(x  < 0 ) p.setX(0);
+    if(y  < 0 ) p.setY(0);
+    if(x2 > sw) p.rx() -= x2 - sw;
+    if(y2 > sh) p.ry() -= y2 - sh;
 
 
     //I'm using this QPoint to determine where to offset the bitBlt in m_pixmap
@@ -104,34 +104,34 @@ SegmentTip::moveTo(QPoint p, QWidget &canvas, bool placeAbove )
     p->drawPixmap(intersection, m_pixmap);
     delete p; */
 
-    QColor const c = QToolTip::palette().color(QPalette::Active, QColorGroup::Background );
+    QColor const c = QToolTip::palette().color(QPalette::Active, QColorGroup::Background);
     if (!m_backing_store)
-        m_pixmap.fill(c );
+        m_pixmap.fill(c);
 
-    QPainter paint(&m_pixmap );
-    paint.setPen(Qt::black );
-    paint.setBrush(Qt::NoBrush );
-    paint.drawRect(rect() );
+    QPainter paint(&m_pixmap);
+    paint.setPen(Qt::black);
+    paint.setBrush(Qt::NoBrush);
+    paint.drawRect(rect());
     paint.end();
 
     /* if (m_backing_store)
-        m_pixmap = QPixmap::fromImage(Blitz::fade(m_pixmap.toImage() , 0.6f, c )); */ // TODO: reimplement this
+        m_pixmap = QPixmap::fromImage(Blitz::fade(m_pixmap.toImage() , 0.6f, c)); */ // TODO: reimplement this
 
-    paint.begin(&m_pixmap );
-    paint.drawText(rect(), Qt::AlignCenter, m_text );
+    paint.begin(&m_pixmap);
+    paint.drawText(rect(), Qt::AlignCenter, m_text);
     paint.end();
 
     p += screen.topLeft(); //for Xinerama users
 
-    move(x, y );
+    move(x, y);
     show();
     update();
 }
 
 void
-SegmentTip::updateTip(const File* const file, const Directory* const root )
+SegmentTip::updateTip(const File* const file, const Directory* const root)
 {
-    const QString s1  = file->fullPath(root );
+    const QString s1  = file->fullPath(root);
     QString s2        = file->humanReadableSize();
     KLocale *loc      = KGlobal::locale();
     const uint MARGIN = 3;
@@ -139,61 +139,61 @@ SegmentTip::updateTip(const File* const file, const Directory* const root )
     uint maxw         = 0;
     uint h            = fontMetrics().height()*2 + 2*MARGIN;
 
-    if(pc > 0 ) s2 += QString(" (%1%)" ).arg(loc->formatNumber(pc, 0 ) );
+    if(pc > 0) s2 += QString(" (%1%)").arg(loc->formatNumber(pc, 0));
 
     m_text  = s1;
     m_text += '\n';
     m_text += s2;
 
-    if(file->isDirectory() )
+    if(file->isDirectory())
     {
         double files  = static_cast<const Directory*>(file)->children();
         const uint pc = uint((100 * files) / (double)root->children());
-        QString s3    = i18n("Files: %1" ).arg(loc->formatNumber(files, 0 ) );
+        QString s3    = i18n("Files: %1").arg(loc->formatNumber(files, 0));
 
-        if(pc > 0 ) s3 += QString(" (%1%)" ).arg(loc->formatNumber(pc, 0 ) );
+        if(pc > 0) s3 += QString(" (%1%)").arg(loc->formatNumber(pc, 0));
 
-        maxw    = fontMetrics().width(s3 );
+        maxw    = fontMetrics().width(s3);
         h      += fontMetrics().height();
         m_text += '\n';
         m_text += s3;
     }
 
     uint
-    w = fontMetrics().width(s1 ); if(w > maxw ) maxw = w;
-    w = fontMetrics().width(s2 ); if(w > maxw ) maxw = w;
+    w = fontMetrics().width(s1); if(w > maxw) maxw = w;
+    w = fontMetrics().width(s2); if(w > maxw) maxw = w;
 
-    resize(maxw + 2 * MARGIN, h );
+    resize(maxw + 2 * MARGIN, h);
 }
 
 bool
-SegmentTip::event(QEvent *e )
+SegmentTip::event(QEvent *e)
 {
-    switch(e->type() )
+    switch(e->type())
     {
     case QEvent::Show:
-        kapp->installEventFilter(this );
+        kapp->installEventFilter(this);
         break;
     case QEvent::Hide:
-        kapp->removeEventFilter(this );
+        kapp->removeEventFilter(this);
         break;
     case QEvent::Paint:
     {
-        //QPainter(this ).drawPixmap(0, 0, m_pixmap );
-        bitBlt(this, 0, 0, &m_pixmap );
+        //QPainter(this).drawPixmap(0, 0, m_pixmap);
+        bitBlt(this, 0, 0, &m_pixmap);
         return true;
     }
     default:
         ;
     }
 
-    return false/*QWidget::event(e )*/;
+    return false/*QWidget::event(e)*/;
 }
 
 bool
-SegmentTip::eventFilter(QObject*, QEvent *e )
+SegmentTip::eventFilter(QObject*, QEvent *e)
 {
-    switch (e->type() )
+    switch (e->type())
     {
     case QEvent::Leave:
 //     case QEvent::MouseButtonPress:

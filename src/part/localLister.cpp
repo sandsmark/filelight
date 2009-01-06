@@ -198,7 +198,7 @@ namespace Filelight
       dirent *ent;
       while ((ent = readdir(dir)))
       {
-         if( ScanManager::s_abort )
+         if(ScanManager::s_abort)
             return cwd;
 
          if (qstrcmp(ent->d_name, ".") == 0 || qstrcmp(ent->d_name, "..") == 0)
@@ -242,7 +242,7 @@ namespace Filelight
                   d = it.remove();
                   ScanManager::s_files += d->children();
                   //**** ideally don't have this redundant extra somehow
-                  cwd->append( d, new_dirname );
+                  cwd->append(d, new_dirname);
                }
             }
 

@@ -80,7 +80,7 @@ namespace Filelight
 
       if(url.protocol() == "file")
       {
-         const QString path = url.path( KUrl::AddTrailingSlash );
+         const QString path = url.path(KUrl::AddTrailingSlash);
 
          Chain<Directory> *trees = new Chain<Directory>;
 
@@ -92,11 +92,11 @@ namespace Filelight
          *   cached:     /usr/local/, /usr/include/
          */
 
-         for( Iterator<Directory> it = m_cache->iterator(); it != m_cache->end(); ++it )
+         for(Iterator<Directory> it = m_cache->iterator(); it != m_cache->end(); ++it)
          {
             QString cachePath = (*it)->name();
 
-            if( path.startsWith( cachePath ) ) //then whole tree already scanned
+            if(path.startsWith(cachePath)) //then whole tree already scanned
             {
                //find a pointer to the requested branch
 

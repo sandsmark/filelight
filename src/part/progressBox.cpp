@@ -37,23 +37,23 @@ ProgressBox::ProgressBox(QWidget *parent, QObject *part)
 
    setObjectName("ProgressBox");
 
-   setAlignment( Qt::AlignCenter );
-   setFont( KGlobalSettings::fixedFont() );
-   setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Fixed );
+   setAlignment(Qt::AlignCenter);
+   setFont(KGlobalSettings::fixedFont());
+   setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
-   setText( 999999 );
-   setMinimumWidth( sizeHint().width() );
+   setText(999999);
+   setMinimumWidth(sizeHint().width());
 
-   connect( &m_timer, SIGNAL(timeout()), SLOT(report()) );
-   connect( part, SIGNAL(started( KIO::Job* )), SLOT(start()) );
-   connect( part, SIGNAL(completed()), SLOT(stop()) );
-   connect( part, SIGNAL(canceled( const QString& )), SLOT(halt()) );
+   connect(&m_timer, SIGNAL(timeout()), SLOT(report()));
+   connect(part, SIGNAL(started(KIO::Job*)), SLOT(start()));
+   connect(part, SIGNAL(completed()), SLOT(stop()));
+   connect(part, SIGNAL(canceled(const QString&)), SLOT(halt()));
 }
 
 void
 ProgressBox::start() //slot
 {
-   m_timer.start( 50 ); //20 times per second - very smooth
+   m_timer.start(50); //20 times per second - very smooth
    report();
    show();
 }
@@ -61,7 +61,7 @@ ProgressBox::start() //slot
 void
 ProgressBox::report() //slot
 {
-   setText( Filelight::ScanManager::files() );
+   setText(Filelight::ScanManager::files());
 }
 
 void
@@ -75,11 +75,11 @@ ProgressBox::halt()
 {
    // canceled by stop button
    m_timer.stop();
-   QTimer::singleShot( 2000, this, SLOT(hide()) );
+   QTimer::singleShot(2000, this, SLOT(hide()));
 }
 
 void
-ProgressBox::setText( int files )
+ProgressBox::setText(int files)
 {
    QLabel::setText(i18np("%1 File", "%1 Files", files));
 }

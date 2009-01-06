@@ -102,7 +102,7 @@ namespace RadialMap
         QTimer           m_timer;
         Map              m_map;
         SegmentTip       *m_tip;
-        Segment         *m_rootSegment;
+        Segment          *m_rootSegment;
     };
 }
 

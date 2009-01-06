@@ -134,7 +134,7 @@ namespace Filelight
       for(KFileItemList::ConstIterator it = items.begin(), end = items.end(); it != end; ++it)
       {
          if(it->isDir())
-            m_store->stores += new Store( it->url(), it->name(), m_store );
+            m_store->stores += new Store(it->url(), it->name(), m_store);
          else
             m_store->directory->append(it->name().toLocal8Bit(), it->size() / 1024);
 
@@ -166,7 +166,7 @@ namespace Filelight
       else {
          kDebug() << "I think we're done\n";
 
-         Q_ASSERT( m_root == m_store );
+         Q_ASSERT(m_root == m_store);
 
          delete this;
       }
