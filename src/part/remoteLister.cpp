@@ -20,15 +20,15 @@
 ***********************************************************************/
 
 #include "remoteLister.h"
-
 #include "fileTree.h"
 #include "scan.h"
 
-#include <QApplication>
 #include <KDebug>
-#include <QTimer>
 #include <KDirLister>
+
+#include <QApplication>
 #include <QLinkedList>
+#include <QTimer>
 
 namespace Filelight
 {

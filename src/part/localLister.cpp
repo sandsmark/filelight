@@ -23,10 +23,10 @@
 #include "localLister.h"
 #include "fileTree.h"
 #include "scan.h"
-#include <iostream>
 
 #include <KDebug>
 #include <KMessageBox>
+
 #include <QApplication> //postEvent()
 #include <QFile>
 #include <Q3CString>
@@ -80,7 +80,7 @@ namespace Filelight
 
       if(ScanManager::s_abort) //scan was cancelled
       {
-         kDebug() << "Scan succesfully aborted" << endl;
+         kDebug() << "Scan succesfully aborted";
          delete tree;
          tree = 0;
       }
@@ -155,7 +155,7 @@ namespace Filelight
    {
       ///show error message that stat or opendir may give
 
-      #define out(s) kError() << s ": " << path << endl; break
+      #define out(s) kError() << s ": " << path; break
 
       switch(errno) {
       case EACCES:
@@ -238,7 +238,7 @@ namespace Filelight
             {
                if(new_path == (*it)->name8Bit())
                {
-                  kDebug() << "Tree pre-completed: " << (*it)->name() << endl;
+                  kDebug() << "Tree pre-completed: " << (*it)->name();
                   d = it.remove();
                   ScanManager::s_files += d->children();
                   //**** ideally don't have this redundant extra somehow

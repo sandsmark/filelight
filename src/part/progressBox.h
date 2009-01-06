@@ -22,8 +22,8 @@
 #ifndef PROGRESSBOX_H
 #define PROGRESSBOX_H
 
-#include <qlabel.h>
-#include <qtimer.h>
+#include <QLabel>
+#include <QTimer>
 
 namespace KIO { class Job; }
 

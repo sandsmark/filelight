@@ -22,8 +22,7 @@
 #ifndef LOCALLISTER_H
 #define LOCALLISTER_H
 
-#include <qthread.h>
-//Added by qt3to4:
+#include <QThread>
 #include <Q3CString>
 
 class Directory;

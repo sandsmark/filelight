@@ -21,24 +21,25 @@
 
 #include "Config.h"
 #include "fileTree.h"
+#include "radialMap/radialMap.h"
+#include "radialMap/widget.h"
+#include "summaryWidget.h"
+#include "summaryWidget.moc"
+
 #include <KCursor>
 #include <KIconEffect> //MyRadialMap::mousePressEvent()
 #include <KIconLoader>
 #include <KIcon>
 #include <KLocale>
+
 #include <QLabel>
 #include <QLayout>
 #include <Q3TextStream>
 #include <QApplication>
-//Added by qt3to4:
 #include <Q3CString>
 #include <Q3ValueList>
 #include <QMouseEvent>
 #include <QTextOStream>
-#include "radialMap/radialMap.h"
-#include "radialMap/widget.h"
-#include "summaryWidget.h"
-#include "summaryWidget.moc"
 
 
 static Filelight::MapScheme oldScheme;

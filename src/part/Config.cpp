@@ -24,9 +24,9 @@
 
 #include <KConfig>
 #include <KConfigGroup>
+#include <KGlobal>
 #include <KSharedConfig>
 #include <KSharedPtr>
-#include <KGlobal>
 
 
 bool Config::scanAcrossMounts;

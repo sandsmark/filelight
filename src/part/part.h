@@ -22,10 +22,10 @@
 #ifndef FILELIGHTPART_H
 #define FILELIGHTPART_H
 
-#include <kparts/browserextension.h>
-#include <kparts/statusbarextension.h>
-#include <kparts/part.h>
-#include <kurl.h>
+#include <KParts/BrowserExtension>
+#include <KParts/StatusBarExtension>
+#include <KParts/Part>
+#include <KUrl>
 
 class KAboutData;
 using KParts::StatusBarExtension;

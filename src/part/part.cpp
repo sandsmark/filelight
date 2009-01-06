@@ -29,22 +29,22 @@
 #include "settingsDialog.h"
 #include "summaryWidget.h"
 
-#include <kaboutdata.h>   //::createAboutData()
-#include <kaction.h>
-#include <kparts/browserextension.h>
-#include <klocale.h>
-#include <kmessagebox.h>  //::start()
+#include <KAboutData>   //::createAboutData()
+#include <KAction>
 #include <KActionCollection>
-//#include <konq_operations.h>
-#include <kparts/genericfactory.h>
-#include <kstatusbar.h>
-#include <kstandardaction.h>
-#include <qfile.h>        //encodeName()
-#include <qtimer.h>       //postInit() hack
-#include <q3vbox.h>
-//Added by qt3to4:
+#include <KLocale>
+#include <KMessageBox>  //::start()
+#include <KParts/BrowserExtension>
+#include <KParts/GenericFactory>
+#include <KStatusBar>
+#include <KStandardAction>
+
+#include <QFile>        //encodeName()
+#include <QTimer>       //postInit() hack
+#include <Q3VBox>
 #include <Q3CString>
 #include <QPixmap>
+
 #include <unistd.h>       //access()
 #include <iostream>
 
@@ -52,10 +52,6 @@ namespace Filelight {
 
 K_PLUGIN_FACTORY(filelightPartFactory, registerPlugin<Part>();)  // produce a factory
 K_EXPORT_PLUGIN(filelightPartFactory("filelightpart"))
-
-//typedef KParts::GenericFactory<Filelight::Part> Factory;
-//K_EXPORT_COMPONENT_FACTORY(libfilelight, Filelight::Factory)
-
 
 BrowserExtension::BrowserExtension(Part *parent)
   : KParts::BrowserExtension(parent)

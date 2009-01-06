@@ -19,14 +19,14 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#include <kglobal.h>
-#include <kglobalsettings.h>
-#include <kio/job.h>
-#include <klocale.h>
-
 #include "scan.h"
 #include "progressBox.h"
-//Added by qt3to4:
+
+#include <KGlobal>
+#include <KGlobalSettings>
+#include <KIO/Job>
+#include <KLocale>
+
 #include <QLabel>
 
 

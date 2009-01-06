@@ -20,9 +20,11 @@
 ***********************************************************************/
 
 #include "fileTree.h"
-#include <kglobal.h>
-#include <klocale.h>
-#include <qfile.h>
+
+#include <KGlobal>
+#include <KLocale>
+
+#include <QFile>
 
 
 //static definitions

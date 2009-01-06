@@ -19,16 +19,16 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#include "fileTree.h"
-#include <kcursor.h>
-#include "localLister.h"
-#include <qapplication.h>
-#include <KDebug>
-//Added by qt3to4:
-#include <QCustomEvent>
 #include "remoteLister.h"
 #include "scan.h"
+#include "fileTree.h"
+#include "localLister.h"
 
+#include <KCursor>
+#include <KDebug>
+
+#include <QApplication>
+#include <QCustomEvent>
 
 namespace Filelight
 {

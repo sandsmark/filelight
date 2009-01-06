@@ -19,23 +19,22 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#include <qapplication.h> //Getting desktop width
-#include <qcheckbox.h>
-#include <qpushbutton.h>
-#include <qradiobutton.h>
-#include <qslider.h>
-#include <QVBoxLayout>
-#include <QCloseEvent>
-
-#include <KDirSelectDialog>
-#include <kiconloader.h>
-#include <klocale.h>
-#include <kmessagebox.h>
-#include <knuminput.h>
-
 #include "settingsDialog.h"
 #include "Config.h"
 
+#include <KDirSelectDialog>
+#include <KIconLoader>
+#include <KLocale>
+#include <KMessageBox>
+#include <KNumInput>
+
+#include <QApplication> //Getting desktop width
+#include <QCheckBox>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QSlider>
+#include <QVBoxLayout>
+#include <QCloseEvent>
 
 SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent)
 {

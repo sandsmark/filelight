@@ -22,7 +22,7 @@
 #ifndef REMOTELISTER_H
 #define REMOTELISTER_H
 
-#include <kdirlister.h>
+#include <KDirLister>
 
 namespace Filelight
 {

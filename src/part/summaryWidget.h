@@ -22,7 +22,7 @@
 #ifndef FILELIGHTSUMMARY_H
 #define FILELIGHTSUMMARY_H
 
-#include <qwidget.h>
+#include <QWidget>
 
 
 class SummaryWidget : public QWidget

@@ -22,10 +22,8 @@
 #ifndef SCAN_H
 #define SCAN_H
 
-#include <kurl.h>
-#include <qobject.h>
-//Added by qt3to4:
-#include <QCustomEvent>
+#include <KUrl>
+#include <QObject>
 
 class QThread;
 class Directory;
