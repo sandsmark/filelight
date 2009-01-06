@@ -1,7 +1,23 @@
-/**Maintainer: Martin T. Sandsmark <sandsmark@samfundet.no>, (C) 2008-2009
-*  Original author:  Max Howell <max.howell@methylblue.com>, (C) 2003-2004
-*  Copyright: See COPYING file that comes with this distribution
-*/
+/***********************************************************************
+* Copyright 2003-2004  Max Howell <max.howell@methylblue.com>
+* Copyright 2008-2009  Martin Sandsmark <sandsmark@samfundet.no>
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License as
+* published by the Free Software Foundation; either version 2 of
+* the License or (at your option) version 3 or any later version
+* accepted by the membership of KDE e.V. (or its successor approved
+* by the membership of KDE e.V.), which shall act as a proxy
+* defined in Section 14 of version 3 of the license.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 
 #include "Config.h"
 #include "define.h"
@@ -97,7 +113,7 @@ Part::postInit()
       connect(summary, SIGNAL(activated(const KUrl&)), SLOT(openURL(const KUrl&)));
       summary->show();
       m_layout->addWidget(summary);
-  
+
       //FIXME KXMLGUI is b0rked, it should allow us to set this
       //BEFORE createGUI is called but it doesn't
       stateChanged("scan_failed");
@@ -192,15 +208,15 @@ Part::createAboutData()
 {
     return new KAboutData(
 		    "filelight",
-		    0, 
+		    0,
 		    ki18n("Filelight"),
 		    APP_VERSION,
 		    ki18n("Displays file usage in an easy to understand way."),
 		    KAboutData::License_GPL,
 		    ki18n("(c) 2002-2004 Max Howell\n\
-			    (c) 2008 Martin T. Sandsmark"), 
-		    ki18n("Please report bugs."), 
-		    "http://iskrembilen.com/", 
+			    (c) 2008 Martin T. Sandsmark"),
+		    ki18n("Please report bugs."),
+		    "http://iskrembilen.com/",
 		    "sandsmark@iskrembilen.com");
 }
 

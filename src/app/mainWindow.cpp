@@ -1,6 +1,23 @@
-// Maintainer:         Martin Sandsmark <sandsmark@samfundet.no> (C) 2008
-// Original author:    Max Howell <max.howell@methylblue.com>, (C) 2003-4
-// Copyright:          See COPYING file that comes with this distribution
+/***********************************************************************
+* Copyright 2003-2004  Max Howell <max.howell@methylblue.com>
+* Copyright 2008-2009  Martin Sandsmark <sandsmark@samfundet.no>
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License as
+* published by the Free Software Foundation; either version 2 of
+* the License or (at your option) version 3 or any later version
+* accepted by the membership of KDE e.V. (or its successor approved
+* by the membership of KDE e.V.), which shall act as a proxy
+* defined in Section 14 of version 3 of the license.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 
 #include "mainWindow.h"
 #include "part/part.h"
@@ -42,7 +59,7 @@ MainWindow::MainWindow() : KParts::MainWindow(), m_part(0)
 {
     setXMLFile("filelightui.rc");
     KPluginFactory *factory = KPluginLoader("filelightpart").factory();
-    
+
     if (!factory) {
        KMessageBox::error(this, i18n("Unable to load the Filelight Part.\nPlease make sure Filelight was correctly installed."));
        std::exit(1);
@@ -56,22 +73,22 @@ MainWindow::MainWindow() : KParts::MainWindow(), m_part(0)
         setupActions();
         createGUI(m_part);
         setCentralWidget(m_part->widget());
-    
+
         stateChanged("scan_failed"); //bah! doesn't affect the parts' actions, should I add them to the actionCollection here?
-    
+
         //QList<QObject *> buttons = toolBar()->findChildren<QObject *>("KToolBarButton"); //FIXME
         //if (buttons.isEmpty())
         //    KMessageBox::error(this, i18n("Filelight is not installed properly, consequently its menus and toolbars will appear reduced or even empty"));
         //delete &buttons;
-    
+
         connect(m_part, SIGNAL(started(KIO::Job*)), SLOT(scanStarted()));
         connect(m_part, SIGNAL(completed()), SLOT(scanCompleted()));
         connect(m_part, SIGNAL(canceled(const QString&)), SLOT(scanFailed()));
-    
+
         //TODO test these
         connect(m_part, SIGNAL(canceled(const QString&)), m_histories, SLOT(stop()));
         connect(BrowserExtension::childObject(m_part), SIGNAL(openURLNotify()), SLOT(urlAboutToChange()));
-    
+
         const KConfigGroup config = KGlobal::config()->group("general");
         m_combo->setHistoryItems(config.readPathEntry("comboHistory", QStringList()));
         applyMainWindowSettings(config, "window");
@@ -100,25 +117,25 @@ inline void MainWindow::setupActions() //singleton function
     KAction* action;
 
     //KAction(KIcon("folder_home"), i18n( "Scan &Home Directory" ), this, SLOT(slotScanHomeDirectory()), ac, "scan_home" )
-    action = ac->addAction("scan_home", this, SLOT(slotScanHomeDirectory())); 
+    action = ac->addAction("scan_home", this, SLOT(slotScanHomeDirectory()));
     action->setText(i18n("Scan &Home Directory"));
     action->setIcon(KIcon("user-home"));
     action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Home));
 
     //new KAction( i18n( "Scan &Root Directory" ), "folder_red", 0, this, SLOT(slotScanRootDirectory()), ac, "scan_root" );
-    action = ac->addAction("scan_root", this, SLOT(slotScanRootDirectory())); 
+    action = ac->addAction("scan_root", this, SLOT(slotScanRootDirectory()));
     action->setText(i18n("Scan &Root Directory"));
     action->setIcon(KIcon("folder-red"));
 
     //new KAction( i18n( "Rescan" ), "reload", KStandardShortcut::reload(), m_part, SLOT(rescan()), ac, "scan_rescan" );
-    action = ac->addAction("scan_rescan", m_part, SLOT(rescan())); 
+    action = ac->addAction("scan_rescan", m_part, SLOT(rescan()));
     action->setText(i18n("Rescan"));
     action->setIcon(KIcon("view-refresh"));
     action->setShortcut(KStandardShortcut::reload());
 
 
     //new KAction( i18n( "Stop" ), "stop", Qt::Key_Escape, this, SLOT(slotAbortScan()), ac, "scan_stop" );
-    action = ac->addAction("scan_stop", this, SLOT(slotAbortScan())); 
+    action = ac->addAction("scan_stop", this, SLOT(slotAbortScan()));
     action->setText(i18n("Stop"));
     action->setIcon(KIcon("process-stop"));
     action->setShortcut(Qt::Key_Escape);
@@ -126,7 +143,7 @@ inline void MainWindow::setupActions() //singleton function
     //new KAction( i18n( "Clear Location Bar" ), KApplication::reverseLayout() ? "clear_left" : "locationbar_erase", 0, m_combo, SLOT(clearEdit()), ac, "clear_location" );
 
     //new KAction( i18n( "Go" ), "key_enter", 0, m_combo, SIGNAL(returnPressed()), ac, "go" );
-    action = ac->addAction("go", m_combo, SIGNAL(returnPressed())); 
+    action = ac->addAction("go", m_combo, SIGNAL(returnPressed()));
     action->setText(i18n("Go"));
     action->setIcon(KIcon("go-jump-locationbar"));
 
