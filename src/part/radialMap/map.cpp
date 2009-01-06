@@ -1,15 +1,15 @@
 //Author:    Max Howell <max.howell@methylblue.com>, (C) 2003-4
 //Copyright: See COPYING file that comes with this distribution
 
-#include <kcursor.h>         //make()
-#include <kglobalsettings.h> //kdeColours
+#include <KCursor>         //make()
+#include <KDebug>
+#include <KGlobalSettings> //kdeColours
 #include <qimageblitz/qimageblitz.h>    //desaturate()
-#include <qapplication.h>    //make()
-#include <qimage.h>          //make() & paint()
-#include <qfont.h>           //ctor
-#include <qfontmetrics.h>    //ctor
-#include <qpainter.h>
-//Added by qt3to4:
+#include <QApplication>    //make()
+#include <QImage>          //make() & paint()
+#include <QFont>           //ctor
+#include <QFontMetrics>    //ctor
+#include <QPainter>
 #include <Q3PointArray>
 
 #include "builder.h"
@@ -23,7 +23,8 @@
 
 
 RadialMap::Map::Map()
-        : m_signature(0)
+        : QPixmap(QSize(500,500))
+        , m_signature(0)
         , m_ringBreadth(MIN_RING_BREADTH)
         , m_innerRadius(0)
         , m_visibleDepth(DEFAULT_RING_DEPTH)
@@ -180,6 +181,7 @@ void RadialMap::Map::colorise()
 
                if((*it)->file()->name() == "Used") {
                   cb = QApplication::palette().active().color(QColorGroup::Highlight);
+//                  cb = this->palette().color(QColorGroup::Highlight);
                   cb.getHsv(&h, &s1, &v1);
 
                   if(s1 > 80)
@@ -255,6 +257,7 @@ void RadialMap::Map::colorise()
 
             (*it)->setPalette(cp, cb);
 
+	    //TODO:
             //**** may be better to store KDE colours as H and S and vary V as others
             //**** perhaps make saturation difference for s2 dependent on contrast too
             //**** fake segments don't work with highContrast
@@ -278,6 +281,7 @@ void RadialMap::Map::aaPaint()
 
 void RadialMap::Map::paint(unsigned int scaleFactor)
 {
+   kDebug() << "drawing on pixmap...";
    if (scaleFactor == 0) //just in case
       scaleFactor = 1;
 
@@ -309,6 +313,7 @@ void RadialMap::Map::paint(unsigned int scaleFactor)
    //  ** i.e. slightly eliptic when resizing inbetween
 
    if (QPixmap::isNull())
+      kWarning() << "Refusing to draw on null pixmap";
       return;
 
    paint.begin(this);

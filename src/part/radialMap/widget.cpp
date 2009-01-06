@@ -14,7 +14,7 @@
 #include "part/fileTree.h"
 #include "radialMap.h" //constants
 #include "widget.h"
-
+#include "map.h"
 
 
 RadialMap::Widget::Widget(QWidget *parent)
@@ -28,7 +28,7 @@ RadialMap::Widget::Widget(QWidget *parent)
    QPalette palette;
    palette.setColor(this->backgroundRole(), Qt::white);
    setPalette(palette);
-   
+
    const QBitmap *cursor = QCursor(Qt::PointingHandCursor).bitmap();
    m_tip = new SegmentTip(cursor ? cursor->height() : 16);
 
