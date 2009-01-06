@@ -22,7 +22,7 @@ namespace Filelight
    class BrowserExtension : public KParts::BrowserExtension
    {
    public:
-      BrowserExtension( Part* );
+      BrowserExtension(Part*);
    };
 
 
@@ -41,14 +41,14 @@ namespace Filelight
       static KAboutData *createAboutData();
 
    public slots:
-      virtual bool openURL( const KUrl& );
+      virtual bool openURL(const KUrl&);
       void configFilelight();
       void rescan();
 
    private slots:
       void postInit();
-      void scanCompleted( Directory* );
-      void mapChanged( const Directory* );
+      void scanCompleted(Directory*);
+      void mapChanged(const Directory*);
 
    private:
       KStatusBar *statusBar() { return m_statusbar->statusBar(); }
@@ -62,10 +62,10 @@ namespace Filelight
       bool m_started;
 
    private:
-      bool start( const KUrl& );
+      bool start(const KUrl&);
 
    private slots:
-      void updateURL( const KUrl & );
+      void updateURL(const KUrl &);
    };
 }
 

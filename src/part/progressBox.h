@@ -15,9 +15,9 @@ class ProgressBox : public QLabel
 Q_OBJECT
 
 public:
-    ProgressBox( QWidget*, QObject* );
+    ProgressBox(QWidget*, QObject*);
 
-    void setText( int );
+    void setText(int);
 
 public slots:
     void start();

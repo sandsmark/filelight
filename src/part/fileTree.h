@@ -24,8 +24,8 @@ template <class T>
 class Link
 {
 public:
-   Link( T* const t ) : prev( this ), next( this ), data( t ) {}
-   Link() : prev( this ), next( this ), data( 0 ) {}
+   Link(T* const t) : prev(this), next(this), data(t) {}
+   Link() : prev(this), next(this), data(0) {}
 
 //TODO unlinking is slow and you don't use it very much in this context.
 //  ** Perhaps you can make a faster deletion system that doesn't bother tidying up first
@@ -50,12 +50,12 @@ template <class T>
 class Iterator
 {
 public:
-   Iterator() : link( 0 ) { } //**** remove this, remove this REMOVE THIS!!! dangerous as your implementation doesn't test for null links, always assumes they can be derefenced
-   Iterator( Link<T> *p ) : link( p ) { }
+   Iterator() : link(0) { } //**** remove this, remove this REMOVE THIS!!! dangerous as your implementation doesn't test for null links, always assumes they can be derefenced
+   Iterator(Link<T> *p) : link(p) { }
 
-   bool operator==( const Iterator<T>& it ) const { return link == it.link; }
-   bool operator!=( const Iterator<T>& it ) const { return link != it.link; }
-   bool operator!=( const Link<T> *p ) const { return p != link; }
+   bool operator==(const Iterator<T>& it) const { return link == it.link; }
+   bool operator!=(const Iterator<T>& it) const { return link != it.link; }
+   bool operator!=(const Link<T> *p) const { return p != link; }
 
    //here we have a choice, really I should make two classes one const the other not
    const T* operator*() const { return link->data; }
@@ -65,9 +65,9 @@ public:
 
    bool isNull() const { return (link == 0); } //REMOVE WITH ABOVE REMOVAL you don't want null iterators to be possible
 
-   void transferTo( Chain<T> &chain )
+   void transferTo(Chain<T> &chain)
    {
-      chain.append( remove() );
+      chain.append(remove());
    }
 
    T* remove() //remove from list, delete Link, data is returned NOT deleted
@@ -92,11 +92,11 @@ template <class T>
 class ConstIterator
 {
 public:
-   ConstIterator( Link<T> *p ) : link( p ) { }
+   ConstIterator(Link<T> *p) : link(p) { }
 
-   bool operator==( const Iterator<T>& it ) const { return link == it.link; }
-   bool operator!=( const Iterator<T>& it ) const { return link != it.link; }
-   bool operator!=( const Link<T> *p ) const { return p != link; }
+   bool operator==(const Iterator<T>& it) const { return link == it.link; }
+   bool operator!=(const Iterator<T>& it) const { return link != it.link; }
+   bool operator!=(const Link<T> *p) const { return p != link; }
 
    const T* operator*() const { return link->data; }
 
@@ -113,9 +113,9 @@ class Chain
 public:
    virtual ~Chain() { empty(); }
 
-   void append( T* const data )
+   void append(T* const data)
    {
-      Link<T>* const link = new Link<T>( data );
+      Link<T>* const link = new Link<T>(data);
 
       link->prev = head.prev;
       link->next = &head;
@@ -124,9 +124,9 @@ public:
       head.prev = link;
    }
 
-   void transferTo( Chain &c )
+   void transferTo(Chain &c)
    {
-      if( isEmpty() ) return;
+      if(isEmpty()) return;
 
       Link<T>* const first = head.next;
       Link<T>* const last  = head.prev;
@@ -140,16 +140,16 @@ public:
       c.head.prev = last;
    }
 
-   void empty() { while( head.next != &head ) { delete head.next; } }
+   void empty() { while(head.next != &head) { delete head.next; } }
 
-   Iterator<T>      iterator()      const { return Iterator<T>( head.next ); }
-   ConstIterator<T> constIterator() const { return ConstIterator<T>( head.next ); }
+   Iterator<T>      iterator()      const { return Iterator<T>(head.next); }
+   ConstIterator<T> constIterator() const { return ConstIterator<T>(head.next); }
    const Link<T>   *end()           const { return &head; }
    bool             isEmpty()       const { return head.next == &head; }
 
 private:
    Link<T> head;
-   void operator=( const Chain& );
+   void operator=(const Chain&);
 };
 
 
@@ -166,74 +166,74 @@ public:
    static const uint DENOMINATOR[4];
 
 public:
-   File( const char *name, FileSize size ) : m_parent( 0 ), m_name( qstrdup( name ) ), m_size( size ) {}
+   File(const char *name, FileSize size) : m_parent(0), m_name(qstrdup(name)), m_size(size) {}
    virtual ~File() { delete [] m_name; }
 
    const Directory *parent() const { return m_parent; }
    const char *name8Bit() const { return m_name; }
    FileSize size() const { return m_size; }
-   QString name() const { return QFile::decodeName( m_name ); }
+   QString name() const { return QFile::decodeName(m_name); }
 
    virtual bool isDirectory() const { return false; }
 
-   QString fullPath( const Directory* = 0 ) const;
-   QString humanReadableSize( UnitPrefix key = mega ) const;
+   QString fullPath(const Directory* = 0) const;
+   QString humanReadableSize(UnitPrefix key = mega) const;
 
 public:
-   static QString humanReadableSize( uint size, UnitPrefix Key = mega );
+   static QString humanReadableSize(uint size, UnitPrefix Key = mega);
 
 protected:
-   File( const char *name, FileSize size, Directory *parent ) : m_parent( parent ), m_name( qstrdup( name ) ), m_size( size ) {}
+   File(const char *name, FileSize size, Directory *parent) : m_parent(parent), m_name(qstrdup(name)), m_size(size) {}
 
    Directory *m_parent; //0 if this is treeRoot
    char      *m_name;
    FileSize   m_size;   //in units of KiB
 
 private:
-   File( const File& );
-   void operator=( const File& );
+   File(const File&);
+   void operator=(const File&);
 };
 
 
 class Directory : public Chain<File>, public File
 {
 public:
-   Directory( const char *name ) : File( name, 0 ), m_children( 0 ) {} //DON'T pass the full path!
+   Directory(const char *name) : File(name, 0), m_children(0) {} //DON'T pass the full path!
 
    uint children() const { return m_children; }
    virtual bool isDirectory() const { return true; }
 
    ///appends a Directory
-   void append( Directory *d, const char *name=0 )
+   void append(Directory *d, const char *name=0)
    {
-      if( name ) {
+      if(name) {
          delete [] d->m_name;
-         d->m_name = qstrdup( name ); } //directories that had a fullpath copy just their names this way
+         d->m_name = qstrdup(name); } //directories that had a fullpath copy just their names this way
 
       m_children += d->children(); //doesn't include the dir itself
       d->m_parent = this;
-      append( (File*)d ); //will add 1 to filecount for the dir itself
+      append((File*)d); //will add 1 to filecount for the dir itself
    }
 
    ///appends a File
-   void append( const char *name, FileSize size )
+   void append(const char *name, FileSize size)
    {
-      append( new File( name, size, this ) );
+      append(new File(name, size, this));
    }
 
 private:
-   void append( File *p )
+   void append(File *p)
    {
       m_children++;
       m_size += p->size();
-      Chain<File>::append( p );
+      Chain<File>::append(p);
    }
 
    uint m_children;
 
 private:
-   Directory( const Directory& ); //undefined
-   void operator=( const Directory& ); //undefined
+   Directory(const Directory&); //undefined
+   void operator=(const Directory&); //undefined
 };
 
 #endif

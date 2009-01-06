@@ -14,12 +14,12 @@ namespace RadialMap
     class Segment //all angles are in 16ths of degrees
     {
     public:
-        Segment( const File *f, uint s, uint l, bool isFake = false )
-          : m_angleStart( s )
-          , m_angleSegment( l )
-          , m_file( f )
-          , m_hasHiddenChildren( false )
-          , m_fake( isFake ) {}
+        Segment(const File *f, uint s, uint l, bool isFake = false)
+          : m_angleStart(s)
+          , m_angleSegment(l)
+          , m_file(f)
+          , m_hasHiddenChildren(false)
+          , m_fake(isFake) {}
         ~Segment();
 
         uint          start() const { return m_angleStart; }
@@ -32,13 +32,13 @@ namespace RadialMap
         bool isFake() const { return m_fake; }
         bool hasHiddenChildren() const { return m_hasHiddenChildren; }
 
-        bool intersects( uint a ) const { return ( ( a >= start() ) && ( a < end() ) ); }
+        bool intersects(uint a) const { return ((a >= start()) && (a < end())); }
 
         friend class Map;
         friend class Builder;
 
     private:
-        void setPalette( const QColor &p, const QColor &b ) { m_pen = p; m_brush = b; }
+        void setPalette(const QColor &p, const QColor &b) { m_pen = p; m_brush = b; }
 
         const uint m_angleStart, m_angleSegment;
         const File* const m_file;

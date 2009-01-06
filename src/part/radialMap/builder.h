@@ -19,12 +19,12 @@ namespace RadialMap
     class Builder
     {
     public:
-        Builder( Map*, const Directory* const, bool fast=false );
+        Builder(Map*, const Directory* const, bool fast=false);
 
     private:
-        void findVisibleDepth( const Directory* const dir, const uint=0 );
-        void setLimits( const uint& );
-        bool build( const Directory* const, const uint=0, uint=0, const uint=5760 );
+        void findVisibleDepth(const Directory* const dir, const uint=0);
+        void setLimits(const uint&);
+        bool build(const Directory* const, const uint=0, uint=0, const uint=5760);
 
         Map             *m_map;
         const Directory* const m_root;

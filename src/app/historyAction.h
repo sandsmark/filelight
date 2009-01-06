@@ -24,7 +24,7 @@ class HistoryAction : KAction
     friend class HistoryCollection;
 
 public:
-    virtual void setEnabled(bool b = true) { KAction::setEnabled( b ? !m_list.isEmpty() : false); }
+    virtual void setEnabled(bool b = true) { KAction::setEnabled(b ? !m_list.isEmpty() : false); }
 
     void clear() { m_list.clear(); KAction::setText(m_text); }
 

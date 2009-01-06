@@ -20,28 +20,28 @@ public:
 	SettingsDialog(QWidget* = 0);
 
 protected:
-  virtual void closeEvent( QCloseEvent * );
+  virtual void closeEvent(QCloseEvent *);
   virtual void reject();
 
 public slots:
   void addDirectory();
   void removeDirectory();
-  void toggleScanAcrossMounts( bool );
-  void toggleDontScanRemoteMounts( bool );
-  void toggleDontScanRemovableMedia( bool );
+  void toggleScanAcrossMounts(bool);
+  void toggleDontScanRemoteMounts(bool);
+  void toggleDontScanRemovableMedia(bool);
   void reset();
   void startTimer();
-  void toggleUseAntialiasing( bool = true );
-  void toggleVaryLabelFontSizes( bool );
-  void changeContrast( int );
-  void changeScheme( int );
-  void changeMinFontPitch( int );
-  void toggleShowSmallFiles( bool );
+  void toggleUseAntialiasing(bool = true);
+  void toggleVaryLabelFontSizes(bool);
+  void changeContrast(int);
+  void changeScheme(int);
+  void changeMinFontPitch(int);
+  void toggleShowSmallFiles(bool);
   void slotSliderReleased();
 
 signals:
   void mapIsInvalid();
-  void canvasIsDirty( int );
+  void canvasIsDirty(int);
 
 private:
   QTimer m_timer;

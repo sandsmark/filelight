@@ -16,7 +16,7 @@ namespace Filelight
    class LocalLister : public QThread
    {
    public:
-      LocalLister( const QString &path, Chain<Directory> *cachedTrees, QObject *parent );
+      LocalLister(const QString &path, Chain<Directory> *cachedTrees, QObject *parent);
 
       static bool readMounts();
 
@@ -27,7 +27,7 @@ namespace Filelight
 
    private:
       virtual void run();
-      Directory *scan( const Q3CString&, const Q3CString& );
+      Directory *scan(const Q3CString&, const Q3CString&);
 
    private:
       static QStringList s_localMounts, s_remoteMounts; //TODO namespace

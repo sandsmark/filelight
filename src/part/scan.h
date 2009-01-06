@@ -23,10 +23,10 @@ namespace Filelight
       friend class RemoteLister;
 
    public:
-      ScanManager( QObject *parent );
+      ScanManager(QObject *parent);
       virtual ~ScanManager();
 
-      bool start( const KUrl& );
+      bool start(const KUrl&);
       bool running() const;
 
       static uint files() { return s_files; }
@@ -36,7 +36,7 @@ namespace Filelight
       void emptyCache();
 
    signals:
-      void completed( Directory* );
+      void completed(Directory*);
       void aboutToEmptyCache();
 
    private:

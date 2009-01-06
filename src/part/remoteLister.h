@@ -12,7 +12,7 @@ namespace Filelight
    {
    Q_OBJECT
    public:
-      RemoteLister( const KUrl &url, QWidget *parent );
+      RemoteLister(const KUrl &url, QWidget *parent);
       ~RemoteLister();
 
    private slots:

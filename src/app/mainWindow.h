@@ -35,8 +35,8 @@ class MainWindow : public KParts::MainWindow
     void slotScanDirectory();
     void slotScanHomeDirectory();
     void slotScanRootDirectory();
-    bool slotScanUrl( const KUrl& );
-    bool slotScanPath( const QString& );
+    bool slotScanUrl(const KUrl&);
+    bool slotScanPath(const QString&);
     void slotAbortScan();
 
     void configToolbars();
