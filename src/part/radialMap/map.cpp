@@ -300,7 +300,7 @@ void RadialMap::Map::aaPaint()
 
 void RadialMap::Map::paint(unsigned int scaleFactor)
 {
-   kDebug() << "drawing on pixmap...";
+   kDebug() << "drawing on pixmap coordinates:" << m_rect;
    if (scaleFactor == 0) //just in case
       scaleFactor = 1;
 
@@ -321,7 +321,7 @@ void RadialMap::Map::paint(unsigned int scaleFactor)
       rect.setCoords(x1, y1, x2, y2);
 
       step *= scaleFactor;
-      QPixmap::resize(this->size() * (int)scaleFactor);
+//      QPixmap::resize(this->size() * (int)scaleFactor); //TODO: fixme, etc.
    }
    else if(m_ringBreadth != MAX_RING_BREADTH && m_ringBreadth != MIN_RING_BREADTH) {
       excess = rect.width() % m_ringBreadth;
@@ -331,8 +331,8 @@ void RadialMap::Map::paint(unsigned int scaleFactor)
    //**** best option you can think of is to make the circles slightly less perfect,
    //  ** i.e. slightly eliptic when resizing inbetween
 
-   if (isNull())
-      kWarning() << "Refusing to draw uninitialized.";
+   if (QPixmap::isNull())
+      kWarning() << "Refusing to draw on empty pixmap.";
       return;
 
    paint.begin(this);
