@@ -36,7 +36,7 @@
 
 
 RadialMap::Widget::Widget(QWidget *parent)
-   : QWidget(parent, Qt::WNoAutoErase)
+   : QWidget(parent)
    , m_tree(0)
    , m_focus(0)
    , m_rootSegment(0) //TODO we don't delete it, *shrug*

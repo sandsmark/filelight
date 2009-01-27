@@ -56,7 +56,7 @@ bool isBackingStoreActive()
 
 
 SegmentTip::SegmentTip(uint h)
-        : QWidget(0, Qt::WNoAutoErase | Qt::WStyle_Customize | Qt::WStyle_NoBorder | Qt::WStyle_Tool | Qt::WStyle_StaysOnTop | Qt::WX11BypassWM)
+    : QWidget(0, Qt::FramelessWindowHint | Qt::Tool | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint)
         , m_cursorHeight(-h)
         , m_backing_store(isBackingStoreActive())
 {
@@ -99,7 +99,7 @@ SegmentTip::moveTo(QPoint p, QWidget &canvas, bool placeAbove)
 
     m_pixmap = QPixmap(size()); //move to updateTip once you are sure it can never be null
 
-    QColor const c = QToolTip::palette().color(QPalette::Active, QColorGroup::Background);
+    const QColor c = QToolTip::palette().color(QPalette::Active, QPalette::Background);
     if (!m_backing_store)
         m_pixmap.fill(c);
 

@@ -18,9 +18,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-find_package(KDE4 REQUIRED Qt3Support)
+find_package(KDE4 REQUIRED)
 
-add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS -fPIC)
+add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -fPIC)
 
 include(KDE4Defaults)
 
@@ -30,3 +30,4 @@ include_directories(src/ ${KDE4_INCLUDES} ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} )
 
 add_subdirectory(src)
 add_subdirectory(misc)
+

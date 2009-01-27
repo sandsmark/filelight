@@ -58,10 +58,10 @@ namespace RadialMap {
             Chain<Segment> *m_signature;
 
             QRect   m_rect;
+            uint    m_visibleDepth; ///visible level depth of system
             QPixmap m_pixmap;
             uint    m_ringBreadth;  ///ring breadth
             uint    m_innerRadius;  ///radius of inner circle
-            uint    m_visibleDepth; ///visible level depth of system
             QString m_centerText;
 
             uint MAP_2MARGIN;

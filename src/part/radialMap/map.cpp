@@ -39,10 +39,10 @@
 
 RadialMap::Map::Map()
         : m_signature(0)
-        , m_ringBreadth(MIN_RING_BREADTH)
-        , m_innerRadius(0)
         , m_visibleDepth(DEFAULT_RING_DEPTH)
         , m_pixmap()
+        , m_ringBreadth(MIN_RING_BREADTH)
+        , m_innerRadius(0)
 {
     //FIXME this is all broken. No longer is a maximum depth!
     const int fmh   = QFontMetrics(QFont()).height();

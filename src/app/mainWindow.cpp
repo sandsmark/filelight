@@ -51,8 +51,6 @@
 #include <KStandardAction>
 #include <KActionCollection>
 
-#include <Q3PopupMenu>
-
 namespace Filelight {
 
 MainWindow::MainWindow() : KParts::MainWindow(), m_part(0)
