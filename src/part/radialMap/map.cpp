@@ -37,9 +37,6 @@
 #include "sincos.h"
 #include "widget.h"
 
-#define COLOR_GREY QColor(0, 0, 140, QColor::Hsv)
-
-
 RadialMap::Map::Map()
         : QPixmap()
         , m_signature(0)
@@ -152,7 +149,7 @@ bool RadialMap::Map::resize(const QRect &rect)
 
       //resize the pixmap
       size += MAP_2MARGIN;
-      QPixmap::resize(size, size); //FIXME 
+      QPixmap::resize(size, size); //FIXME
       fill();
 
       // for summary widget this is a good optimisation as it happens
@@ -199,8 +196,7 @@ void RadialMap::Map::colorise()
             case 2000: //HACK for summary view
 
                if((*it)->file()->name() == "Used") {
-                  cb = QApplication::palette().active().color(QColorGroup::Highlight);
-//                  cb = this->palette().color(QColorGroup::Highlight);
+                    cb = QApplication::palette().highlight().color();
                   cb.getHsv(&h, &s1, &v1);
 
                   if(s1 > 80)
@@ -313,7 +309,7 @@ void RadialMap::Map::paint(unsigned int scaleFactor)
    if(scaleFactor > 1)
    {
       int x1, y1, x2, y2;
-      rect.coords(&x1, &y1, &x2, &y2);
+      rect.getCoords(&x1, &y1, &x2, &y2);
       x1 *= scaleFactor;
       y1 *= scaleFactor;
       x2 *= scaleFactor;
@@ -397,7 +393,7 @@ void RadialMap::Map::paint(unsigned int scaleFactor)
             paint.setPen(pen);
             QRect rect2 = rect;
             width /= 2;
-            rect2.addCoords(width, width, -width, -width);
+            rect2.adjust(width, width, -width, -width);
             paint.drawArc(rect2, (*it)->start(), (*it)->length());
             paint.restore();
          }
@@ -409,12 +405,12 @@ void RadialMap::Map::paint(unsigned int scaleFactor)
          excess -= 2;
       }
 
-      rect.addCoords(step, step, -step, -step);
+      rect.adjust(step, step, -step, -step);
    }
 
    //  if(excess > 0) rect.addCoords(excess, excess, 0, 0); //ugly
 
-   paint.setPen(COLOR_GREY);
+   paint.setPen(Qt::gray);
    paint.setBrush(Qt::white);
    paint.drawEllipse(rect);
 
@@ -424,7 +420,7 @@ void RadialMap::Map::paint(unsigned int scaleFactor)
       paint.end();
 
       int x1, y1, x2, y2;
-      rect.coords(&x1, &y1, &x2, &y2);
+      rect.getCoords(&x1, &y1, &x2, &y2);
       x1 /= scaleFactor;
       y1 /= scaleFactor;
       x2 /= scaleFactor;
@@ -432,11 +428,11 @@ void RadialMap::Map::paint(unsigned int scaleFactor)
       rect.setCoords(x1, y1, x2, y2);
 
       QImage img = this->toImage();
-      img = img.smoothScale(this->size() / (int)scaleFactor);
+      img = img.scaled(this->size() / (int)scaleFactor, Qt::KeepAspectRatio, Qt::SmoothTransformation);
       this->fromImage(img);
 
       paint.begin(this);
-      paint.setPen(COLOR_GREY);
+      paint.setPen(Qt::gray);
       paint.setBrush(Qt::white);
    }
 

@@ -42,7 +42,7 @@ namespace RadialMap {
 bool isBackingStoreActive()
 {
     //TODO: THIS IS UGLY!
-    // # xdpyinfo | grep backing
+// # xdpyinfo | grep backing
     // options:    backing-store YES, save-unders YES
 
     char buffer[4096];
@@ -97,12 +97,7 @@ SegmentTip::moveTo(QPoint p, QWidget &canvas, bool placeAbove)
     const QRect alphaMaskRect(canvas.mapFromGlobal(p), size());
     const QRect intersection(alphaMaskRect.intersect(canvas.rect()));
 
-    /* m_pixmap.resize(size()); //move to updateTip once you are sure it can never be null */
-    m_pixmap = QPixmap(size());
-    bitBlt(&m_pixmap, offset, &canvas, intersection, QPainter::CompositionMode_SourceOver);
-/*    QPainter* p = new QPainter(&canvas);
-    p->drawPixmap(intersection, m_pixmap);
-    delete p; */
+    m_pixmap = QPixmap(size()); //move to updateTip once you are sure it can never be null
 
     QColor const c = QToolTip::palette().color(QPalette::Active, QColorGroup::Background);
     if (!m_backing_store)
@@ -179,8 +174,7 @@ SegmentTip::event(QEvent *e)
         break;
     case QEvent::Paint:
     {
-        //QPainter(this).drawPixmap(0, 0, m_pixmap);
-        bitBlt(this, 0, 0, &m_pixmap);
+        QPainter(this).drawPixmap(0, 0, m_pixmap);
         return true;
     }
     default:
