@@ -38,11 +38,11 @@
 #include "widget.h"
 
 RadialMap::Map::Map()
-        : QPixmap()
-        , m_signature(0)
+        : m_signature(0)
         , m_ringBreadth(MIN_RING_BREADTH)
         , m_innerRadius(0)
         , m_visibleDepth(DEFAULT_RING_DEPTH)
+        , m_pixmap()
 {
     //FIXME this is all broken. No longer is a maximum depth!
     const int fmh   = QFontMetrics(QFont()).height();
@@ -62,12 +62,12 @@ void RadialMap::Map::invalidate(const bool desaturateTheImage)
 
    if(desaturateTheImage)
    {
-      QImage img = this->toImage();
+      QImage img = m_pixmap.toImage();
 
       Blitz::desaturate(img, 0.7);
       Blitz::grayscale(img, true);
 
-      this->fromImage(img);
+      m_pixmap.fromImage(img);
    }
 
    m_visibleDepth = Config::defaultRingDepth;
@@ -149,11 +149,11 @@ bool RadialMap::Map::resize(const QRect &rect)
 
       //resize the pixmap
       size += MAP_2MARGIN;
-      QPixmap::resize(size, size); //FIXME
-      fill();
+      m_pixmap = QPixmap(size, size); //resize(size, size);
+      m_pixmap.fill();
 
       // for summary widget this is a good optimisation as it happens
-      if (QPixmap::isNull())
+      if (m_pixmap.isNull())
           return false;
 
       if(m_signature != 0)
@@ -161,7 +161,7 @@ bool RadialMap::Map::resize(const QRect &rect)
          setRingBreadth();
          paint();
       }
-      else fill(); //FIXME I don't like having to do this..
+      else m_pixmap.fill(); //FIXME I don't like having to do this..
 
       return true;
    }
@@ -327,13 +327,13 @@ void RadialMap::Map::paint(unsigned int scaleFactor)
    //**** best option you can think of is to make the circles slightly less perfect,
    //  ** i.e. slightly eliptic when resizing inbetween
 
-   if (QPixmap::isNull())
+   if (m_pixmap.isNull())
       kWarning() << "Refusing to draw on empty pixmap.";
       return;
 
-   paint.begin(this);
+   paint.begin(&m_pixmap);
 
-   fill(); //erase background
+   m_pixmap.fill(); //erase background
 
    for(int x = m_visibleDepth; x >= 0; --x)
    {
@@ -413,7 +413,7 @@ void RadialMap::Map::paint(unsigned int scaleFactor)
    paint.setPen(Qt::gray);
    paint.setBrush(Qt::white);
    paint.drawEllipse(rect);
-
+    kDebug() << scaleFactor;
    if(scaleFactor > 1)
    {
       //have to end in order to smoothscale()
@@ -427,11 +427,11 @@ void RadialMap::Map::paint(unsigned int scaleFactor)
       y2 /= scaleFactor;
       rect.setCoords(x1, y1, x2, y2);
 
-      QImage img = this->toImage();
-      img = img.scaled(this->size() / (int)scaleFactor, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-      this->fromImage(img);
+      QImage img = m_pixmap.toImage();
+      img = img.scaled(m_pixmap.size() / (int)scaleFactor, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+      //this->fromImage(img);
 
-      paint.begin(this);
+      paint.begin(&m_pixmap);
       paint.setPen(Qt::gray);
       paint.setBrush(Qt::white);
    }

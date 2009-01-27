@@ -29,7 +29,7 @@
 namespace RadialMap {
     class Segment;
 
-    class Map : public QPixmap
+    class Map
     {
         public:
             Map();
@@ -40,6 +40,11 @@ namespace RadialMap {
 
             bool isNull() const { return (m_signature == 0); }
             void invalidate(const bool);
+
+            int height() const { return m_rect.height(); }
+            int width() const { return m_rect.width();  }
+
+            QPixmap getPixmap() { return m_pixmap; }
 
             friend class Builder;
             friend class Widget;
@@ -53,6 +58,7 @@ namespace RadialMap {
             Chain<Segment> *m_signature;
 
             QRect   m_rect;
+            QPixmap m_pixmap;
             uint    m_ringBreadth;  ///ring breadth
             uint    m_innerRadius;  ///radius of inner circle
             uint    m_visibleDepth; ///visible level depth of system

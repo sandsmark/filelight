@@ -69,7 +69,7 @@ RadialMap::Widget::paintEvent(QPaintEvent*)
 
     QPainter paint(this);
 
-    paint.drawPixmap(m_offset, m_map);
+    paint.drawPixmap(m_offset, m_map.getPixmap());
 
     //vertical strips
     if(m_map.width() < width())
