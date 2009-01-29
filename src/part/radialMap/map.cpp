@@ -327,9 +327,10 @@ void RadialMap::Map::paint(unsigned int scaleFactor)
    //**** best option you can think of is to make the circles slightly less perfect,
    //  ** i.e. slightly eliptic when resizing inbetween
 
-   if (m_pixmap.isNull())
+   if (m_pixmap.isNull()){
       kWarning() << "Refusing to draw on empty pixmap.";
       return;
+   }
 
    paint.begin(&m_pixmap);
 
