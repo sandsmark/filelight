@@ -28,7 +28,6 @@
 #include <KDebug>
 
 #include <QApplication>
-#include <QCustomEvent>
 
 namespace Filelight
 {
@@ -41,6 +40,7 @@ namespace Filelight
       , m_cache(new Chain<Directory>)
    {
       Filelight::LocalLister::readMounts();
+      connect(this, SIGNAL(branchCompleted(Directory*, bool)), this, SLOT(cacheTree(Directory*, bool)));
    }
 
    ScanManager::~ScanManager()
@@ -130,7 +130,7 @@ namespace Filelight
                   //we found a completed tree, thus no need to scan
                   kDebug() << "Found cache-handle, generating map.." << endl;
 
-                  appendTree(d, true);
+                  emit branchCompleted(d, true);
 
                   return true;
                }
@@ -153,6 +153,8 @@ namespace Filelight
          QApplication::setOverrideCursor(Qt::BusyCursor);
          //starts listing by itself
          m_thread = new Filelight::LocalLister(path, trees, this);
+         connect(m_thread, SIGNAL(branchCompleted(Directory*, bool)), this, SLOT(cacheTree(Directory*, bool)));
+
          return true;
       }
 
@@ -189,9 +191,10 @@ namespace Filelight
    }
 
    void
-   ScanManager::appendTree(Directory *tree, bool finished)
+   ScanManager::cacheTree(Directory *tree, bool finished)
    {
-/*      Directory *tree = (Directory*)e->data(); */
+      kDebug() << tree->children();
+      kDebug() << finished;
 
       if(m_thread) {
           m_thread->terminate();

@@ -32,10 +32,15 @@ namespace Filelight
 {
    class LocalLister : public QThread
    {
+   Q_OBJECT
+
    public:
       LocalLister(const QString &path, Chain<Directory> *cachedTrees, QObject *parent);
 
       static bool readMounts();
+
+   signals:
+      void branchCompleted(Directory* tree, bool finished);
 
    private:
       QString m_path;

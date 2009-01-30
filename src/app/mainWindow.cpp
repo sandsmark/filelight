@@ -150,6 +150,9 @@ inline void MainWindow::setupActions() //singleton function
     action->setText(i18n("Location Bar"));
     action->setDefaultWidget(m_combo);
 
+    action = ac->addAction("scan_directory", this, SLOT(slotScanDirectory()));
+    action->setText(i18n("Scan Directory"));
+    action->setIcon(KIcon("folder"));
 
     //m_recentScans = new KRecentFilesAction(i18n("&Recent Scans"), 0, ac, "scan_recent", 8);
     m_recentScans = new KRecentFilesAction(i18n("&Recent Scans"), ac);

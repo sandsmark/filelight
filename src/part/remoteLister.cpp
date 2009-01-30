@@ -103,7 +103,7 @@ namespace Filelight
    {
       Directory *tree = isFinished() ? m_store->directory : 0;
 
-      qobject_cast<ScanManager*>(parent())->appendTree(tree, false);
+//      qobject_cast<ScanManager*>(parent())->appendTree(tree, false);//FIXME TODO FUCK
       delete m_root;
    }
 

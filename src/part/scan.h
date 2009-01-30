@@ -50,10 +50,12 @@ namespace Filelight
    public slots:
       bool abort();
       void emptyCache();
+      void cacheTree(Directory*, bool);
 
    signals:
       void completed(Directory*);
       void aboutToEmptyCache();
+      void branchCompleted(Directory* tree, bool finished);
 
    private:
       static bool s_abort;
@@ -63,7 +65,6 @@ namespace Filelight
       QThread *m_thread;
       Chain<Directory> *m_cache;
 
-      virtual void appendTree(Directory*, bool);
    };
 }
 

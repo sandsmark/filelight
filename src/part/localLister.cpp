@@ -84,10 +84,7 @@ namespace Filelight
          delete tree;
          tree = 0;
       }
-      if (parent() != 0)
-        qobject_cast<ScanManager *>(parent())->appendTree(tree, false);
-      else
-        KMessageBox::error(qobject_cast<QWidget *>(parent()), "FIXME: something wrong happened!");
+      emit branchCompleted(tree, false);
    }
 
    // from system.h in GNU coreutils package
@@ -359,3 +356,5 @@ namespace Filelight
       return true;
    }
 }
+
+#include "localLister.moc"
