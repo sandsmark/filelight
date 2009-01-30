@@ -139,7 +139,6 @@ bool RadialMap::Map::resize(const QRect &rect)
 
         {
             const uint minSize = MIN_RING_BREADTH * 2 * (m_visibleDepth + 2);
-            const uint mD2 = MAP_2MARGIN / 2;
 
             if (size < minSize)
                 size = minSize;

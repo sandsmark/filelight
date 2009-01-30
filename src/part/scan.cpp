@@ -36,9 +36,9 @@ uint ScanManager::s_files = 0;
 
 ScanManager::ScanManager(QObject *parent)
         : QObject(parent)
+        , m_mutex()
         , m_thread(0)
         , m_cache(new Chain<Directory>)
-        , m_mutex(0)
 {
     Filelight::LocalLister::readMounts();
     connect(this, SIGNAL(branchCompleted(Directory*, bool)), this, SLOT(cacheTree(Directory*, bool)));
