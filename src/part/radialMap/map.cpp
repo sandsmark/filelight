@@ -149,8 +149,7 @@ bool RadialMap::Map::resize(const QRect &rect)
 
       //resize the pixmap
       size += MAP_2MARGIN;
-      m_pixmap = QPixmap(size, size); //resize(size, size);
-      m_pixmap.fill();
+      m_pixmap = QPixmap(size, size);
 
       // for summary widget this is a good optimisation as it happens
       if (m_pixmap.isNull())
@@ -317,7 +316,7 @@ void RadialMap::Map::paint(unsigned int scaleFactor)
       rect.setCoords(x1, y1, x2, y2);
 
       step *= scaleFactor;
-//      QPixmap::resize(this->size() * (int)scaleFactor); //TODO: fixme, etc.
+      m_pixmap = QPixmap(m_pixmap.size() * (int)scaleFactor);
    }
    else if(m_ringBreadth != MAX_RING_BREADTH && m_ringBreadth != MIN_RING_BREADTH) {
       excess = rect.width() % m_ringBreadth;
@@ -414,9 +413,10 @@ void RadialMap::Map::paint(unsigned int scaleFactor)
    paint.setPen(Qt::gray);
    paint.setBrush(Qt::white);
    paint.drawEllipse(rect);
-    kDebug() << scaleFactor;
+   kDebug() << scaleFactor;
    if(scaleFactor > 1)
    {
+       kWarning() << "scaling";
       //have to end in order to smoothscale()
       paint.end();
 
@@ -430,7 +430,7 @@ void RadialMap::Map::paint(unsigned int scaleFactor)
 
       QImage img = m_pixmap.toImage();
       img = img.scaled(m_pixmap.size() / (int)scaleFactor, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-      //this->fromImage(img);
+      m_pixmap = QPixmap::fromImage(img);
 
       paint.begin(&m_pixmap);
       paint.setPen(Qt::gray);
