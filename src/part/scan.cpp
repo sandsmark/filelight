@@ -38,6 +38,7 @@ namespace Filelight
       : QObject(parent)
       , m_thread(0)
       , m_cache(new Chain<Directory>)
+      , m_mutex(0)
    {
       Filelight::LocalLister::readMounts();
       connect(this, SIGNAL(branchCompleted(Directory*, bool)), this, SLOT(cacheTree(Directory*, bool)));
@@ -193,6 +194,8 @@ namespace Filelight
    void
    ScanManager::cacheTree(Directory *tree, bool finished)
    {
+      QMutexLocker locker(&m_mutex); // This gets released once it is destroyed.
+
       if(m_thread) {
           m_thread->terminate();
           m_thread->wait();

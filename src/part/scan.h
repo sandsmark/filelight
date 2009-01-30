@@ -24,6 +24,7 @@
 
 #include <KUrl>
 #include <QObject>
+#include <QMutex>
 
 class QThread;
 class Directory;
@@ -62,6 +63,7 @@ namespace Filelight
       static uint s_files;
 
       KUrl m_url;
+      QMutex m_mutex;
       QThread *m_thread;
       Chain<Directory> *m_cache;
 
