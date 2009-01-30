@@ -122,6 +122,8 @@ Part::openURL(const KUrl &u)
 {
    //we don't want to be using the summary screen anymore
    delete widget()->findChild<SummaryWidget *>("summaryWidget");
+
+   m_layout->addWidget(m_map);
    m_map->show();
 
    //TODO everyone hates dialogs, instead render the text in big fonts on the Map
