@@ -27,45 +27,53 @@
 #include <QString>
 
 namespace RadialMap {
-    class Segment;
+class Segment;
 
-    class Map
-    {
-        public:
-            Map();
-            ~Map();
+class Map
+{
+public:
+    Map();
+    ~Map();
 
-            void make(const Directory *, bool = false);
-            bool resize(const QRect&);
+    void make(const Directory *, bool = false);
+    bool resize(const QRect&);
 
-            bool isNull() const { return (m_signature == 0); }
-            void invalidate(const bool);
+    bool isNull() const {
+        return (m_signature == 0);
+    }
+    void invalidate(const bool);
 
-            int height() const { return m_rect.height(); }
-            int width() const { return m_rect.width();  }
+    int height() const {
+        return m_rect.height();
+    }
+    int width() const {
+        return m_rect.width();
+    }
 
-            QPixmap getPixmap() { return m_pixmap; }
+    QPixmap getPixmap() {
+        return m_pixmap;
+    }
 
-            friend class Builder;
-            friend class Widget;
+    friend class Builder;
+    friend class Widget;
 
-        private:
-            void paint(uint = 1);
-            void aaPaint();
-            void colorise();
-            void setRingBreadth();
+private:
+    void paint(uint = 1);
+    void aaPaint();
+    void colorise();
+    void setRingBreadth();
 
-            Chain<Segment> *m_signature;
+    Chain<Segment> *m_signature;
 
-            QRect   m_rect;
-            uint    m_visibleDepth; ///visible level depth of system
-            QPixmap m_pixmap;
-            uint    m_ringBreadth;  ///ring breadth
-            uint    m_innerRadius;  ///radius of inner circle
-            QString m_centerText;
+    QRect   m_rect;
+    uint    m_visibleDepth; ///visible level depth of system
+    QPixmap m_pixmap;
+    uint    m_ringBreadth;  ///ring breadth
+    uint    m_innerRadius;  ///radius of inner circle
+    QString m_centerText;
 
-            uint MAP_2MARGIN;
-    };
+    uint MAP_2MARGIN;
+};
 }
 
 #endif

@@ -59,9 +59,9 @@ MainWindow::MainWindow() : KParts::MainWindow(), m_part(0)
     KPluginFactory *factory = KPluginLoader("filelightpart").factory();
 
     if (!factory) {
-       KMessageBox::error(this, i18n("Unable to load the Filelight Part.\nPlease make sure Filelight was correctly installed."));
-       std::exit(1);
-       return;
+        KMessageBox::error(this, i18n("Unable to load the Filelight Part.\nPlease make sure Filelight was correctly installed."));
+        std::exit(1);
+        return;
     }
 
     m_part = static_cast<Part *>(factory->create<KParts::ReadOnlyPart>(this));
@@ -171,8 +171,8 @@ inline void MainWindow::setupActions() //singleton function
 
 bool MainWindow::queryExit()
 {
-    if(!m_part) //apparently std::exit() still calls this function, and abort() causes a crash..
-       return true;
+    if (!m_part) //apparently std::exit() still calls this function, and abort() causes a crash..
+        return true;
 
     KConfigGroup config = KGlobal::config()->group("general");
 
@@ -206,37 +206,43 @@ inline void MainWindow::slotScanDirectory()
     slotScanUrl(KFileDialog::getExistingDirectoryUrl(m_part->url(), this, QString("Select directory to scan...")));
 }
 
-inline void MainWindow::slotScanHomeDirectory() { slotScanPath(getenv("HOME")); }
-inline void MainWindow::slotScanRootDirectory() { slotScanPath("/"); }
-inline void MainWindow::slotUp()                { slotScanUrl(m_part->url().upUrl()); }
+inline void MainWindow::slotScanHomeDirectory() {
+    slotScanPath(getenv("HOME"));
+}
+inline void MainWindow::slotScanRootDirectory() {
+    slotScanPath("/");
+}
+inline void MainWindow::slotUp()                {
+    slotScanUrl(m_part->url().upUrl());
+}
 
 inline void MainWindow::slotComboScan()
 {
-   const QString path = KShell::tildeExpand(m_combo->lineEdit()->text());
-   if (slotScanPath(path))
-      m_combo->addToHistory(path);
+    const QString path = KShell::tildeExpand(m_combo->lineEdit()->text());
+    if (slotScanPath(path))
+        m_combo->addToHistory(path);
 }
 
 inline bool MainWindow::slotScanPath(const QString &path)
 {
-   return slotScanUrl(KUrl::KUrl(path));
+    return slotScanUrl(KUrl::KUrl(path));
 }
 
 bool MainWindow::slotScanUrl(const KUrl &url)
 {
-   const KUrl oldUrl = m_part->url();
-   const bool b = m_part->openURL(url);
+    const KUrl oldUrl = m_part->url();
+    const bool b = m_part->openURL(url);
 
-   if (b) {
-      m_histories->push(oldUrl);
-      //action("go_back")->setEnabled(false); //FIXME
-   }
-   return b;
+    if (b) {
+        m_histories->push(oldUrl);
+        //action("go_back")->setEnabled(false); //FIXME
+    }
+    return b;
 }
 
 inline void MainWindow::slotAbortScan()
 {
-    if(m_part->closeURL()) action("scan_stop")->setEnabled(false);
+    if (m_part->closeURL()) action("scan_stop")->setEnabled(false);
 }
 
 inline void MainWindow::scanStarted()
@@ -273,10 +279,10 @@ void MainWindow::scanCompleted()
 
 inline void MainWindow::urlAboutToChange()
 {
-   //called when part's URL is about to change internally
-   //the part will then create the Map and emit completed()
+    //called when part's URL is about to change internally
+    //the part will then create the Map and emit completed()
 
-   m_histories->push(m_part->url());
+    m_histories->push(m_part->url());
 }
 
 
@@ -286,14 +292,14 @@ inline void MainWindow::urlAboutToChange()
 
 void MainWindow::saveProperties(KConfigGroup &configgroup) //virtual
 {
-   m_histories->save(configgroup);
-   configgroup.writeEntry("currentMap", m_part->url().path());
+    m_histories->save(configgroup);
+    configgroup.writeEntry("currentMap", m_part->url().path());
 }
 
 void MainWindow::readProperties(const KConfigGroup &configgroup) //virtual
 {
-   m_histories->restore(configgroup);
-   slotScanPath(configgroup.group("General").readEntry("currentMap", QString()));
+    m_histories->restore(configgroup);
+    slotScanPath(configgroup.group("General").readEntry("currentMap", QString()));
 }
 
 } //namespace Filelight
@@ -305,8 +311,8 @@ void MainWindow::readProperties(const KConfigGroup &configgroup) //virtual
 void setActionMenuTextOnly(KAction *a, QString const &suffix)
 {
     QString const menu_text = suffix.isEmpty()
-            ? a->text()
-            : i18nc("&Up: /home/mxcl", "%1: %2").arg(a->text(), suffix);
+                              ? a->text()
+                              : i18nc("&Up: /home/mxcl", "%1: %2").arg(a->text(), suffix);
 
     for (int i = 0; i < a->associatedWidgets().count(); ++i) {
         QWidget *w = a->associatedWidgets().value(i);
@@ -315,7 +321,8 @@ void setActionMenuTextOnly(KAction *a, QString const &suffix)
         /*if (w->inherits("QPopupMenu")) //FIXME: This was probably here for a reason!
             static_cast<Q3PopupMenu*>(w)->changeItem(id, menu_text);
 
-        else */if (w->inherits("KToolBar")) {
+        else */
+        if (w->inherits("KToolBar")) {
             QWidget *button = static_cast<KToolBar*>(w);
             if (button->inherits("KToolBarButton"))
                 button->setToolTip(suffix);

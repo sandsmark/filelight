@@ -39,7 +39,7 @@ inline HistoryAction::HistoryAction(const QString &text, KActionCollection *ac)
 
 void HistoryAction::push(const QString &path)
 {
-    if(!path.isEmpty() && m_list.last() != path)
+    if (!path.isEmpty() && m_list.last() != path)
     {
         m_list.append(path);
         setActionMenuTextOnly(this, path);
@@ -70,9 +70,9 @@ HistoryCollection::HistoryCollection(KActionCollection *ac, QObject *parent)
 
 void HistoryCollection::push(const KUrl &url) //slot
 {
-    if(!url.isEmpty())
+    if (!url.isEmpty())
     {
-        if(!m_receiver)
+        if (!m_receiver)
         {
             m_f->clear();
             m_receiver = m_b;

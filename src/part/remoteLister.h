@@ -26,21 +26,21 @@
 
 namespace Filelight
 {
-   class RemoteLister : public KDirLister
-   {
-   Q_OBJECT
-   public:
-      RemoteLister(const KUrl &url, QWidget *parent);
-      ~RemoteLister();
+class RemoteLister : public KDirLister
+{
+    Q_OBJECT
+public:
+    RemoteLister(const KUrl &url, QWidget *parent);
+    ~RemoteLister();
 
-   private slots:
-      void completed();
-      void _completed();
-      void canceled();
+private slots:
+    void completed();
+    void _completed();
+    void canceled();
 
-   private:
-      class Store *m_root, *m_store;
-  };
+private:
+    class Store *m_root, *m_store;
+};
 }
 
 #endif

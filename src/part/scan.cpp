@@ -31,192 +31,193 @@
 
 namespace Filelight
 {
-   bool ScanManager::s_abort = false;
-   uint ScanManager::s_files = 0;
+bool ScanManager::s_abort = false;
+uint ScanManager::s_files = 0;
 
-   ScanManager::ScanManager(QObject *parent)
-      : QObject(parent)
-      , m_thread(0)
-      , m_cache(new Chain<Directory>)
-      , m_mutex(0)
-   {
-      Filelight::LocalLister::readMounts();
-      connect(this, SIGNAL(branchCompleted(Directory*, bool)), this, SLOT(cacheTree(Directory*, bool)));
-   }
+ScanManager::ScanManager(QObject *parent)
+        : QObject(parent)
+        , m_thread(0)
+        , m_cache(new Chain<Directory>)
+        , m_mutex(0)
+{
+    Filelight::LocalLister::readMounts();
+    connect(this, SIGNAL(branchCompleted(Directory*, bool)), this, SLOT(cacheTree(Directory*, bool)));
+}
 
-   ScanManager::~ScanManager()
-   {
-      if(m_thread) {
-         kDebug() << "Attempting to abort scan operation..." << endl;
-         s_abort = true;
-         m_thread->wait();
-      }
+ScanManager::~ScanManager()
+{
+    if (m_thread) {
+        kDebug() << "Attempting to abort scan operation..." << endl;
+        s_abort = true;
+        m_thread->wait();
+    }
 
-      delete m_cache;
+    delete m_cache;
 
-      //RemoteListers are QObjects and get automatically deleted
-   }
+    //RemoteListers are QObjects and get automatically deleted
+}
 
-   bool ScanManager::running() const
-   {
-      //FIXME not complete
-      return m_thread && m_thread->isRunning();
-   }
+bool ScanManager::running() const
+{
+    //FIXME not complete
+    return m_thread && m_thread->isRunning();
+}
 
-   bool ScanManager::start(const KUrl &url)
-   {
-      //url is guarenteed clean and safe
+bool ScanManager::start(const KUrl &url)
+{
+    //url is guarenteed clean and safe
 
-      kDebug() << "Scan requested for: " << url.prettyUrl() << endl;
+    kDebug() << "Scan requested for: " << url.prettyUrl() << endl;
 
-      if(running()) {
-         //shouldn't happen, but lets prevent mega-disasters just in case eh?
-         kWarning() << "Attempted to run 2 scans concurrently!\n";
-         //TODO give user an error
-         return false;
-      }
+    if (running()) {
+        //shouldn't happen, but lets prevent mega-disasters just in case eh?
+        kWarning() << "Attempted to run 2 scans concurrently!\n";
+        //TODO give user an error
+        return false;
+    }
 
-      s_files = 0;
-      s_abort = false;
+    s_files = 0;
+    s_abort = false;
 
-      if(url.protocol() == "file")
-      {
-         const QString path = url.path(KUrl::AddTrailingSlash);
+    if (url.protocol() == "file")
+    {
+        const QString path = url.path(KUrl::AddTrailingSlash);
 
-         Chain<Directory> *trees = new Chain<Directory>;
+        Chain<Directory> *trees = new Chain<Directory>;
 
-         /* CHECK CACHE
-         *   user wants: /usr/local/
-         *   cached:     /usr/
-         *
-         *   user wants: /usr/
-         *   cached:     /usr/local/, /usr/include/
-         */
+        /* CHECK CACHE
+        *   user wants: /usr/local/
+        *   cached:     /usr/
+        *
+        *   user wants: /usr/
+        *   cached:     /usr/local/, /usr/include/
+        */
 
-         for(Iterator<Directory> it = m_cache->iterator(); it != m_cache->end(); ++it)
-         {
+        for (Iterator<Directory> it = m_cache->iterator(); it != m_cache->end(); ++it)
+        {
             QString cachePath = (*it)->name();
 
-            if(path.startsWith(cachePath)) //then whole tree already scanned
+            if (path.startsWith(cachePath)) //then whole tree already scanned
             {
-               //find a pointer to the requested branch
+                //find a pointer to the requested branch
 
-               kDebug() << "Cache-(a)hit: " << cachePath << endl;
+                kDebug() << "Cache-(a)hit: " << cachePath << endl;
 
-               QStringList split = path.mid(cachePath.length()).split('/');
-               Directory *d = *it;
-               Iterator<File> jt;
+                QStringList split = path.mid(cachePath.length()).split('/');
+                Directory *d = *it;
+                Iterator<File> jt;
 
-               while(!split.isEmpty() && d != NULL) //if NULL we have got lost so abort!!
-               {
-                  jt = d->iterator();
+                while (!split.isEmpty() && d != NULL) //if NULL we have got lost so abort!!
+                {
+                    jt = d->iterator();
 
-                  const Link<File> *end = d->end();
-                  QString s = split.first(); s += '/';
+                    const Link<File> *end = d->end();
+                    QString s = split.first();
+                    s += '/';
 
-                  for (d = 0; jt != end; ++jt)
-                  if (s == (*jt)->name())
-                  {
-                     d = (Directory*)*jt;
-                     break;
-                  }
+                    for (d = 0; jt != end; ++jt)
+                        if (s == (*jt)->name())
+                        {
+                            d = (Directory*)*jt;
+                            break;
+                        }
 
-                  split.pop_front();
-               }
+                    split.pop_front();
+                }
 
-               if(d)
-               {
-                  delete trees;
+                if (d)
+                {
+                    delete trees;
 
-                  //we found a completed tree, thus no need to scan
-                  kDebug() << "Found cache-handle, generating map.." << endl;
+                    //we found a completed tree, thus no need to scan
+                    kDebug() << "Found cache-handle, generating map.." << endl;
 
-                  emit branchCompleted(d, true);
+                    emit branchCompleted(d, true);
 
-                  return true;
-               }
-               else
-               {
-                  //something went wrong, we couldn't find the directory we were expecting
-                  kError() << "Didn't find " << path << " in the cache!\n";
-                  delete it.remove(); //safest to get rid of it
-                  break; //do a full scan
-               }
+                    return true;
+                }
+                else
+                {
+                    //something went wrong, we couldn't find the directory we were expecting
+                    kError() << "Didn't find " << path << " in the cache!\n";
+                    delete it.remove(); //safest to get rid of it
+                    break; //do a full scan
+                }
             }
-            else if(cachePath.startsWith(path)) //then part of the requested tree is already scanned
+            else if (cachePath.startsWith(path)) //then part of the requested tree is already scanned
             {
-               kDebug() << "Cache-(b)hit: " << cachePath << endl;
-               it.transferTo(*trees);
+                kDebug() << "Cache-(b)hit: " << cachePath << endl;
+                it.transferTo(*trees);
             }
-         }
+        }
 
-         m_url.setPath(path); //FIXME stop switching between paths and KURLs all the time
-         QApplication::setOverrideCursor(Qt::BusyCursor);
-         //starts listing by itself
-         m_thread = new Filelight::LocalLister(path, trees, this);
-         connect(m_thread, SIGNAL(branchCompleted(Directory*, bool)), this, SLOT(cacheTree(Directory*, bool)));
+        m_url.setPath(path); //FIXME stop switching between paths and KURLs all the time
+        QApplication::setOverrideCursor(Qt::BusyCursor);
+        //starts listing by itself
+        m_thread = new Filelight::LocalLister(path, trees, this);
+        connect(m_thread, SIGNAL(branchCompleted(Directory*, bool)), this, SLOT(cacheTree(Directory*, bool)));
 
-         return true;
-      }
+        return true;
+    }
 
-      m_url = url;
-      QApplication::setOverrideCursor(Qt::BusyCursor);
-      //will start listing straight away
-      QObject *o = new Filelight::RemoteLister(url, (QWidget*)parent());
-      o->setParent(this);
-      o->setObjectName("remote_lister");
-      return true;
-   }
+    m_url = url;
+    QApplication::setOverrideCursor(Qt::BusyCursor);
+    //will start listing straight away
+    QObject *o = new Filelight::RemoteLister(url, (QWidget*)parent());
+    o->setParent(this);
+    o->setObjectName("remote_lister");
+    return true;
+}
 
-   bool
-   ScanManager::abort()
-   {
-      s_abort = true;
+bool
+ScanManager::abort()
+{
+    s_abort = true;
 
-      delete findChild<RemoteLister *>("remote_lister");
+    delete findChild<RemoteLister *>("remote_lister");
 
-      return m_thread && m_thread->isRunning();
-   }
+    return m_thread && m_thread->isRunning();
+}
 
-   void
-   ScanManager::emptyCache()
-   {
-      s_abort = true;
+void
+ScanManager::emptyCache()
+{
+    s_abort = true;
 
-      if(m_thread && m_thread->isRunning())
-         m_thread->wait();
+    if (m_thread && m_thread->isRunning())
+        m_thread->wait();
 
-      emit aboutToEmptyCache();
+    emit aboutToEmptyCache();
 
-      m_cache->empty();
-   }
+    m_cache->empty();
+}
 
-   void
-   ScanManager::cacheTree(Directory *tree, bool finished)
-   {
-      QMutexLocker locker(&m_mutex); // This gets released once it is destroyed.
+void
+ScanManager::cacheTree(Directory *tree, bool finished)
+{
+    QMutexLocker locker(&m_mutex); // This gets released once it is destroyed.
 
-      if(m_thread) {
-          m_thread->terminate();
-          m_thread->wait();
-          delete m_thread; //note the lister deletes itself
-          m_thread = 0;
-      }
+    if (m_thread) {
+        m_thread->terminate();
+        m_thread->wait();
+        delete m_thread; //note the lister deletes itself
+        m_thread = 0;
+    }
 
-      emit completed(tree);
+    emit completed(tree);
 
-      if(tree) {
-         //we don't cache foreign stuff
-         //we don't recache stuff (thus only type 1000 events)
-         if(m_url.protocol() == "file" && finished)
+    if (tree) {
+        //we don't cache foreign stuff
+        //we don't recache stuff (thus only type 1000 events)
+        if (m_url.protocol() == "file" && finished)
             //TODO sanity check the cache
             m_cache->append(tree);
-      }
-      else //scan failed
-         m_cache->empty(); //FIXME this is safe but annoying
+    }
+    else //scan failed
+        m_cache->empty(); //FIXME this is safe but annoying
 
-      QApplication::restoreOverrideCursor();
-   }
+    QApplication::restoreOverrideCursor();
+}
 }
 
 #include "scan.moc"

@@ -30,23 +30,23 @@ class Directory;
 
 namespace RadialMap
 {
-    class SegmentTip : public QWidget
-    {
-    public:
-        SegmentTip(uint);
+class SegmentTip : public QWidget
+{
+public:
+    SegmentTip(uint);
 
-        void updateTip(const File*, const Directory*);
-        void moveTo(QPoint, QWidget&, bool);
+    void updateTip(const File*, const Directory*);
+    void moveTo(QPoint, QWidget&, bool);
 
-    private:
-        virtual bool eventFilter(QObject*, QEvent*);
-        virtual bool event(QEvent*);
+private:
+    virtual bool eventFilter(QObject*, QEvent*);
+    virtual bool event(QEvent*);
 
-        uint    m_cursorHeight;
-        QPixmap m_pixmap;
-        QString m_text;
-        bool    m_backing_store;
-    };
+    uint    m_cursorHeight;
+    QPixmap m_pixmap;
+    QString m_text;
+    bool    m_backing_store;
+};
 }
 
 #endif

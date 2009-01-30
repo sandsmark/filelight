@@ -47,22 +47,22 @@ static Filelight::MapScheme oldScheme;
 
 struct Disk
 {
-   QString device;
-   QString type;
-   QString mount;
-   QString icon;
+    QString device;
+    QString type;
+    QString mount;
+    QString icon;
 
-   int size;
-   int used;
-   int free; //NOTE used+avail != size (clustersize!)
+    int size;
+    int used;
+    int free; //NOTE used+avail != size (clustersize!)
 
-   void guessIconName();
+    void guessIconName();
 };
 
 
 struct DiskList : Q3ValueList<Disk>
 {
-   DiskList();
+    DiskList();
 };
 
 
@@ -76,7 +76,7 @@ public:
 
     virtual void setCursor(const QCursor &c)
     {
-        if(focusSegment() && focusSegment()->file()->name() == "Used")
+        if (focusSegment() && focusSegment()->file()->name() == "Used")
             RadialMap::Widget::setCursor(c);
         else
             unsetCursor();
@@ -87,11 +87,11 @@ public:
         const RadialMap::Segment *segment = focusSegment();
 
         //we will allow right clicks to the center circle
-        if(segment == rootSegment())
+        if (segment == rootSegment())
             RadialMap::Widget::mousePressEvent(e);
 
         //and clicks to the used segment
-        else if(segment && segment->file()->name() == "Used") {
+        else if (segment && segment->file()->name() == "Used") {
             const QRect rect(e->x() - 20, e->y() - 20, 40, 40);
 //            KIconEffect::visualActivate(this, rect); TODO: Re-enable
             emit activated(url());
@@ -157,7 +157,7 @@ void SummaryWidget::createDiskMaps()
         box->layout()->addWidget(map);
         box->layout()->addItem(horizontalLayout);
 
-	layout()->addWidget(box);
+        layout()->addWidget(box);
         //box->show(); // will show its children too
 
         Directory *tree = new Directory(disk.mount.toLocal8Bit());
@@ -216,10 +216,10 @@ DiskList::DiskList()
         disk.device = s.left(s.indexOf(BLANK));
         s = s.remove(0, s.indexOf(BLANK) + 1);
 
-    #ifndef NO_FS_TYPE
+#ifndef NO_FS_TYPE
         disk.type = s.left(s.indexOf(BLANK));
         s = s.remove(0, s.indexOf(BLANK) + 1);
-    #endif
+#endif
 
         int n = s.indexOf(BLANK);
         disk.size = s.left(n).toInt();
@@ -245,23 +245,23 @@ DiskList::DiskList()
 
 void Disk::guessIconName()
 {
-   if(mount.contains("cdrom"))        icon = "media-optical";
-   else if(device.contains("cdrom"))  icon = "media-optical";
-   else if(mount.contains("writer"))  icon = "media-optical-recordable";
-   else if(device.contains("writer")) icon = "media-optical-recordable";
+    if (mount.contains("cdrom"))        icon = "media-optical";
+    else if (device.contains("cdrom"))  icon = "media-optical";
+    else if (mount.contains("writer"))  icon = "media-optical-recordable";
+    else if (device.contains("writer")) icon = "media-optical-recordable";
 //   else if(mount.contains("mo"))      icon = "mo";
 //   else if(device.contains("mo"))     icon = "mo";
-   else if(device.contains("fd")) {
+    else if (device.contains("fd")) {
 //      if(device.contains("360"))      icon = "media-floppy";
 //      if(device.contains("1200"))     icon = "media-floppy";
 //      else
-         icon = "media-floppy";
-   }
-   else if(mount.contains("floppy"))  icon = "media-floppy";
-   else if(mount.contains("zip"))     icon = "media-floppy";
-   else if(type.contains("nfs"))      icon = "network-server-database";
-   else
-      icon = "drive-harddisk";
+        icon = "media-floppy";
+    }
+    else if (mount.contains("floppy"))  icon = "media-floppy";
+    else if (mount.contains("zip"))     icon = "media-floppy";
+    else if (type.contains("nfs"))      icon = "network-server-database";
+    else
+        icon = "drive-harddisk";
 
 //   icon += /*mounted() ? */"_mount"/* : "_unmount"*/;
 }

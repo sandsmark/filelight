@@ -30,30 +30,30 @@ template<class T> class Chain;
 
 namespace Filelight
 {
-   class LocalLister : public QThread
-   {
-   Q_OBJECT
+class LocalLister : public QThread
+{
+    Q_OBJECT
 
-   public:
-      LocalLister(const QString &path, Chain<Directory> *cachedTrees, QObject *parent);
+public:
+    LocalLister(const QString &path, Chain<Directory> *cachedTrees, QObject *parent);
 
-      static bool readMounts();
+    static bool readMounts();
 
-   signals:
-      void branchCompleted(Directory* tree, bool finished);
+signals:
+    void branchCompleted(Directory* tree, bool finished);
 
-   private:
-      QString m_path;
-      Chain<Directory> *m_trees;
-      QObject *m_parent;
+private:
+    QString m_path;
+    Chain<Directory> *m_trees;
+    QObject *m_parent;
 
-   private:
-      virtual void run();
-      Directory *scan(const Q3CString&, const Q3CString&);
+private:
+    virtual void run();
+    Directory *scan(const Q3CString&, const Q3CString&);
 
-   private:
-      static QStringList s_localMounts, s_remoteMounts; //TODO namespace
-   };
+private:
+    static QStringList s_localMounts, s_remoteMounts; //TODO namespace
+};
 }
 
 #endif

@@ -81,7 +81,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent)
 void SettingsDialog::closeEvent(QCloseEvent*)
 {
     //if an invalidation is pending, force it now!
-    if(m_timer.isActive()) m_timer.setInterval(0);
+    if (m_timer.isActive()) m_timer.setInterval(0);
 
     Config::write();
 
@@ -108,7 +108,7 @@ void SettingsDialog::reset()
     m_removeButton->setEnabled(m_listBox->count() == 0);
 
     //tab 2
-    if(colourSchemeGroup->selected() != Config::scheme) //TODO: This is probably wrong
+    if (colourSchemeGroup->selected() != Config::scheme) //TODO: This is probably wrong
     {
         colourSchemeGroup->setSelected(Config::scheme);
         //setButton doesn't call a single QButtonGroup signal!
@@ -154,11 +154,11 @@ void SettingsDialog::addDirectory()
     //TODO error handling!
     //TODO wrong protocol handling!
 
-    if(!url.isEmpty())
+    if (!url.isEmpty())
     {
         const QString path = url.path(KUrl::RemoveTrailingSlash);
 
-        if(!Config::skipList.contains(path))
+        if (!Config::skipList.contains(path))
         {
             Config::skipList.append(path);
             m_listBox->insertItem(path);

@@ -30,39 +30,39 @@
 
 class SettingsDialog : public QDialog, public Ui::Dialog
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
-	SettingsDialog(QWidget* = 0);
+    SettingsDialog(QWidget* = 0);
 
 protected:
-  virtual void closeEvent(QCloseEvent *);
-  virtual void reject();
+    virtual void closeEvent(QCloseEvent *);
+    virtual void reject();
 
 public slots:
-  void addDirectory();
-  void removeDirectory();
-  void toggleScanAcrossMounts(bool);
-  void toggleDontScanRemoteMounts(bool);
-  void toggleDontScanRemovableMedia(bool);
-  void reset();
-  void startTimer();
-  void toggleUseAntialiasing(bool = true);
-  void toggleVaryLabelFontSizes(bool);
-  void changeContrast(int);
-  void changeScheme(int);
-  void changeMinFontPitch(int);
-  void toggleShowSmallFiles(bool);
-  void slotSliderReleased();
+    void addDirectory();
+    void removeDirectory();
+    void toggleScanAcrossMounts(bool);
+    void toggleDontScanRemoteMounts(bool);
+    void toggleDontScanRemovableMedia(bool);
+    void reset();
+    void startTimer();
+    void toggleUseAntialiasing(bool = true);
+    void toggleVaryLabelFontSizes(bool);
+    void changeContrast(int);
+    void changeScheme(int);
+    void changeMinFontPitch(int);
+    void toggleShowSmallFiles(bool);
+    void slotSliderReleased();
 
 signals:
-  void mapIsInvalid();
-  void canvasIsDirty(int);
+    void mapIsInvalid();
+    void canvasIsDirty(int);
 
 private:
-  QTimer m_timer;
+    QTimer m_timer;
 
-  static const uint TIMEOUT=1000;
+    static const uint TIMEOUT=1000;
 };
 
 #endif

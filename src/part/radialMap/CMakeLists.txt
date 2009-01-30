@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-include_directories(${CMAKE_SOURCE_DIR}/filelight/src/part ${KDE4_INCLUDES} ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} )
+include_directories($ {CMAKE_SOURCE_DIR}/filelight/src/part $ {KDE4_INCLUDES} $ {KDE4_INCLUDE_DIR} $ {QT_INCLUDES} )
 
 set(radialmap_STAT_SRCS
     widget.cpp
@@ -28,6 +28,6 @@ set(radialmap_STAT_SRCS
     labels.cpp
     segmentTip.cpp)
 
-kde4_add_library(radialmap STATIC ${radialmap_STAT_SRCS} )
+kde4_add_library(radialmap STATIC $ {radialmap_STAT_SRCS} )
 find_package(Blitz REQUIRED)
 

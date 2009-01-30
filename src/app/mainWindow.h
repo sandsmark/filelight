@@ -39,14 +39,16 @@ class Part;
 
 class MainWindow : public KParts::MainWindow
 {
-  Q_OBJECT
+    Q_OBJECT
 
-  public:
+public:
     MainWindow();
 
-    void scan(const KUrl &u) { slotScanUrl(u); }
+    void scan(const KUrl &u) {
+        slotScanUrl(u);
+    }
 
-  private slots:
+private slots:
     void slotUp();
     void slotComboScan();
     void slotScanDirectory();
@@ -65,12 +67,12 @@ class MainWindow : public KParts::MainWindow
 
     void urlAboutToChange();
 
-  protected:
+protected:
     virtual void saveProperties(KConfigGroup&);
     virtual void readProperties(const KConfigGroup&);
     virtual bool queryExit();
 
-  private:
+private:
     Filelight::Part *m_part;
 
     KSqueezedTextLabel *m_status[2];

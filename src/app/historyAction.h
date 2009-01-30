@@ -41,9 +41,14 @@ class HistoryAction : KAction
     friend class HistoryCollection;
 
 public:
-    virtual void setEnabled(bool b = true) { KAction::setEnabled(b ? !m_list.isEmpty() : false); }
+    virtual void setEnabled(bool b = true) {
+        KAction::setEnabled(b ? !m_list.isEmpty() : false);
+    }
 
-    void clear() { m_list.clear(); KAction::setText(m_text); }
+    void clear() {
+        m_list.clear();
+        KAction::setText(m_text);
+    }
 
 private:
     void setText();
@@ -58,7 +63,7 @@ private:
 
 class HistoryCollection : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     HistoryCollection(KActionCollection *ac, QObject *parent);
@@ -68,7 +73,9 @@ public:
 
 public slots:
     void push(const KUrl&);
-    void stop() { m_receiver = 0; }
+    void stop() {
+        m_receiver = 0;
+    }
 
 signals:
     void activated(const KUrl&);

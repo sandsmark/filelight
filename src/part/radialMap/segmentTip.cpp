@@ -56,7 +56,7 @@ bool isBackingStoreActive()
 
 
 SegmentTip::SegmentTip(uint h)
-    : QWidget(0, Qt::FramelessWindowHint | Qt::Tool | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint)
+        : QWidget(0, Qt::FramelessWindowHint | Qt::Tool | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint)
         , m_cursorHeight(-h)
         , m_backing_store(isBackingStoreActive())
 {
@@ -82,16 +82,16 @@ SegmentTip::moveTo(QPoint p, QWidget &canvas, bool placeAbove)
     const int sw = screen.width();
     const int sh = screen.height();
 
-    if(x  < 0 ) p.setX(0);
-    if(y  < 0 ) p.setY(0);
-    if(x2 > sw) p.rx() -= x2 - sw;
-    if(y2 > sh) p.ry() -= y2 - sh;
+    if (x  < 0 ) p.setX(0);
+    if (y  < 0 ) p.setY(0);
+    if (x2 > sw) p.rx() -= x2 - sw;
+    if (y2 > sh) p.ry() -= y2 - sh;
 
 
     //I'm using this QPoint to determine where to offset the bitBlt in m_pixmap
     QPoint offset = canvas.mapToGlobal(QPoint()) - p;
-    if(offset.x() < 0) offset.setX(0);
-    if(offset.y() < 0) offset.setY(0);
+    if (offset.x() < 0) offset.setX(0);
+    if (offset.y() < 0) offset.setY(0);
 
 
     const QRect alphaMaskRect(canvas.mapFromGlobal(p), size());
@@ -134,19 +134,19 @@ SegmentTip::updateTip(const File* const file, const Directory* const root)
     uint maxw         = 0;
     uint h            = fontMetrics().height()*2 + 2*MARGIN;
 
-    if(pc > 0) s2 += QString(" (%1%)").arg(loc->formatNumber(pc, 0));
+    if (pc > 0) s2 += QString(" (%1%)").arg(loc->formatNumber(pc, 0));
 
     m_text  = s1;
     m_text += '\n';
     m_text += s2;
 
-    if(file->isDirectory())
+    if (file->isDirectory())
     {
         double files  = static_cast<const Directory*>(file)->children();
         const uint pc = uint((100 * files) / (double)root->children());
         QString s3    = i18n("Files: %1").arg(loc->formatNumber(files, 0));
 
-        if(pc > 0) s3 += QString(" (%1%)").arg(loc->formatNumber(pc, 0));
+        if (pc > 0) s3 += QString(" (%1%)").arg(loc->formatNumber(pc, 0));
 
         maxw    = fontMetrics().width(s3);
         h      += fontMetrics().height();
@@ -155,8 +155,10 @@ SegmentTip::updateTip(const File* const file, const Directory* const root)
     }
 
     uint
-    w = fontMetrics().width(s1); if(w > maxw) maxw = w;
-    w = fontMetrics().width(s2); if(w > maxw) maxw = w;
+    w = fontMetrics().width(s1);
+    if (w > maxw) maxw = w;
+    w = fontMetrics().width(s2);
+    if (w > maxw) maxw = w;
 
     resize(maxw + 2 * MARGIN, h);
 }
@@ -164,7 +166,7 @@ SegmentTip::updateTip(const File* const file, const Directory* const root)
 bool
 SegmentTip::event(QEvent *e)
 {
-    switch(e->type())
+    switch (e->type())
     {
     case QEvent::Show:
         kapp->installEventFilter(this);

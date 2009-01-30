@@ -32,42 +32,44 @@ template<class T> class Chain;
 
 namespace Filelight
 {
-   class ScanManager : public QObject
-   {
-      Q_OBJECT
+class ScanManager : public QObject
+{
+    Q_OBJECT
 
-      friend class LocalLister;
-      friend class RemoteLister;
+    friend class LocalLister;
+    friend class RemoteLister;
 
-   public:
-      ScanManager(QObject *parent);
-      virtual ~ScanManager();
+public:
+    ScanManager(QObject *parent);
+    virtual ~ScanManager();
 
-      bool start(const KUrl&);
-      bool running() const;
+    bool start(const KUrl&);
+    bool running() const;
 
-      static uint files() { return s_files; }
+    static uint files() {
+        return s_files;
+    }
 
-   public slots:
-      bool abort();
-      void emptyCache();
-      void cacheTree(Directory*, bool);
+public slots:
+    bool abort();
+    void emptyCache();
+    void cacheTree(Directory*, bool);
 
-   signals:
-      void completed(Directory*);
-      void aboutToEmptyCache();
-      void branchCompleted(Directory* tree, bool finished);
+signals:
+    void completed(Directory*);
+    void aboutToEmptyCache();
+    void branchCompleted(Directory* tree, bool finished);
 
-   private:
-      static bool s_abort;
-      static uint s_files;
+private:
+    static bool s_abort;
+    static uint s_files;
 
-      KUrl m_url;
-      QMutex m_mutex;
-      QThread *m_thread;
-      Chain<Directory> *m_cache;
+    KUrl m_url;
+    QMutex m_mutex;
+    QThread *m_thread;
+    Chain<Directory> *m_cache;
 
-   };
+};
 }
 
 #endif

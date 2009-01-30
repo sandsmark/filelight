@@ -29,62 +29,70 @@
 
 class KAboutData;
 using KParts::StatusBarExtension;
-namespace RadialMap { class Widget; }
+namespace RadialMap {
+class Widget;
+}
 class Directory;
 
 
 namespace Filelight
 {
-   class Part;
+class Part;
 
-   class BrowserExtension : public KParts::BrowserExtension
-   {
-   public:
-      BrowserExtension(Part*);
-   };
+class BrowserExtension : public KParts::BrowserExtension
+{
+public:
+    BrowserExtension(Part*);
+};
 
 
-   class Part : public KParts::ReadOnlyPart
-   {
-      Q_OBJECT
+class Part : public KParts::ReadOnlyPart
+{
+    Q_OBJECT
 
-   public:
-      Part(QWidget *, QObject *, const QList<QVariant>&);
+public:
+    Part(QWidget *, QObject *, const QList<QVariant>&);
 
-      virtual bool openFile() { return false; } //pure virtual in base class
-      virtual bool closeURL();
+    virtual bool openFile() {
+        return false;    //pure virtual in base class
+    }
+    virtual bool closeURL();
 
-      QString prettyUrl() const { return url().protocol() == "file" ? url().path() : url().prettyUrl(); }
+    QString prettyUrl() const {
+        return url().protocol() == "file" ? url().path() : url().prettyUrl();
+    }
 
-      static KAboutData *createAboutData();
+    static KAboutData *createAboutData();
 
-   public slots:
-      virtual bool openURL(const KUrl&);
-      void configFilelight();
-      void rescan();
+public slots:
+    virtual bool openURL(const KUrl&);
+    void configFilelight();
+    void rescan();
 
-   private slots:
-      void postInit();
-      void scanCompleted(Directory*);
-      void mapChanged(const Directory*);
+private slots:
+    void postInit();
+    void scanCompleted(Directory*);
+    void mapChanged(const Directory*);
 
-   private:
-      KStatusBar *statusBar() { return m_statusbar->statusBar(); }
+private:
+    KStatusBar *statusBar() {
+        return m_statusbar->statusBar();
+    }
 
-      QLayout            *m_layout;
-      BrowserExtension   *m_ext;
-      StatusBarExtension *m_statusbar;
-      RadialMap::Widget  *m_map;
-      class ScanManager  *m_manager;
+    QLayout            *m_layout;
+    BrowserExtension   *m_ext;
+    StatusBarExtension *m_statusbar;
+    RadialMap::Widget  *m_map;
+    class ScanManager  *m_manager;
 
-      bool m_started;
+    bool m_started;
 
-   private:
-      bool start(const KUrl&);
+private:
+    bool start(const KUrl&);
 
-   private slots:
-      void updateURL(const KUrl &);
-   };
+private slots:
+    void updateURL(const KUrl &);
+};
 }
 
 #endif

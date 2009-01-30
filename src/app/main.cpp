@@ -29,15 +29,15 @@
 #include <kurl.h>
 
 static KAboutData about(
-        APP_NAME,
-	0,
-	ki18n(APP_PRETTYNAME),
-	APP_VERSION,
-        ki18n("Graphical disk-usage information"),
-	KAboutData::License_GPL_V2,
-        ki18n("(C) 2006 Max Howell\n(C) 2008 Martin Sandsmark"),
-	ki18n("You like it, you buy it!"),
-        "http://www.methylblue.com/filelight/");
+    APP_NAME,
+    0,
+    ki18n(APP_PRETTYNAME),
+    APP_VERSION,
+    ki18n("Graphical disk-usage information"),
+    KAboutData::License_GPL_V2,
+    ki18n("(C) 2006 Max Howell\n(C) 2008 Martin Sandsmark"),
+    ki18n("You like it, you buy it!"),
+    "http://www.methylblue.com/filelight/");
 
 
 int main(int argc, char *argv[])

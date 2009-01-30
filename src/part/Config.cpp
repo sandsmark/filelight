@@ -74,6 +74,6 @@ Filelight::Config::write()
     config.writeEntry("antiAliasFactor", antiAliasFactor);
     config.writeEntry("minFontPitch", minFontPitch);
     config.writeEntry("scheme", (int)scheme); // TODO: make the enum belong to a qwidget,
-    						//and use magic macros to make it save this properly
+    //and use magic macros to make it save this properly
     config.writePathEntry("skipList", skipList);
 }

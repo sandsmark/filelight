@@ -54,7 +54,7 @@ K_PLUGIN_FACTORY(filelightPartFactory, registerPlugin<Part>();)  // produce a fa
 K_EXPORT_PLUGIN(filelightPartFactory("filelightpart"))
 
 BrowserExtension::BrowserExtension(Part *parent)
-  : KParts::BrowserExtension(parent)
+        : KParts::BrowserExtension(parent)
 {}
 
 
@@ -103,92 +103,92 @@ Part::Part(QWidget *parentWidget, QObject *parent, const QList<QVariant>&)
 void
 Part::postInit()
 {
-   if(url().isEmpty()) //if url is not empty openURL() has been called immediately after ctor, which happens
-   {
-      QWidget *summary = new SummaryWidget(widget());
-      summary->setObjectName("summaryWidget");
-      connect(summary, SIGNAL(activated(const KUrl&)), SLOT(openURL(const KUrl&)));
-      summary->show();
-      m_layout->addWidget(summary);
+    if (url().isEmpty()) //if url is not empty openURL() has been called immediately after ctor, which happens
+    {
+        QWidget *summary = new SummaryWidget(widget());
+        summary->setObjectName("summaryWidget");
+        connect(summary, SIGNAL(activated(const KUrl&)), SLOT(openURL(const KUrl&)));
+        summary->show();
+        m_layout->addWidget(summary);
 
-      //FIXME KXMLGUI is b0rked, it should allow us to set this
-      //BEFORE createGUI is called but it doesn't
-      stateChanged("scan_failed");
-   }
+        //FIXME KXMLGUI is b0rked, it should allow us to set this
+        //BEFORE createGUI is called but it doesn't
+        stateChanged("scan_failed");
+    }
 }
 
 bool
 Part::openURL(const KUrl &u)
 {
-   //we don't want to be using the summary screen anymore
-   delete widget()->findChild<SummaryWidget *>("summaryWidget");
+    //we don't want to be using the summary screen anymore
+    delete widget()->findChild<SummaryWidget *>("summaryWidget");
 
-   m_layout->addWidget(m_map);
-   m_map->show();
+    m_layout->addWidget(m_map);
+    m_map->show();
 
-   //TODO everyone hates dialogs, instead render the text in big fonts on the Map
-   //TODO should have an empty KUrl until scan is confirmed successful
-   //TODO probably should set caption to QString::null while map is unusable
+    //TODO everyone hates dialogs, instead render the text in big fonts on the Map
+    //TODO should have an empty KUrl until scan is confirmed successful
+    //TODO probably should set caption to QString::null while map is unusable
 
-   #define KMSG(s) KMessageBox::information(widget(), s)
+#define KMSG(s) KMessageBox::information(widget(), s)
 
-   KUrl uri = u;
-   uri.cleanPath(KUrl::SimplifyDirSeparators);
-   const QString path = uri.path(KUrl::AddTrailingSlash);
-   const Q3CString path8bit = QFile::encodeName(path);
-   const bool isLocal = uri.protocol() == "file";
+    KUrl uri = u;
+    uri.cleanPath(KUrl::SimplifyDirSeparators);
+    const QString path = uri.path(KUrl::AddTrailingSlash);
+    const Q3CString path8bit = QFile::encodeName(path);
+    const bool isLocal = uri.protocol() == "file";
 
-   if(uri.isEmpty())
-   {
-      //do nothing, chances are the user accidently pressed ENTER
-   }
-   else if(!uri.isValid())
-   {
-      KMSG(i18n("The entered URL cannot be parsed; it is invalid."));
-   }
-   else if(path[0] != '/')
-   {
-      KMSG(i18n("Filelight only accepts absolute paths, eg. /%1").arg(path));
-   }
-   else if(isLocal && access(path8bit, F_OK) != 0) //stat(path, &statbuf) == 0
-   {
-      KMSG(i18n("Directory not found: %1").arg(path));
-   }
-   else if(isLocal && access(path8bit, R_OK | X_OK) != 0)
-   {
-      KMSG(i18n("Unable to enter: %1\nYou do not have access rights to this location.").arg(path));
-   }
-   else
-   {
-      if(uri == url())
-         m_manager->emptyCache(); //same as rescan()
+    if (uri.isEmpty())
+    {
+        //do nothing, chances are the user accidently pressed ENTER
+    }
+    else if (!uri.isValid())
+    {
+        KMSG(i18n("The entered URL cannot be parsed; it is invalid."));
+    }
+    else if (path[0] != '/')
+    {
+        KMSG(i18n("Filelight only accepts absolute paths, eg. /%1").arg(path));
+    }
+    else if (isLocal && access(path8bit, F_OK) != 0) //stat(path, &statbuf) == 0
+    {
+        KMSG(i18n("Directory not found: %1").arg(path));
+    }
+    else if (isLocal && access(path8bit, R_OK | X_OK) != 0)
+    {
+        KMSG(i18n("Unable to enter: %1\nYou do not have access rights to this location.").arg(path));
+    }
+    else
+    {
+        if (uri == url())
+            m_manager->emptyCache(); //same as rescan()
 
-      return start(uri);
-   }
+        return start(uri);
+    }
 
-   return false;
+    return false;
 }
 
 bool
 Part::closeURL()
 {
-   if(m_manager->abort())
-      statusBar()->showMessage(i18n("Aborting Scan..."));
+    if (m_manager->abort())
+        statusBar()->showMessage(i18n("Aborting Scan..."));
 
-   setUrl(KUrl());
+    setUrl(KUrl());
 
-   return true;
+    return true;
 }
 
 void
 Part::updateURL(const KUrl &u)
 {
-   //the map has changed internally, update the interface to reflect this
-   emit m_ext->openUrlNotify(); //must be done first
-   emit m_ext->setLocationBarUrl(u.prettyUrl());
+    //the map has changed internally, update the interface to reflect this
+    emit m_ext->openUrlNotify(); //must be done first
+    emit m_ext->setLocationBarUrl(u.prettyUrl());
 
-   //do this last, or it breaks Konqi location bar
-   setUrl(u);
+    //do this last, or it breaks Konqi location bar
+    setUrl(u);
 }
 
 void
@@ -206,86 +206,86 @@ KAboutData*
 Part::createAboutData()
 {
     return new KAboutData(
-		    "filelight",
-		    0,
-		    ki18n("Filelight"),
-		    APP_VERSION,
-		    ki18n("Displays file usage in an easy to understand way."),
-		    KAboutData::License_GPL,
-		    ki18n("(c) 2002-2004 Max Howell\n\
+               "filelight",
+               0,
+               ki18n("Filelight"),
+               APP_VERSION,
+               ki18n("Displays file usage in an easy to understand way."),
+               KAboutData::License_GPL,
+               ki18n("(c) 2002-2004 Max Howell\n\
 			    (c) 2008 Martin T. Sandsmark"),
-		    ki18n("Please report bugs."),
-		    "http://iskrembilen.com/",
-		    "sandsmark@iskrembilen.com");
+               ki18n("Please report bugs."),
+               "http://iskrembilen.com/",
+               "sandsmark@iskrembilen.com");
 }
 
 bool
 Part::start(const KUrl &url)
 {
-   if(!m_started) {
-      m_statusbar->addStatusBarItem(new ProgressBox(statusBar(), this), 0, true);
-      connect(m_map, SIGNAL(mouseHover(const QString&)), statusBar(), SLOT(message(const QString&)));
-      connect(m_map, SIGNAL(created(const Directory*)), statusBar(), SLOT(clear()));
-      m_started = true;
-   }
+    if (!m_started) {
+        m_statusbar->addStatusBarItem(new ProgressBox(statusBar(), this), 0, true);
+        connect(m_map, SIGNAL(mouseHover(const QString&)), statusBar(), SLOT(message(const QString&)));
+        connect(m_map, SIGNAL(created(const Directory*)), statusBar(), SLOT(clear()));
+        m_started = true;
+    }
 
-   if(m_manager->start(url)) {
-      setUrl(url);
+    if (m_manager->start(url)) {
+        setUrl(url);
 
-      const QString s = i18n("Scanning: %1", prettyUrl());
-      stateChanged("scan_started");
-      emit started(0); //as a Part, we have to do this
-      emit setWindowCaption(s);
-      statusBar()->showMessage(s);
-      m_map->invalidate(); //to maintain ui consistency
+        const QString s = i18n("Scanning: %1", prettyUrl());
+        stateChanged("scan_started");
+        emit started(0); //as a Part, we have to do this
+        emit setWindowCaption(s);
+        statusBar()->showMessage(s);
+        m_map->invalidate(); //to maintain ui consistency
 
-      return true;
-   }
+        return true;
+    }
 
-   return false;
+    return false;
 }
 
 void
 Part::rescan()
 {
-   //FIXME we have to empty the cache because otherwise rescan picks up the old tree..
-   m_manager->emptyCache(); //causes canvas to invalidate
-   start(url());
+    //FIXME we have to empty the cache because otherwise rescan picks up the old tree..
+    m_manager->emptyCache(); //causes canvas to invalidate
+    start(url());
 }
 
 void
 Part::scanCompleted(Directory *tree)
 {
-   if(tree) {
-      statusBar()->showMessage(i18n("Scan completed, generating map..."));
+    if (tree) {
+        statusBar()->showMessage(i18n("Scan completed, generating map..."));
 
-      m_map->create(tree);
+        m_map->create(tree);
 
-      //do after creating map
-      stateChanged("scan_complete");
-   }
-   else {
-      stateChanged("scan_failed");
-      emit canceled(i18n("Scan failed: %1").arg(prettyUrl()));
-      emit setWindowCaption(QString::null);
+        //do after creating map
+        stateChanged("scan_complete");
+    }
+    else {
+        stateChanged("scan_failed");
+        emit canceled(i18n("Scan failed: %1").arg(prettyUrl()));
+        emit setWindowCaption(QString::null);
 
-      statusBar()->clearMessage();
+        statusBar()->clearMessage();
 
-      setUrl(KUrl());
-   }
+        setUrl(KUrl());
+    }
 }
 
 void
 Part::mapChanged(const Directory *tree)
 {
-   //IMPORTANT -> url() has already been set
+    //IMPORTANT -> url() has already been set
 
-   emit setWindowCaption(prettyUrl());
+    emit setWindowCaption(prettyUrl());
 
-   ProgressBox *progress = statusBar()->findChild<ProgressBox *>();
+    ProgressBox *progress = statusBar()->findChild<ProgressBox *>();
 
-   if(progress)
-      progress->setText(tree->children());
+    if (progress)
+        progress->setText(tree->children());
 }
 
 } //namespace Filelight

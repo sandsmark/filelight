@@ -25,12 +25,14 @@
 #include <QLabel>
 #include <QTimer>
 
-namespace KIO { class Job; }
+namespace KIO {
+class Job;
+}
 
 
 class ProgressBox : public QLabel
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     ProgressBox(QWidget*, QObject*);
