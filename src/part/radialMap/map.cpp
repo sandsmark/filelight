@@ -296,7 +296,6 @@ void RadialMap::Map::aaPaint()
 
 void RadialMap::Map::paint(unsigned int scaleFactor)
 {
-   kDebug() << "drawing on pixmap coordinates:" << m_rect;
    if (scaleFactor == 0) //just in case
       scaleFactor = 1;
 
@@ -328,7 +327,7 @@ void RadialMap::Map::paint(unsigned int scaleFactor)
    //  ** i.e. slightly eliptic when resizing inbetween
 
    if (m_pixmap.isNull()){
-      kWarning() << "Refusing to draw on empty pixmap.";
+      kWarning() << "Refusing to draw on null pixmap.";
       return;
    }
 
@@ -414,10 +413,8 @@ void RadialMap::Map::paint(unsigned int scaleFactor)
    paint.setPen(Qt::gray);
    paint.setBrush(Qt::white);
    paint.drawEllipse(rect);
-   kDebug() << scaleFactor;
    if(scaleFactor > 1)
    {
-       kWarning() << "scaling";
       //have to end in order to smoothscale()
       paint.end();
 

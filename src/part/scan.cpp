@@ -193,9 +193,6 @@ namespace Filelight
    void
    ScanManager::cacheTree(Directory *tree, bool finished)
    {
-      kDebug() << tree->children();
-      kDebug() << finished;
-
       if(m_thread) {
           m_thread->terminate();
           m_thread->wait();
