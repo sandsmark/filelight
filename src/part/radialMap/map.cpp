@@ -141,10 +141,11 @@ bool RadialMap::Map::resize(const QRect &rect)
          const uint minSize = MIN_RING_BREADTH * 2 * (m_visibleDepth + 2);
          const uint mD2 = MAP_2MARGIN / 2;
 
-         if(size < minSize) size = minSize;
+         if(size < minSize)
+             size = minSize;
 
          //this QRect is used by paint()
-         m_rect.setRect(mD2, mD2, size, size);
+        m_rect.setRect(0,0,size,size);
       }
 
       //resize the pixmap
