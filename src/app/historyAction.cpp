@@ -39,7 +39,7 @@ inline HistoryAction::HistoryAction(const QString &text, KActionCollection *ac)
 
 void HistoryAction::push(const QString &path)
 {
-    if (!path.isEmpty() && m_list.last() != path)
+    if (!path.isEmpty() && !m_list.isEmpty() && m_list.last() != path)
     {
         m_list.append(path);
         setActionMenuTextOnly(this, path);
